@@ -1,0 +1,27 @@
+name: vantage419
+description: "Premium discovery tool for Toledo residents with gamified local exploration"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.8
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+  url_launcher: ^6.3.1
+  flutter_riverpod: ^2.6.1
+  shared_preferences: ^2.3.4
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
