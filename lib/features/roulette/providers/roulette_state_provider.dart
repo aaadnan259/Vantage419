@@ -33,7 +33,9 @@ class RouletteState {
   final List<UserVisit> visits;
   final String? errorMessage;
 
-  RouletteMode get mode => RouletteMode.modes[currentMode];
+  /// S3.3: Bounds-checked mode getter — clamps to valid range.
+  RouletteMode get mode =>
+      RouletteMode.modes[currentMode.clamp(0, RouletteMode.modes.length - 1)];
 
   RouletteState copyWith({
     int? currentMode,
@@ -59,6 +61,19 @@ class RouletteState {
 /// Manages roulette spinning, mode selection, and visit tracking.
 class RouletteNotifier extends StateNotifier<RouletteState> {
   RouletteNotifier(this._service) : super(const RouletteState()) {
+    // S3.2: Debug-only validation that all spot IDs are unique
+    assert(() {
+      final ids = toledoSpots.map((s) => s.id).toList();
+      final unique = ids.toSet();
+      if (ids.length != unique.length) {
+        final dupes = ids
+            .where((id) => ids.where((i) => i == id).length > 1)
+            .toSet();
+        debugPrint('⚠️ Duplicate spot IDs detected: $dupes');
+      }
+      return ids.length == unique.length;
+    }(), 'All spot IDs must be unique — found duplicates in toledo_spots.dart');
+
     _loadVisits();
   }
 
@@ -68,7 +83,9 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     state = state.copyWith(visits: _service.loadVisits());
   }
 
+  /// S3.3: Bounds-checked mode selection — rejects invalid indices.
   void selectMode(int index) {
+    if (index < 0 || index >= RouletteMode.modes.length) return;
     state = state.copyWith(
       currentMode: index,
       clearSelectedSpot: true,
@@ -77,7 +94,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
   }
 
   /// Spin the roulette — returns the selected spot or null.
-  /// Wrapped in try/catch/finally so the button NEVER locks up.
   Future<ToledoSpot?> spin() async {
     if (state.isSpinning) return null;
 
@@ -88,7 +104,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     );
 
     try {
-      // Simulate spin delay for animation
       await Future.delayed(AppConstants.spinDuration);
 
       final result = _service.spin(
@@ -108,7 +123,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
           visits: updatedVisits,
         );
       } else {
-        // No spots match the current mode
         state = state.copyWith(
           isSpinning: false,
           errorMessage:

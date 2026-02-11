@@ -14,6 +14,12 @@ class RouletteService {
   final SharedPreferences _prefs;
   static const _visitsKey = 'user_visits';
 
+  /// S3.5: Class-level RNG for better distribution across spins.
+  final _rng = Random();
+
+  /// Hard cap on stored visits to prevent unbounded growth (S3.1).
+  static const _maxVisits = 500;
+
   /// Load persisted visits from disk.
   /// Handles corrupt JSON gracefully — resets and returns empty on failure.
   List<UserVisit> loadVisits() {
@@ -46,10 +52,28 @@ class RouletteService {
     }
   }
 
-  /// Save visits to disk.
+  /// Save visits to disk after pruning stale entries (S3.1).
   Future<void> saveVisits(List<UserVisit> visits) async {
-    final json = jsonEncode(visits.map((v) => v.toJson()).toList());
+    final pruned = _pruneVisits(visits);
+    final json = jsonEncode(pruned.map((v) => v.toJson()).toList());
     await _prefs.setString(_visitsKey, json);
+  }
+
+  /// Remove entries older than the visit window and cap total count (S3.1).
+  List<UserVisit> _pruneVisits(List<UserVisit> visits) {
+    final cutoff = DateTime.now().subtract(
+      const Duration(days: AppConstants.visitedWindowDays * 2),
+    );
+
+    var pruned = visits.where((v) => v.visitedAt.isAfter(cutoff)).toList();
+
+    // Hard cap — keep most recent if over limit
+    if (pruned.length > _maxVisits) {
+      pruned.sort((a, b) => b.visitedAt.compareTo(a.visitedAt));
+      pruned = pruned.sublist(0, _maxVisits);
+    }
+
+    return pruned;
   }
 
   /// Record a visit for the given spot.
@@ -62,7 +86,7 @@ class RouletteService {
       UserVisit(spotId: spotId, visitedAt: DateTime.now()),
     ];
     await saveVisits(updated);
-    return updated;
+    return _pruneVisits(updated);
   }
 
   /// Pick a random spot with weighted selection.
@@ -73,7 +97,6 @@ class RouletteService {
     required List<SpotCategory> categories,
     required List<UserVisit> visits,
   }) {
-    // Filter by category
     final pool = spots.where((s) => categories.contains(s.category)).toList();
 
     if (pool.isEmpty) return null;
@@ -98,7 +121,6 @@ class RouletteService {
       }
     }
 
-    final rng = Random();
-    return weighted[rng.nextInt(weighted.length)];
+    return weighted[_rng.nextInt(weighted.length)];
   }
 }

@@ -12,9 +12,12 @@ class UserVisit {
     'rating': rating,
   };
 
+  /// S3.4: Defensive deserialization — invalid dates fall back to epoch.
   factory UserVisit.fromJson(Map<String, dynamic> json) => UserVisit(
-    spotId: json['spotId'] as String,
-    visitedAt: DateTime.parse(json['visitedAt'] as String),
+    spotId: json['spotId'] as String? ?? '',
+    visitedAt:
+        DateTime.tryParse(json['visitedAt']?.toString() ?? '') ??
+        DateTime.fromMillisecondsSinceEpoch(0),
     rating: json['rating'] as int?,
   );
 }
