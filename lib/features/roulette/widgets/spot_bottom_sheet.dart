@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/models/spot_category.dart';
 import '../../../core/models/toledo_spot.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/theme/colors.dart';
@@ -21,17 +22,7 @@ class SpotBottomSheet extends StatelessWidget {
       snapSizes: const [0.40, 0.80],
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: VantageColors.surface,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 20,
-                offset: Offset(0, -4),
-              ),
-            ],
-          ),
+          decoration: _sheetDecoration,
           child: ListView(
             controller: scrollController,
             padding: EdgeInsets.zero,
@@ -153,6 +144,15 @@ class SpotBottomSheet extends StatelessWidget {
       },
     );
   }
+
+  /// S5.6: Allocated once, reused every build.
+  static const _sheetDecoration = BoxDecoration(
+    color: VantageColors.surface,
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    boxShadow: [
+      BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, -4)),
+    ],
+  );
 }
 
 /// Pulsing drag handle that hints the sheet is draggable (S2.1).
@@ -209,7 +209,7 @@ class _DragHandleHintState extends State<_DragHandleHint>
 class _CategoryBadge extends StatelessWidget {
   const _CategoryBadge({required this.category});
 
-  final dynamic category;
+  final SpotCategory category;
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +254,7 @@ class _NavigateButtonState extends State<_NavigateButton> {
     if (_isLaunching) return;
     setState(() => _isLaunching = true);
 
-    final success = await NavigationService().navigateTo(
+    final success = await NavigationService.instance.navigateTo(
       latitude: widget.spot.latitude,
       longitude: widget.spot.longitude,
       label: widget.spot.name,

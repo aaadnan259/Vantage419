@@ -10,6 +10,7 @@ import 'providers/map_controller_provider.dart';
 import 'providers/user_location_provider.dart';
 import 'widgets/map_controls.dart';
 import 'widgets/map_layer.dart';
+import 'widgets/user_location_marker.dart';
 import '../roulette/providers/roulette_state_provider.dart';
 import '../roulette/widgets/spin_button.dart';
 import '../roulette/widgets/category_selector.dart';
@@ -104,21 +105,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         point: pos,
                         width: 24,
                         height: 24,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: VantageColors.accent,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: VantageColors.accent.withValues(
-                                  alpha: 0.4,
-                                ),
-                                blurRadius: 12,
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: const UserLocationMarker(),
                       ),
                     ],
                   );
@@ -127,9 +114,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 error: (_, _) => const MarkerLayer(markers: []),
               ),
 
-              // Spot markers
+              // S5.2: Only render markers for spots matching active mode
               SpotMarkerLayer(
-                spots: toledoSpots,
+                spots: toledoSpots
+                    .where(
+                      (s) => rouletteState.mode.categories.contains(s.category),
+                    )
+                    .toList(),
                 selectedSpotId: rouletteState.selectedSpot?.id,
                 onSpotTapped: (spot) => _onSpotTapped(spot, mapController),
               ),

@@ -3,6 +3,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Launches external navigation apps with destination coordinates.
 class NavigationService {
+  const NavigationService._();
+
+  /// Singleton instance — no state, just methods (S5.5).
+  static const instance = NavigationService._();
+
   /// Attempt Google Maps → Waze → web fallback.
   /// Returns false if all launch attempts fail or throw.
   Future<bool> navigateTo({

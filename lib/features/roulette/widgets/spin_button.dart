@@ -80,30 +80,33 @@ class _SpinButtonState extends State<SpinButton>
         builder: (context, child) {
           return Transform.rotate(angle: _rotation.value, child: child);
         },
-        child: Material(
-          shape: const CircleBorder(),
-          elevation: 8,
-          child: Ink(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  VantageColors.accentLight,
-                  VantageColors.accent,
-                  VantageColors.accentDark,
-                ],
+        // S5.4: RepaintBoundary — icon+gradient rasterize once, rotation composited
+        child: RepaintBoundary(
+          child: Material(
+            shape: const CircleBorder(),
+            elevation: 8,
+            child: Ink(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    VantageColors.accentLight,
+                    VantageColors.accent,
+                    VantageColors.accentDark,
+                  ],
+                ),
               ),
-            ),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: _handleTap,
-              child: const Center(
-                child: Icon(
-                  Icons.explore_rounded,
-                  size: 36,
-                  color: Colors.white,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: _handleTap,
+                child: const Center(
+                  child: Icon(
+                    Icons.explore_rounded,
+                    size: 36,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
