@@ -11,34 +11,41 @@ class ThemeToggle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          final nextMode = _nextMode(themeMode);
-          ref.read(themeProvider.notifier).setThemeMode(nextMode);
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: context.colors.surface.withValues(alpha: 0.9),
+    return Semantics(
+      label: 'Toggle theme mode',
+      button: true,
+      child: Material(
+        color: Colors.transparent,
+        child: Tooltip(
+          message: 'Switch theme',
+          child: InkWell(
+            onTap: () {
+              final nextMode = _nextMode(themeMode);
+              ref.read(themeProvider.notifier).setThemeMode(nextMode);
+            },
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: context.colors.textMuted.withValues(alpha: 0.2),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: context.colors.surface.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.colors.textMuted.withValues(alpha: 0.2),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Icon(
-            _getIcon(themeMode),
-            color: context.colors.textPrimary,
-            size: 20,
+              child: Icon(
+                _getIcon(themeMode),
+                color: context.colors.textPrimary,
+                size: 20,
+              ),
+            ),
           ),
         ),
       ),
