@@ -12,8 +12,9 @@ import 'widgets/empty_state.dart';
 import 'widgets/map_controls.dart';
 import 'widgets/map_layer.dart';
 import 'widgets/user_location_marker.dart';
+import 'widgets/floating_search_pill.dart';
+import '../roulette/widgets/shuffle_deck_overlay.dart';
 import '../roulette/providers/roulette_state_provider.dart';
-import '../roulette/widgets/spin_button.dart';
 import '../roulette/widgets/category_selector.dart';
 import '../roulette/widgets/spot_bottom_sheet.dart';
 import '../settings/widgets/theme_toggle.dart';
@@ -87,9 +88,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   ),
                 ),
                 children: [
-                  // Dark tile layer with error tracking (S1.6)
+                  // Light tile layer (S4.5.3.1)
                   TileLayer(
-                    urlTemplate: AppConstants.darkTileUrl,
+                    urlTemplate: AppConstants.lightTileUrl,
                     userAgentPackageName: 'com.vantage419.app',
                     maxZoom: 19,
                     tileProvider: NetworkTileProvider(),
@@ -142,7 +143,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   ) ??
                   const SizedBox.shrink(),
 
-              // Tile error banner (S1.6) — shown when tiles fail to load
+              // Tile error banner (S1.6)
               if (hasTileError) const TileErrorBanner(),
 
               // S6.3: Empty state when no spots match active mode
@@ -177,28 +178,46 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 child: const ThemeToggle(),
               ),
 
-              // Spin button — S2.2: AnimatedPositioned slides above sheet
+              // S4.5.3.3: Floating Search Pill (Replaces SpinButton)
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOutCubic,
                 bottom: rouletteState.selectedSpot != null
                     ? MediaQuery.of(context).size.height * 0.42 + 16
                     : 32,
-                right: 24,
-                child: SpinButton(
-                  isSpinning: rouletteState.isSpinning,
-                  hasResult: rouletteState.selectedSpot != null,
-                  hasError: rouletteState.errorMessage != null,
-                  onSpin: () => _onSpin(mapController),
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: FloatingSearchPill(
+                    onTapDice: () => _onSpin(mapController, filteredSpots),
+                    onTapSearch: () {
+                      // Future: Implement search
+                    },
+                  ),
                 ),
               ),
 
-              // Bottom sheet — displayed when a spot is selected
-              if (rouletteState.selectedSpot != null)
+              // Spin button placeholder (Functionality moved to Pill/Overlay)
+
+              // Bottom sheet — displayed when a spot is selected AND overlay is closed
+              if (rouletteState.selectedSpot != null && !_showOverlay)
                 SpotBottomSheet(
                   spot: rouletteState.selectedSpot!,
                   onClose: () =>
                       ref.read(rouletteProvider.notifier).clearSelection(),
+                ),
+
+              // S4.5.4: Shuffle Deck Overlay
+              if (_showOverlay && _winner != null)
+                ShuffleDeckOverlay(
+                  candidates: _candidates,
+                  winner: _winner!,
+                  onComplete: _onOverlayComplete,
+                  onRespin: () {
+                    setState(() => _showOverlay = false);
+                    _onSpin(mapController, filteredSpots);
+                  },
+                  onLetsGo: _onLetsGo,
                 ),
             ],
           );
@@ -249,14 +268,49 @@ class _MapScreenState extends ConsumerState<MapScreen>
     );
   }
 
-  Future<void> _onSpin(MapController controller) async {
-    final spot = await ref.read(rouletteProvider.notifier).spin();
-    if (spot != null) {
-      _animateCamera(
-        controller,
-        LatLng(spot.latitude, spot.longitude),
-        AppConstants.spotZoom,
-      );
+  // S4.5.4: Overlay State
+  bool _showOverlay = false;
+  List<ToledoSpot> _candidates = [];
+  ToledoSpot? _winner;
+
+  Future<void> _onSpin(MapController controller, List<ToledoSpot> pool) async {
+    if (pool.isEmpty) return;
+
+    // 1. Generate Candidates (Shuffle Deck)
+    final candidates = List<ToledoSpot>.from(pool)..shuffle();
+    final deck = candidates.take(10).toList();
+
+    // 2. Get Winner (Logic)
+    final winner = await ref.read(rouletteProvider.notifier).spin();
+    if (winner == null) return;
+
+    // 3. Show Overlay
+    if (mounted) {
+      setState(() {
+        _candidates = deck;
+        _winner = winner;
+        _showOverlay = true;
+      });
     }
+  }
+
+  void _onOverlayComplete() {
+    // Animation finished, winner is shown.
+    // We update the map camera to the winner in background
+    if (_winner != null) {
+      ref
+          .read(mapControllerProvider)
+          .move(
+            LatLng(_winner!.latitude, _winner!.longitude),
+            AppConstants.spotZoom,
+          );
+    }
+  }
+
+  void _onLetsGo() {
+    setState(() {
+      _showOverlay = false;
+    });
+    // This reveals the bottom sheet which is already active due to notifier state
   }
 }

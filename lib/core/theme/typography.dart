@@ -4,25 +4,25 @@ import 'package:google_fonts/google_fonts.dart';
 /// Vantage 419 type system — Space Grotesk headings, Inter body.
 abstract final class VantageTypography {
   static TextTheme get textTheme => TextTheme(
-    displayLarge: GoogleFonts.spaceGrotesk(
+    displayLarge: GoogleFonts.playfairDisplay(
       fontSize: 32,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
     ),
-    displayMedium: GoogleFonts.spaceGrotesk(
+    displayMedium: GoogleFonts.playfairDisplay(
       fontSize: 28,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.25,
     ),
-    headlineLarge: GoogleFonts.spaceGrotesk(
+    headlineLarge: GoogleFonts.playfairDisplay(
       fontSize: 24,
       fontWeight: FontWeight.w700,
     ),
-    headlineMedium: GoogleFonts.spaceGrotesk(
+    headlineMedium: GoogleFonts.playfairDisplay(
       fontSize: 20,
       fontWeight: FontWeight.w600,
     ),
-    headlineSmall: GoogleFonts.spaceGrotesk(
+    headlineSmall: GoogleFonts.playfairDisplay(
       fontSize: 18,
       fontWeight: FontWeight.w600,
     ),

@@ -26,6 +26,9 @@ class SpotLocalDataSource {
         vibeCheck: 'Late-night bowl perfection',
         description:
             'Authentic Japanese ramen with rich tonkotsu broth and handmade noodles',
+        imageUrl:
+            'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop',
+        tags: ['Cozy', 'Hot Soup', 'Casual'],
       ),
       ToledoSpot(
         id: 'din_002',
@@ -36,6 +39,9 @@ class SpotLocalDataSource {
         vibeCheck: 'Classic diner vibes, open late',
         description:
             '24-hour comfort food with generous portions and nostalgic atmosphere',
+        imageUrl:
+            'https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=800&auto=format&fit=crop',
+        tags: ['Late Night', 'Comfort Food', 'Retro'],
       ),
       ToledoSpot(
         id: 'din_003',
@@ -46,6 +52,9 @@ class SpotLocalDataSource {
         vibeCheck: 'Upscale Japanese fusion',
         description:
             'Modern Japanese cuisine with creative presentations and premium ingredients',
+        imageUrl:
+            'https://images.unsplash.com/photo-1626804475297-411db1434c31?q=80&w=800&auto=format&fit=crop',
+        tags: ['Date Night', 'Upscale', 'Sushi'],
       ),
       ToledoSpot(
         id: 'din_004',
@@ -55,6 +64,9 @@ class SpotLocalDataSource {
         category: SpotCategory.dining,
         vibeCheck: 'Sushi bar excellence',
         description: 'Traditional sushi and sashimi with skilled itamae chefs',
+        imageUrl:
+            'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=800&auto=format&fit=crop',
+        tags: ['Sushi', 'Chefs Choice', 'Quiet'],
       ),
       ToledoSpot(
         id: 'din_005',
@@ -65,16 +77,22 @@ class SpotLocalDataSource {
         vibeCheck: 'Interactive grill-your-own experience',
         description:
             'All-you-can-eat Korean BBQ with table grills and banchan variety',
+        imageUrl:
+            'https://images.unsplash.com/photo-1529193591184-b1d580690dd0?q=80&w=800&auto=format&fit=crop',
+        tags: ['Group Dining', 'Interactive', 'Spicy'],
       ),
       ToledoSpot(
         id: 'rec_001',
-        name: 'Ottawa Park Basketball Courts',
+        name: 'Ottawa Park',
         latitude: 41.6689,
         longitude: -83.6012,
         category: SpotCategory.recreation,
-        vibeCheck: 'Pickup games and cardio runs',
+        vibeCheck: 'Pick-up games & cardio runs',
         description:
-            'Well-maintained outdoor courts with regular pickup basketball games',
+            'Well-maintained outdoor courts and extensive trail system.',
+        imageUrl:
+            'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop',
+        tags: ['Outdoors', 'Cardio', 'Free'],
       ),
       ToledoSpot(
         id: 'rec_002',
@@ -82,9 +100,12 @@ class SpotLocalDataSource {
         latitude: 41.6801,
         longitude: -83.4523,
         category: SpotCategory.recreation,
-        vibeCheck: 'Waterfront trails and skyline views',
+        vibeCheck: 'Waterfront trails & skyline views',
         description:
             'Urban park along Maumee River with walking trails and event space',
+        imageUrl:
+            'https://images.unsplash.com/photo-1496545672479-7dd69bd695e5?q=80&w=800&auto=format&fit=crop',
+        tags: ['Views', 'Riverfront', 'Walking'],
       ),
       ToledoSpot(
         id: 'rec_003',
@@ -92,9 +113,12 @@ class SpotLocalDataSource {
         latitude: 41.6234,
         longitude: -83.5512,
         category: SpotCategory.entertainment,
-        vibeCheck: 'World-class exhibits year-round',
+        vibeCheck: 'World-class exhibits',
         description:
             'Historic zoo with diverse animal collection and botanical gardens',
+        imageUrl:
+            'https://images.unsplash.com/photo-1534567176735-8463641bd7e4?q=80&w=800&auto=format&fit=crop',
+        tags: ['Family Friendly', 'Animals', 'Historic'],
       ),
       ToledoSpot(
         id: 'fit_001',
@@ -102,9 +126,12 @@ class SpotLocalDataSource {
         latitude: 41.5570,
         longitude: -83.6270,
         category: SpotCategory.fitness,
-        vibeCheck: 'Full-service gym and pool',
+        vibeCheck: 'Full-service wellness',
         description:
             'Modern fitness facility with cardio equipment, weights, and aquatic center',
+        imageUrl:
+            'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop',
+        tags: ['Gym', 'Swimming', 'Wellness'],
       ),
       ToledoSpot(
         id: 'caf_001',
@@ -112,9 +139,12 @@ class SpotLocalDataSource {
         latitude: 41.6523,
         longitude: -83.5489,
         category: SpotCategory.cafe,
-        vibeCheck: 'Specialty coffee and study spot',
+        vibeCheck: 'Specialty coffee & study spot',
         description:
             'Locally roasted coffee with cozy atmosphere for remote work',
+        imageUrl:
+            'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop',
+        tags: ['Coffee', 'Quiet', 'Work Friendly'],
       ),
     ];
   }

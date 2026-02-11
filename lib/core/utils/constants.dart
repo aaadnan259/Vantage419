@@ -10,6 +10,9 @@ abstract final class AppConstants {
   // Dark map tiles (CartoDB Dark Matter)
   static const darkTileUrl =
       'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png';
+  // Light map tiles (CartoDB Voyager - Clean, light)
+  static const lightTileUrl =
+      'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png';
 
   // Animation durations
   static const spinDuration = Duration(milliseconds: 1000);

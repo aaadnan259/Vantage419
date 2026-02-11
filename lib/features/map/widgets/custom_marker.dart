@@ -27,31 +27,31 @@ class CustomMarker extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedScale(
-        scale: isSelected ? 1.0 : 0.83,
+        scale: isSelected ? 1.1 : 1.0,
         duration: const Duration(milliseconds: 350),
         curve: isSelected ? Curves.elasticOut : Curves.easeOut,
         child: Container(
           width: selectedSize,
           height: selectedSize,
           decoration: BoxDecoration(
-            color: category.color,
+            color: context.colors.accentDark, // Forest Green background
             shape: BoxShape.circle,
             border: Border.all(
-              color: isSelected ? Colors.white : context.colors.surface,
-              width: isSelected ? 3 : 2,
+              color: Colors.white, // White border
+              width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: category.color.withValues(alpha: isSelected ? 0.5 : 0.3),
-                blurRadius: isSelected ? 14 : 6,
-                offset: const Offset(0, 3),
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Icon(
             category.icon,
-            size: isSelected ? 24 : 20,
-            color: context.colors.primaryBackground,
+            size: 20,
+            color: Colors.white, // White icon
           ),
         ),
       ),

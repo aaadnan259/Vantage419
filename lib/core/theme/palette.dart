@@ -39,36 +39,36 @@ class VantagePalette extends ThemeExtension<VantagePalette> {
   final Color success;
   final Color warning;
 
-  /// S7.2: Dark Mode Palette (Existing OLED Theme)
+  /// S7.2: Dark Mode Palette ("Midnight" - Deep Green & Gold)
   static const dark = VantagePalette(
-    primaryBackground: Color(0xFF0A0E14),
-    surface: Color(0xFF1A1F2E),
-    surfaceLight: Color(0xFF252B3B),
+    primaryBackground: Color(0xFF051907), // Deep Green
+    surface: Color(0xFF0A200C), // Slightly lighter green
+    surfaceLight: Color(0xFF142B16),
     textPrimary: Color(0xFFE6E6E6),
-    textSecondary: Color(0xFF8B95A8),
-    textMuted: Color(0xFF5A6475),
-    accent: Color(0xFF0D7ABF),
-    accentLight: Color(0xFF1A9AE6),
-    accentDark: Color(0xFF085A8F),
+    textSecondary: Color(0xFFC4C4C4),
+    textMuted: Color(0xFF8B95A8),
+    accent: Color(0xFFFFD700), // Gold
+    accentLight: Color(0xFFFFE66D),
+    accentDark: Color(0xFFC6A700),
     error: Color(0xFFF44336),
     success: Color(0xFF4CAF50),
     warning: Color(0xFFFFB74D),
   );
 
-  /// S7.2: Light Mode Palette (New)
+  /// S7.2: Light Mode Palette ("YummiBite" - Cream & Forest Green)
   static const light = VantagePalette(
-    primaryBackground: Color(0xFFF8F9FA), // Off-white
-    surface: Color(0xFFFFFFFF), // Pure white card
-    surfaceLight: Color(0xFFF1F3F5), // Light gray areas
-    textPrimary: Color(0xFF1A1F2E), // Dark blue text (inverse of dark surface)
-    textSecondary: Color(0xFF5A6475), // Muted blue-gray
-    textMuted: Color(0xFF8B95A8), // Lighter gray
-    accent: Color(0xFF0D7ABF), // Toyota Blue (same brand identity)
-    accentLight: Color(0xFF1A9AE6),
-    accentDark: Color(0xFF085A8F),
-    error: Color(0xFFD32F2F), // Slightly darker error for light mode
-    success: Color(0xFF388E3C), // Slightly darker green
-    warning: Color(0xFFF57C00), // Darker orange
+    primaryBackground: Color(0xFFFAF7F2), // Cream (Warm, paper-like)
+    surface: Color(0xFFFFFFFF), // Pure White
+    surfaceLight: Color(0xFFF0EBE0), // Slightly darker cream
+    textPrimary: Color(0xFF1A1A1A), // Charcoal
+    textSecondary: Color(0xFF4A4A4A), // Graphite
+    textMuted: Color(0xFF8C8C8C),
+    accent: Color(0xFF7CB342), // Fresh Lime
+    accentLight: Color(0xFFAED581),
+    accentDark: Color(0xFF2D5016), // Forest Green (Primary Brand)
+    error: Color(0xFFD32F2F),
+    success: Color(0xFF388E3C),
+    warning: Color(0xFFF57C00),
   );
 
   @override

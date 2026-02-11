@@ -12,6 +12,7 @@ class ToledoSpot {
     required this.description,
     this.imageUrl,
     this.address,
+    this.tags = const [],
   });
 
   final String id;
@@ -23,6 +24,7 @@ class ToledoSpot {
   final String description;
   final String? imageUrl;
   final String? address;
+  final List<String> tags;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -34,6 +36,7 @@ class ToledoSpot {
     'description': description,
     'imageUrl': imageUrl,
     'address': address,
+    'tags': tags,
   };
 
   /// S3.4: Defensive deserialization with coordinate validation
@@ -61,6 +64,9 @@ class ToledoSpot {
       description: json['description'] as String? ?? '',
       imageUrl: json['imageUrl'] as String?,
       address: json['address'] as String?,
+      tags:
+          (json['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          const [],
     );
   }
 }

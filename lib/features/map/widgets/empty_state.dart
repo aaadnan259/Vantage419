@@ -1,46 +1,56 @@
 import 'package:flutter/material.dart';
 import '../../../../core/utils/extensions.dart';
 
-/// Shown on the map when no spots match the active roulette mode.
+/// S6.3 / S4.5.5: Empty state when no spots match active mode.
+/// Updated with "Playful" editorial style.
 class EmptyStateOverlay extends StatelessWidget {
   const EmptyStateOverlay({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 120,
-      left: 32,
-      right: 32,
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          decoration: BoxDecoration(
-            color: context.colors.surface.withValues(alpha: 0.92),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: context.colors.textMuted.withValues(alpha: 0.2),
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        margin: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: context.colors.surface.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.search_off_rounded,
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Playful Icon (Hungry Ghost / Plate)
+            Icon(
+              Icons.no_meals_rounded,
+              size: 64,
+              color: context.colors.textMuted.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              "No spots here!",
+              style: context.textTheme.headlineMedium?.copyWith(
+                color: context.colors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Try adjusting your filters or\nexplore a different area.",
+              style: context.textTheme.bodyMedium?.copyWith(
                 color: context.colors.textSecondary,
-                size: 20,
+                height: 1.5,
               ),
-              SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  'No spots in this category yet',
-                  style: TextStyle(
-                    color: context.colors.textSecondary,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
