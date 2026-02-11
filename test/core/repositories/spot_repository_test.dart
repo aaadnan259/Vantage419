@@ -1,0 +1,81 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:vantage419/core/data_sources/spot_local_data_source.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/spot_category.dart';
+import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/repositories/spot_repository_impl.dart';
+
+// Manual Fake implementation to avoid Mockito codegen/runtime issues
+class FakeSpotLocalDataSource implements SpotLocalDataSource {
+  List<ToledoSpot> _spots = [];
+  List<UserVisit> _visits = [];
+
+  // Setters to seed data
+  void setSpots(List<ToledoSpot> spots) => _spots = spots;
+  void setVisits(List<UserVisit> visits) => _visits = visits;
+
+  // Verification helpers
+  int saveCallCount = 0;
+  List<UserVisit>? lastSavedVisits;
+
+  @override
+  Future<List<ToledoSpot>> fetchStaticSpots() async => _spots;
+
+  @override
+  Future<List<UserVisit>> loadVisits() async => _visits;
+
+  @override
+  Future<void> saveVisits(List<UserVisit> visits) async {
+    saveCallCount++;
+    lastSavedVisits = visits;
+    _visits = visits; // Simulate persistence
+  }
+}
+
+void main() {
+  late SpotRepositoryImpl repository;
+  late FakeSpotLocalDataSource fakeDataSource;
+
+  setUp(() {
+    fakeDataSource = FakeSpotLocalDataSource();
+    repository = SpotRepositoryImpl(fakeDataSource);
+  });
+
+  group('SpotRepositoryImpl', () {
+    test('getSpots returns data from source', () async {
+      final spots = [
+        const ToledoSpot(
+          id: '1',
+          name: 'Test',
+          latitude: 0,
+          longitude: 0,
+          category: SpotCategory.dining,
+          vibeCheck: '',
+          description: '',
+        ),
+      ];
+      fakeDataSource.setSpots(spots);
+
+      final result = await repository.getSpots();
+      expect(result, spots);
+    });
+
+    test('logVisit saves and reloads', () async {
+      final initialVisit = UserVisit(spotId: '1', visitedAt: DateTime.now());
+      final history = [initialVisit];
+      fakeDataSource.setVisits(history);
+
+      final result = await repository.logVisit('2', history);
+
+      // Verify save was called
+      expect(fakeDataSource.saveCallCount, 1);
+
+      // Verify list grew
+      expect(fakeDataSource.lastSavedVisits!.length, 2);
+      expect(fakeDataSource.lastSavedVisits!.last.spotId, '2');
+
+      // Verify it returns the fresh list from loadVisits (which our fake updates in saveVisits)
+      expect(result.length, 2);
+    });
+  });
+}

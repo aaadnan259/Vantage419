@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../core/models/toledo_spot.dart';
 import '../../core/utils/constants.dart';
 import '../../core/utils/extensions.dart';
-import '../../data/toledo_spots.dart';
+import '../../core/providers/spots_provider.dart';
 import 'providers/map_controller_provider.dart';
 import 'providers/user_location_provider.dart';
 import 'widgets/empty_state.dart';
@@ -61,139 +61,148 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final rouletteState = ref.watch(rouletteProvider);
     final userLocation = ref.watch(userLocationProvider);
     final hasTileError = ref.watch(_tileErrorProvider);
-    // S5.2 + S6.3: Filter spots by active mode
-    final filteredSpots = toledoSpots
-        .where((s) => rouletteState.mode.categories.contains(s.category))
-        .toList();
+    final spotsAsync = ref.watch(toledoSpotsProvider);
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Map layer
-          FlutterMap(
-            mapController: mapController,
-            options: MapOptions(
-              initialCenter: AppConstants.toledoCenter,
-              initialZoom: AppConstants.defaultZoom,
-              backgroundColor: context.colors.primaryBackground,
-              interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.all,
-              ),
-            ),
+      body: spotsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error loading spots: $err')),
+        data: (allSpots) {
+          // S5.2 + S6.3: Filter spots by active mode
+          final filteredSpots = allSpots
+              .where((s) => rouletteState.mode.categories.contains(s.category))
+              .toList();
+
+          return Stack(
             children: [
-              // Dark tile layer with error tracking (S1.6)
-              TileLayer(
-                urlTemplate: AppConstants.darkTileUrl,
-                userAgentPackageName: 'com.vantage419.app',
-                maxZoom: 19,
-                tileProvider: NetworkTileProvider(),
-                errorTileCallback: (tile, error, stackTrace) {
-                  // Mark tile error state — shows banner
-                  Future.microtask(() {
-                    if (context.mounted) {
-                      ref.read(_tileErrorProvider.notifier).state = true;
-                    }
-                  });
-                },
+              // Map layer
+              FlutterMap(
+                mapController: mapController,
+                options: MapOptions(
+                  initialCenter: AppConstants.toledoCenter,
+                  initialZoom: AppConstants.defaultZoom,
+                  backgroundColor: context.colors.primaryBackground,
+                  interactionOptions: const InteractionOptions(
+                    flags: InteractiveFlag.all,
+                  ),
+                ),
+                children: [
+                  // Dark tile layer with error tracking (S1.6)
+                  TileLayer(
+                    urlTemplate: AppConstants.darkTileUrl,
+                    userAgentPackageName: 'com.vantage419.app',
+                    maxZoom: 19,
+                    tileProvider: NetworkTileProvider(),
+                    errorTileCallback: (tile, error, stackTrace) {
+                      // Mark tile error state — shows banner
+                      Future.microtask(() {
+                        if (context.mounted) {
+                          ref.read(_tileErrorProvider.notifier).state = true;
+                        }
+                      });
+                    },
+                  ),
+
+                  // User location marker — handles permission errors (S1.2)
+                  userLocation.when(
+                    data: (pos) {
+                      // Clear tile error if location works (network likely ok)
+                      Future.microtask(() {
+                        if (context.mounted) {
+                          ref.read(_tileErrorProvider.notifier).state = false;
+                        }
+                      });
+                      return MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: pos,
+                            width: 24,
+                            height: 24,
+                            child: const UserLocationMarker(),
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () => const MarkerLayer(markers: []),
+                    error: (_, _) => const MarkerLayer(markers: []),
+                  ),
+
+                  // S5.2: Only render markers for spots matching active mode
+                  SpotMarkerLayer(
+                    spots: filteredSpots,
+                    selectedSpotId: rouletteState.selectedSpot?.id,
+                    onSpotTapped: (spot) => _onSpotTapped(spot, mapController),
+                  ),
+                ],
               ),
 
-              // User location marker — handles permission errors (S1.2)
-              userLocation.when(
-                data: (pos) {
-                  // Clear tile error if location works (network likely ok)
-                  Future.microtask(() {
-                    if (context.mounted) {
-                      ref.read(_tileErrorProvider.notifier).state = false;
-                    }
-                  });
-                  return MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: pos,
-                        width: 24,
-                        height: 24,
-                        child: const UserLocationMarker(),
+              // Location error banner (S1.2) — shown when permission denied
+              userLocation.whenOrNull(
+                    error: (error, _) => LocationErrorBanner(error: error),
+                  ) ??
+                  const SizedBox.shrink(),
+
+              // Tile error banner (S1.6) — shown when tiles fail to load
+              if (hasTileError) const TileErrorBanner(),
+
+              // S6.3: Empty state when no spots match active mode
+              if (filteredSpots.isEmpty) const EmptyStateOverlay(),
+
+              // Category selector — top center (S2.5: dim during spin)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 12,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: IgnorePointer(
+                    ignoring: rouletteState.isSpinning,
+                    child: AnimatedOpacity(
+                      opacity: rouletteState.isSpinning ? 0.4 : 1.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: CategorySelector(
+                        selectedIndex: rouletteState.currentMode,
+                        onSelected: (i) =>
+                            ref.read(rouletteProvider.notifier).selectMode(i),
+                        spots: allSpots,
                       ),
-                    ],
-                  );
-                },
-                loading: () => const MarkerLayer(markers: []),
-                error: (_, _) => const MarkerLayer(markers: []),
-              ),
-
-              // S5.2: Only render markers for spots matching active mode
-              SpotMarkerLayer(
-                spots: filteredSpots,
-                selectedSpotId: rouletteState.selectedSpot?.id,
-                onSpotTapped: (spot) => _onSpotTapped(spot, mapController),
-              ),
-            ],
-          ),
-
-          // Location error banner (S1.2) — shown when permission denied
-          userLocation.whenOrNull(
-                error: (error, _) => LocationErrorBanner(error: error),
-              ) ??
-              const SizedBox.shrink(),
-
-          // Tile error banner (S1.6) — shown when tiles fail to load
-          if (hasTileError) const TileErrorBanner(),
-
-          // S6.3: Empty state when no spots match active mode
-          if (filteredSpots.isEmpty) const EmptyStateOverlay(),
-
-          // Category selector — top center (S2.5: dim during spin)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 12,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: IgnorePointer(
-                ignoring: rouletteState.isSpinning,
-                child: AnimatedOpacity(
-                  opacity: rouletteState.isSpinning ? 0.4 : 1.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: CategorySelector(
-                    selectedIndex: rouletteState.currentMode,
-                    onSelected: (i) =>
-                        ref.read(rouletteProvider.notifier).selectMode(i),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
 
-          // S7.6: Theme Toggle — top right
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 12,
-            right: 16,
-            child: const ThemeToggle(),
-          ),
+              // S7.6: Theme Toggle — top right
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 12,
+                right: 16,
+                child: const ThemeToggle(),
+              ),
 
-          // Spin button — S2.2: AnimatedPositioned slides above sheet
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutCubic,
-            bottom: rouletteState.selectedSpot != null
-                ? MediaQuery.of(context).size.height * 0.42 + 16
-                : 32,
-            right: 24,
-            child: SpinButton(
-              isSpinning: rouletteState.isSpinning,
-              hasResult: rouletteState.selectedSpot != null,
-              hasError: rouletteState.errorMessage != null,
-              onSpin: () => _onSpin(mapController),
-            ),
-          ),
+              // Spin button — S2.2: AnimatedPositioned slides above sheet
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+                bottom: rouletteState.selectedSpot != null
+                    ? MediaQuery.of(context).size.height * 0.42 + 16
+                    : 32,
+                right: 24,
+                child: SpinButton(
+                  isSpinning: rouletteState.isSpinning,
+                  hasResult: rouletteState.selectedSpot != null,
+                  hasError: rouletteState.errorMessage != null,
+                  onSpin: () => _onSpin(mapController),
+                ),
+              ),
 
-          // Bottom sheet — displayed when a spot is selected
-          if (rouletteState.selectedSpot != null)
-            SpotBottomSheet(
-              spot: rouletteState.selectedSpot!,
-              onClose: () =>
-                  ref.read(rouletteProvider.notifier).clearSelection(),
-            ),
-        ],
+              // Bottom sheet — displayed when a spot is selected
+              if (rouletteState.selectedSpot != null)
+                SpotBottomSheet(
+                  spot: rouletteState.selectedSpot!,
+                  onClose: () =>
+                      ref.read(rouletteProvider.notifier).clearSelection(),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

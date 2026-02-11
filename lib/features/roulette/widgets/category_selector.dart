@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/roulette_mode.dart';
 import '../../../core/utils/extensions.dart';
-import '../../../data/toledo_spots.dart';
+import '../../../core/models/toledo_spot.dart';
 
 /// Three-button row for roulette mode switching.
 /// S2.3: 44dp tap targets, Semantics labels, mode icons, InkWell ripple.
@@ -10,10 +10,12 @@ class CategorySelector extends StatelessWidget {
     super.key,
     required this.selectedIndex,
     required this.onSelected,
+    required this.spots,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+  final List<ToledoSpot> spots;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class CategorySelector extends StatelessWidget {
               color: mode.color,
               isActive: isActive,
               // S6.5: Count spots matching this mode
-              count: toledoSpots
+              count: spots
                   .where((s) => mode.categories.contains(s.category))
                   .length,
               onTap: () => onSelected(i),

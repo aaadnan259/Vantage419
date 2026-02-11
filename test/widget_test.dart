@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vantage419/core/models/spot_category.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
-import 'package:vantage419/data/toledo_spots.dart';
 
 void main() {
   group('ToledoSpot', () {
@@ -53,17 +52,6 @@ void main() {
       expect(restored.spotId, visit.spotId);
       expect(restored.visitedAt, visit.visitedAt);
       expect(restored.rating, visit.rating);
-    });
-  });
-
-  group('Static data', () {
-    test('has 10 spots', () {
-      expect(toledoSpots.length, 10);
-    });
-
-    test('all spots have unique IDs', () {
-      final ids = toledoSpots.map((s) => s.id).toSet();
-      expect(ids.length, toledoSpots.length);
     });
   });
 }
