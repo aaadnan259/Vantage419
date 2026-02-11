@@ -17,6 +17,7 @@ A gamified local discovery app for Toledo, Ohio. Spin the roulette to find your 
 - [Tech Stack](#tech-stack)
 - [Configuration](#configuration)
 - [Testing](#testing)
+- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -211,6 +212,19 @@ flutter analyze
 ```
 
 Tests cover roulette logic, model validation, and provider state.
+
+---
+
+---
+
+## Documentation
+
+Comprehensive guides for developers and release managers:
+
+- **[Store Listing & Assets](docs/STORE_LISTING.md)** — App metadata, descriptions, and screenshot checklist.
+- **[Build Instructions](docs/BUILD_INSTRUCTIONS.md)** — Guide to signing, building, and obfuscating release APKs.
+- **[Privacy Policy](docs/PRIVACY_POLICY.md)** — Location data usage and privacy details.
+- **[Terms of Service](docs/TERMS_OF_SERVICE.md)** — Standard usage terms.
 
 ---
 
