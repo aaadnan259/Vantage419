@@ -1,6 +1,5 @@
 import 'dart:math';
 import '../models/toledo_spot.dart';
-import '../models/spot_category.dart';
 import '../models/user_visit.dart';
 import '../utils/constants.dart';
 

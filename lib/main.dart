@@ -7,7 +7,6 @@ import 'core/theme/theme_provider.dart';
 import 'core/theme/vantage_theme.dart';
 import 'features/splash/splash_screen.dart';
 import 'core/providers/repository_providers.dart';
-import 'features/roulette/providers/roulette_state_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

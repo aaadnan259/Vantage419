@@ -64,7 +64,7 @@ class _ShuffleDeckOverlayState extends State<ShuffleDeckOverlay>
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withOpacity(0.5), // Dim background
+      color: Colors.black.withValues(alpha: 0.5), // Dim background
       child: Center(
         child: _showWinner
             ? _buildWinnerCard(widget.winner)
@@ -138,7 +138,7 @@ class _Card extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -155,7 +155,7 @@ class _Card extends StatelessWidget {
                 ? Image.network(
                     spot.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       color: context.colors.surfaceLight,
                       child: Icon(
                         Icons.image_not_supported,
@@ -205,8 +205,8 @@ class _Card extends StatelessWidget {
                               color: context.colors.surfaceLight,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: context.colors.textMuted.withOpacity(
-                                  0.2,
+                                color: context.colors.textMuted.withValues(
+                                  alpha: 0.2,
                                 ),
                               ),
                             ),
