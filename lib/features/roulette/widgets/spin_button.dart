@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/constants.dart';
 import '../../../core/utils/extensions.dart';
-import '../providers/roulette_state_provider.dart';
+import '../../../core/providers/repository_providers.dart';
 
 /// 80dp circular button with Toyota Blue gradient and rotation animation.
 /// S2.5: Varied haptics — medium on tap, heavy on success, light on error.

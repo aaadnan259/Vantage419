@@ -1,21 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/models/roulette_mode.dart';
 import '../../../core/models/toledo_spot.dart';
 import '../../../core/models/user_visit.dart';
+import '../../../core/repositories/spot_repository.dart';
 import '../../../core/services/roulette_service.dart';
+import '../../../core/providers/repository_providers.dart';
 import '../../../core/utils/constants.dart';
-import '../../../data/toledo_spots.dart';
 
-/// SharedPreferences provider — initialized in main.
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('Override in main with ProviderScope');
-});
-
-/// RouletteService provider.
+/// Pure logic service provider.
 final rouletteServiceProvider = Provider<RouletteService>((ref) {
-  return RouletteService(ref.read(sharedPreferencesProvider));
+  return RouletteService();
 });
 
 /// Current roulette mode state.
@@ -34,7 +29,7 @@ class RouletteState {
   final List<UserVisit> visits;
   final String? errorMessage;
 
-  /// S3.3: Bounds-checked mode getter — clamps to valid range.
+  /// S3.3: Bounds-checked mode getter.
   RouletteMode get mode =>
       RouletteMode.modes[currentMode.clamp(0, RouletteMode.modes.length - 1)];
 
@@ -61,30 +56,22 @@ class RouletteState {
 
 /// Manages roulette spinning, mode selection, and visit tracking.
 class RouletteNotifier extends StateNotifier<RouletteState> {
-  RouletteNotifier(this._service) : super(const RouletteState()) {
-    // S3.2: Debug-only validation that all spot IDs are unique
-    assert(() {
-      final ids = toledoSpots.map((s) => s.id).toList();
-      final unique = ids.toSet();
-      if (ids.length != unique.length) {
-        final dupes = ids
-            .where((id) => ids.where((i) => i == id).length > 1)
-            .toSet();
-        debugPrint('⚠️ Duplicate spot IDs detected: $dupes');
-      }
-      return ids.length == unique.length;
-    }(), 'All spot IDs must be unique — found duplicates in toledo_spots.dart');
-
-    _loadVisits();
+  RouletteNotifier(this._repository, this._service)
+    : super(const RouletteState()) {
+    _init();
   }
 
+  final SpotRepository _repository;
   final RouletteService _service;
 
-  void _loadVisits() {
-    state = state.copyWith(visits: _service.loadVisits());
+  Future<void> _init() async {
+    // Load initial visits
+    final visits = await _repository.getVisits();
+    if (mounted) {
+      state = state.copyWith(visits: visits);
+    }
   }
 
-  /// S3.3: Bounds-checked mode selection — rejects invalid indices.
   void selectMode(int index) {
     if (index < 0 || index >= RouletteMode.modes.length) return;
     state = state.copyWith(
@@ -94,7 +81,7 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     );
   }
 
-  /// Spin the roulette — returns the selected spot or null.
+  /// Spin the roulette using data from Reservoir.
   Future<ToledoSpot?> spin() async {
     if (state.isSpinning) return null;
 
@@ -105,39 +92,53 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     );
 
     try {
+      // S3.2: Fetch data from Repository (Abstracted Source)
+      // This allows moving to Supabase later without changing this logic.
+      final spots = await _repository.getSpots();
+      // Ensure local state is fresh
+      final visits = await _repository.getVisits();
+
+      // Artificial delay for suspense
       await Future.delayed(AppConstants.spinDuration);
 
       final result = _service.spin(
-        spots: toledoSpots,
-        categories: state.mode.categories,
-        visits: state.visits,
+        spots: spots,
+        pool: spots
+            .where((s) => state.mode.categories.contains(s.category))
+            .toList(),
+        visits: visits,
       );
 
       if (result != null) {
-        final updatedVisits = await _service.recordVisit(
-          result.id,
-          state.visits,
-        );
-        state = state.copyWith(
-          isSpinning: false,
-          selectedSpot: result,
-          visits: updatedVisits,
-        );
+        // Log visit via Repository
+        final updatedVisits = await _repository.logVisit(result.id, visits);
+
+        if (mounted) {
+          state = state.copyWith(
+            isSpinning: false,
+            selectedSpot: result,
+            visits: updatedVisits,
+          );
+        }
       } else {
-        state = state.copyWith(
-          isSpinning: false,
-          errorMessage:
-              "No spots match '${state.mode.displayName}' — try 'Surprise Me'!",
-        );
+        if (mounted) {
+          state = state.copyWith(
+            isSpinning: false,
+            errorMessage:
+                "No spots match '${state.mode.displayName}' — try 'Surprise Me'!",
+          );
+        }
       }
 
       return result;
     } catch (e) {
       debugPrint('⚠️ Spin failed: $e');
-      state = state.copyWith(
-        isSpinning: false,
-        errorMessage: 'Something went wrong. Try spinning again.',
-      );
+      if (mounted) {
+        state = state.copyWith(
+          isSpinning: false,
+          errorMessage: 'Something went wrong. Try spinning again.',
+        );
+      }
       return null;
     }
   }
@@ -149,6 +150,8 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
 
 final rouletteProvider = StateNotifierProvider<RouletteNotifier, RouletteState>(
   (ref) {
-    return RouletteNotifier(ref.read(rouletteServiceProvider));
+    final repository = ref.watch(spotRepositoryProvider);
+    final service = ref.watch(rouletteServiceProvider);
+    return RouletteNotifier(repository, service);
   },
 );
