@@ -36,18 +36,8 @@ class SpotBottomSheet extends StatelessWidget {
             controller: scrollController,
             padding: EdgeInsets.zero,
             children: [
-              // Drag handle
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: VantageColors.textMuted.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
+              // Pulsing drag handle — hints that the sheet is draggable (S2.1)
+              const Center(child: _DragHandleHint()),
 
               // Header row
               Padding(
@@ -58,8 +48,11 @@ class SpotBottomSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // S2.6: Ellipsis at 2 lines for long spot names
                           Text(
                             spot.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: context.textTheme.headlineMedium?.copyWith(
                               color: VantageColors.textPrimary,
                             ),
@@ -69,6 +62,7 @@ class SpotBottomSheet extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 12),
                     _NavigateButton(spot: spot),
                   ],
                 ),
@@ -76,7 +70,7 @@ class SpotBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Vibe check — prominent display
+              // Vibe check
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(16),
@@ -98,6 +92,8 @@ class SpotBottomSheet extends StatelessWidget {
                     Expanded(
                       child: Text(
                         spot.vibeCheck,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: context.textTheme.titleMedium?.copyWith(
                           color: spot.category.color,
                           fontWeight: FontWeight.w600,
@@ -110,11 +106,13 @@ class SpotBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Description
+              // Description — S2.6: capped at 5 lines
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
                   spot.description,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyLarge?.copyWith(
                     color: VantageColors.textSecondary,
                   ),
@@ -136,6 +134,8 @@ class SpotBottomSheet extends StatelessWidget {
                       Expanded(
                         child: Text(
                           spot.address!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: context.textTheme.bodySmall?.copyWith(
                             color: VantageColors.textMuted,
                           ),
@@ -148,6 +148,57 @@ class SpotBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 24),
             ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Pulsing drag handle that hints the sheet is draggable (S2.1).
+class _DragHandleHint extends StatefulWidget {
+  const _DragHandleHint();
+
+  @override
+  State<_DragHandleHint> createState() => _DragHandleHintState();
+}
+
+class _DragHandleHintState extends State<_DragHandleHint>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _opacity = Tween<double>(
+      begin: 0.3,
+      end: 0.7,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _opacity,
+      builder: (context, child) {
+        return Container(
+          margin: const EdgeInsets.only(top: 12, bottom: 8),
+          width: 40,
+          height: 4,
+          decoration: BoxDecoration(
+            color: VantageColors.textMuted.withValues(alpha: _opacity.value),
+            borderRadius: BorderRadius.circular(2),
           ),
         );
       },

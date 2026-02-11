@@ -5,11 +5,20 @@ import '../../../core/theme/colors.dart';
 import '../../../core/utils/constants.dart';
 
 /// 80dp circular button with Toyota Blue gradient and rotation animation.
+/// S2.5: Varied haptics — medium on tap, heavy on success, light on error.
 class SpinButton extends StatefulWidget {
-  const SpinButton({super.key, required this.onSpin, this.isSpinning = false});
+  const SpinButton({
+    super.key,
+    required this.onSpin,
+    this.isSpinning = false,
+    this.hasResult = false,
+    this.hasError = false,
+  });
 
   final VoidCallback onSpin;
   final bool isSpinning;
+  final bool hasResult;
+  final bool hasError;
 
   @override
   State<SpinButton> createState() => _SpinButtonState();
@@ -38,6 +47,14 @@ class _SpinButtonState extends State<SpinButton>
     super.didUpdateWidget(oldWidget);
     if (widget.isSpinning && !oldWidget.isSpinning) {
       _controller.forward(from: 0);
+    }
+    // Haptic on spin completion (S2.5)
+    if (!widget.isSpinning && oldWidget.isSpinning) {
+      if (widget.hasResult) {
+        HapticFeedback.heavyImpact();
+      } else if (widget.hasError) {
+        HapticFeedback.lightImpact();
+      }
     }
   }
 

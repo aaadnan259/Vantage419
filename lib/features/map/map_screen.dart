@@ -147,28 +147,39 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           // Tile error banner (S1.6) — shown when tiles fail to load
           if (hasTileError) const _TileErrorBanner(),
 
-          // Category selector — top center
+          // Category selector — top center (S2.5: dim during spin)
           Positioned(
             top: MediaQuery.of(context).padding.top + 12,
             left: 0,
             right: 0,
             child: Center(
-              child: CategorySelector(
-                selectedIndex: rouletteState.currentMode,
-                onSelected: (i) =>
-                    ref.read(rouletteProvider.notifier).selectMode(i),
+              child: IgnorePointer(
+                ignoring: rouletteState.isSpinning,
+                child: AnimatedOpacity(
+                  opacity: rouletteState.isSpinning ? 0.4 : 1.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: CategorySelector(
+                    selectedIndex: rouletteState.currentMode,
+                    onSelected: (i) =>
+                        ref.read(rouletteProvider.notifier).selectMode(i),
+                  ),
+                ),
               ),
             ),
           ),
 
-          // Spin button — bottom right, thumb zone
-          Positioned(
+          // Spin button — S2.2: AnimatedPositioned slides above sheet
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
             bottom: rouletteState.selectedSpot != null
-                ? MediaQuery.of(context).size.height * 0.42
+                ? MediaQuery.of(context).size.height * 0.42 + 16
                 : 32,
             right: 24,
             child: SpinButton(
               isSpinning: rouletteState.isSpinning,
+              hasResult: rouletteState.selectedSpot != null,
+              hasError: rouletteState.errorMessage != null,
               onSpin: () => _onSpin(mapController),
             ),
           ),
