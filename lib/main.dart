@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/colors.dart';
+import 'core/theme/theme_provider.dart';
 import 'core/theme/vantage_theme.dart';
-import 'features/map/map_screen.dart';
+import 'features/splash/splash_screen.dart';
 import 'features/roulette/providers/roulette_state_provider.dart';
 
 void main() async {
@@ -32,16 +33,20 @@ void main() async {
   );
 }
 
-class VantageApp extends StatelessWidget {
+class VantageApp extends ConsumerWidget {
   const VantageApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return MaterialApp(
       title: 'Vantage 419',
       debugShowCheckedModeBanner: false,
-      theme: VantageTheme.dark,
-      home: const MapScreen(),
+      theme: VantageTheme.light,
+      darkTheme: VantageTheme.dark,
+      themeMode: themeMode,
+      home: const SplashScreen(),
     );
   }
 }

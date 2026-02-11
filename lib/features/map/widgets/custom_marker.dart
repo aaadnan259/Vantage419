@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/spot_category.dart';
-import '../../../core/theme/colors.dart';
 import '../../../core/utils/constants.dart';
+import '../../../core/utils/extensions.dart';
 
 /// Category-colored map marker with icon and elevation shadow.
 /// S2.4: Uses AnimatedScale from center with elastic bounce curve.
@@ -37,7 +37,7 @@ class CustomMarker extends StatelessWidget {
             color: category.color,
             shape: BoxShape.circle,
             border: Border.all(
-              color: isSelected ? Colors.white : VantageColors.surface,
+              color: isSelected ? Colors.white : context.colors.surface,
               width: isSelected ? 3 : 2,
             ),
             boxShadow: [
@@ -51,7 +51,7 @@ class CustomMarker extends StatelessWidget {
           child: Icon(
             category.icon,
             size: isSelected ? 24 : 20,
-            color: VantageColors.primaryBackground,
+            color: context.colors.primaryBackground,
           ),
         ),
       ),

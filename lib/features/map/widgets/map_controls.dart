@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../core/services/location_service.dart';
-import '../../../core/theme/colors.dart';
+import '../../../core/utils/extensions.dart';
 
 /// Banner shown when location permissions are denied or services disabled (S1.2).
 class LocationErrorBanner extends StatelessWidget {
@@ -42,25 +42,25 @@ class LocationErrorBanner extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: VantageColors.surface.withValues(alpha: 0.95),
+            color: context.colors.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: VantageColors.warning.withValues(alpha: 0.3),
+              color: context.colors.warning.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_off_rounded,
-                color: VantageColors.warning,
+                color: context.colors.warning,
                 size: 20,
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   message,
-                  style: const TextStyle(
-                    color: VantageColors.textPrimary,
+                  style: TextStyle(
+                    color: context.colors.textPrimary,
                     fontSize: 13,
                   ),
                 ),
@@ -69,7 +69,7 @@ class LocationErrorBanner extends StatelessWidget {
                 TextButton(
                   onPressed: onAction,
                   style: TextButton.styleFrom(
-                    foregroundColor: VantageColors.accent,
+                    foregroundColor: context.colors.accent,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     minimumSize: const Size(44, 44),
                   ),
@@ -98,18 +98,18 @@ class TileErrorBanner extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: VantageColors.surface.withValues(alpha: 0.95),
+            color: context.colors.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: VantageColors.textMuted.withValues(alpha: 0.3),
+              color: context.colors.textMuted.withValues(alpha: 0.3),
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.cloud_off_rounded,
-                color: VantageColors.textMuted,
+                color: context.colors.textMuted,
                 size: 18,
               ),
               SizedBox(width: 8),
@@ -117,7 +117,7 @@ class TileErrorBanner extends StatelessWidget {
                 child: Text(
                   'Map tiles unavailable — check your connection',
                   style: TextStyle(
-                    color: VantageColors.textSecondary,
+                    color: context.colors.textSecondary,
                     fontSize: 12,
                   ),
                 ),

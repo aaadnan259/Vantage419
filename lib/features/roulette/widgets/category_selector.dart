@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/roulette_mode.dart';
-import '../../../core/theme/colors.dart';
+import '../../../core/utils/extensions.dart';
+import '../../../data/toledo_spots.dart';
 
 /// Three-button row for roulette mode switching.
 /// S2.3: 44dp tap targets, Semantics labels, mode icons, InkWell ripple.
@@ -19,7 +20,7 @@ class CategorySelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: VantageColors.surface.withValues(alpha: 0.9),
+        color: context.colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -34,6 +35,10 @@ class CategorySelector extends StatelessWidget {
               icon: mode.icon,
               color: mode.color,
               isActive: isActive,
+              // S6.5: Count spots matching this mode
+              count: toledoSpots
+                  .where((s) => mode.categories.contains(s.category))
+                  .length,
               onTap: () => onSelected(i),
             ),
           );
@@ -49,6 +54,7 @@ class _ModeChip extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.isActive,
+    required this.count,
     required this.onTap,
   });
 
@@ -56,6 +62,7 @@ class _ModeChip extends StatelessWidget {
   final IconData icon;
   final Color color;
   final bool isActive;
+  final int count;
   final VoidCallback onTap;
 
   @override
@@ -83,7 +90,7 @@ class _ModeChip extends StatelessWidget {
                 border: Border.all(
                   color: isActive
                       ? color
-                      : VantageColors.textMuted.withValues(alpha: 0.3),
+                      : context.colors.textMuted.withValues(alpha: 0.3),
                   width: isActive ? 1.5 : 1,
                 ),
               ),
@@ -93,13 +100,13 @@ class _ModeChip extends StatelessWidget {
                   Icon(
                     icon,
                     size: 16,
-                    color: isActive ? color : VantageColors.textMuted,
+                    color: isActive ? color : context.colors.textMuted,
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    label,
+                    '$label ($count)',
                     style: TextStyle(
-                      color: isActive ? color : VantageColors.textSecondary,
+                      color: isActive ? color : context.colors.textSecondary,
                       fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                       fontSize: 13,
                     ),

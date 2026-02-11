@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/palette.dart';
 
 /// Convenience extensions.
 extension ContextX on BuildContext {
@@ -8,6 +9,11 @@ extension ContextX on BuildContext {
   MediaQueryData get mq => MediaQuery.of(this);
   double get screenWidth => mq.size.width;
   double get screenHeight => mq.size.height;
+
+  /// S7.5: Access the current theme's VantagePalette.
+  /// Usage: `context.colors.surface`
+  VantagePalette get colors =>
+      Theme.of(this).extension<VantagePalette>() ?? VantagePalette.dark;
 }
 
 extension ColorX on Color {

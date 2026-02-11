@@ -3,11 +3,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import '../../core/models/toledo_spot.dart';
-import '../../core/theme/colors.dart';
 import '../../core/utils/constants.dart';
+import '../../core/utils/extensions.dart';
 import '../../data/toledo_spots.dart';
 import 'providers/map_controller_provider.dart';
 import 'providers/user_location_provider.dart';
+import 'widgets/empty_state.dart';
 import 'widgets/map_controls.dart';
 import 'widgets/map_layer.dart';
 import 'widgets/user_location_marker.dart';
@@ -15,6 +16,7 @@ import '../roulette/providers/roulette_state_provider.dart';
 import '../roulette/widgets/spin_button.dart';
 import '../roulette/widgets/category_selector.dart';
 import '../roulette/widgets/spot_bottom_sheet.dart';
+import '../settings/widgets/theme_toggle.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -27,7 +29,8 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -39,7 +42,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(msg),
-              backgroundColor: VantageColors.surface,
+              backgroundColor: context.colors.surface,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -58,6 +61,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final rouletteState = ref.watch(rouletteProvider);
     final userLocation = ref.watch(userLocationProvider);
     final hasTileError = ref.watch(_tileErrorProvider);
+    // S5.2 + S6.3: Filter spots by active mode
+    final filteredSpots = toledoSpots
+        .where((s) => rouletteState.mode.categories.contains(s.category))
+        .toList();
 
     return Scaffold(
       body: Stack(
@@ -68,7 +75,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             options: MapOptions(
               initialCenter: AppConstants.toledoCenter,
               initialZoom: AppConstants.defaultZoom,
-              backgroundColor: VantageColors.primaryBackground,
+              backgroundColor: context.colors.primaryBackground,
               interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.all,
               ),
@@ -116,11 +123,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
               // S5.2: Only render markers for spots matching active mode
               SpotMarkerLayer(
-                spots: toledoSpots
-                    .where(
-                      (s) => rouletteState.mode.categories.contains(s.category),
-                    )
-                    .toList(),
+                spots: filteredSpots,
                 selectedSpotId: rouletteState.selectedSpot?.id,
                 onSpotTapped: (spot) => _onSpotTapped(spot, mapController),
               ),
@@ -135,6 +138,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
           // Tile error banner (S1.6) — shown when tiles fail to load
           if (hasTileError) const TileErrorBanner(),
+
+          // S6.3: Empty state when no spots match active mode
+          if (filteredSpots.isEmpty) const EmptyStateOverlay(),
 
           // Category selector — top center (S2.5: dim during spin)
           Positioned(
@@ -155,6 +161,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
               ),
             ),
+          ),
+
+          // S7.6: Theme Toggle — top right
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 12,
+            right: 16,
+            child: const ThemeToggle(),
           ),
 
           // Spin button — S2.2: AnimatedPositioned slides above sheet
@@ -185,8 +198,43 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
+  /// S6.6: Animated camera fly-to instead of instant jump.
+  void _animateCamera(MapController controller, LatLng target, double zoom) {
+    final cam = controller.camera;
+    final startLat = cam.center.latitude;
+    final startLng = cam.center.longitude;
+    final startZoom = cam.zoom;
+
+    final animController = AnimationController(
+      vsync: this,
+      duration: AppConstants.cameraDuration,
+    );
+    final curve = CurvedAnimation(
+      parent: animController,
+      curve: Curves.easeInOutCubic,
+    );
+
+    animController.addListener(() {
+      final t = curve.value;
+      controller.move(
+        LatLng(
+          startLat + (target.latitude - startLat) * t,
+          startLng + (target.longitude - startLng) * t,
+        ),
+        startZoom + (zoom - startZoom) * t,
+      );
+    });
+    animController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        animController.dispose();
+      }
+    });
+    animController.forward();
+  }
+
   void _onSpotTapped(ToledoSpot spot, MapController controller) {
-    controller.move(
+    _animateCamera(
+      controller,
       LatLng(spot.latitude, spot.longitude),
       AppConstants.spotZoom,
     );
@@ -195,7 +243,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Future<void> _onSpin(MapController controller) async {
     final spot = await ref.read(rouletteProvider.notifier).spin();
     if (spot != null) {
-      controller.move(
+      _animateCamera(
+        controller,
         LatLng(spot.latitude, spot.longitude),
         AppConstants.spotZoom,
       );

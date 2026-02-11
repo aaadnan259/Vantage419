@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/models/spot_category.dart';
 import '../../../core/models/toledo_spot.dart';
 import '../../../core/services/navigation_service.dart';
-import '../../../core/theme/colors.dart';
 import '../../../core/utils/extensions.dart';
 
 /// Draggable bottom sheet showing selected spot details.
@@ -22,7 +22,17 @@ class SpotBottomSheet extends StatelessWidget {
       snapSizes: const [0.40, 0.80],
       builder: (context, scrollController) {
         return Container(
-          decoration: _sheetDecoration,
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 20,
+                offset: Offset(0, -4),
+              ),
+            ],
+          ),
           child: ListView(
             controller: scrollController,
             padding: EdgeInsets.zero,
@@ -45,7 +55,7 @@ class SpotBottomSheet extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: context.textTheme.headlineMedium?.copyWith(
-                              color: VantageColors.textPrimary,
+                              color: context.colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -53,7 +63,10 @@ class SpotBottomSheet extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
+                    // S6.2: Share button
+                    _ShareButton(spot: spot),
+                    const SizedBox(width: 8),
                     _NavigateButton(spot: spot),
                   ],
                 ),
@@ -105,7 +118,7 @@ class SpotBottomSheet extends StatelessWidget {
                   maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyLarge?.copyWith(
-                    color: VantageColors.textSecondary,
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ),
@@ -116,10 +129,10 @@ class SpotBottomSheet extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.location_on_outlined,
                         size: 16,
-                        color: VantageColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -128,7 +141,7 @@ class SpotBottomSheet extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: context.textTheme.bodySmall?.copyWith(
-                            color: VantageColors.textMuted,
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ),
@@ -144,15 +157,6 @@ class SpotBottomSheet extends StatelessWidget {
       },
     );
   }
-
-  /// S5.6: Allocated once, reused every build.
-  static const _sheetDecoration = BoxDecoration(
-    color: VantageColors.surface,
-    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    boxShadow: [
-      BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, -4)),
-    ],
-  );
 }
 
 /// Pulsing drag handle that hints the sheet is draggable (S2.1).
@@ -197,7 +201,7 @@ class _DragHandleHintState extends State<_DragHandleHint>
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: VantageColors.textMuted.withValues(alpha: _opacity.value),
+            color: context.colors.textMuted.withValues(alpha: _opacity.value),
             borderRadius: BorderRadius.circular(2),
           ),
         );
@@ -268,7 +272,7 @@ class _NavigateButtonState extends State<_NavigateButton> {
             content: const Text(
               "Couldn't open navigation. Check your installed map apps.",
             ),
-            backgroundColor: VantageColors.surface,
+            backgroundColor: context.colors.surface,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -287,9 +291,9 @@ class _NavigateButtonState extends State<_NavigateButton> {
       child: ElevatedButton.icon(
         onPressed: _isLaunching ? null : _onNavigate,
         style: ElevatedButton.styleFrom(
-          backgroundColor: VantageColors.accent,
+          backgroundColor: context.colors.accent,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: VantageColors.accentDark,
+          disabledBackgroundColor: context.colors.accentDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -306,6 +310,43 @@ class _NavigateButtonState extends State<_NavigateButton> {
               )
             : const Icon(Icons.navigation_rounded, size: 20),
         label: Text(_isLaunching ? 'Opening...' : 'Go'),
+      ),
+    );
+  }
+}
+
+/// S6.2: Share button — sends spot details via native share sheet.
+class _ShareButton extends StatelessWidget {
+  const _ShareButton({required this.spot});
+
+  final ToledoSpot spot;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: IconButton.filled(
+        onPressed: () {
+          final mapsUrl =
+              'https://www.google.com/maps/search/?api=1&query=${spot.latitude},${spot.longitude}';
+          final text =
+              '${spot.name}\n'
+              '${spot.vibeCheck.isNotEmpty ? '"${spot.vibeCheck}"\n' : ''}'
+              '$mapsUrl';
+          Share.share(text);
+        },
+        style: IconButton.styleFrom(
+          backgroundColor: context.colors.surfaceLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        icon: Icon(
+          Icons.share_rounded,
+          size: 20,
+          color: context.colors.textPrimary,
+        ),
       ),
     );
   }
