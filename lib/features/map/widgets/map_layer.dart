@@ -5,6 +5,7 @@ import '../../../core/models/toledo_spot.dart';
 import 'custom_marker.dart';
 
 /// Builds a MarkerLayer from a list of spots.
+/// S4.4: Uses CustomMarker static constants for DRY sizing.
 class SpotMarkerLayer extends StatelessWidget {
   const SpotMarkerLayer({
     super.key,
@@ -22,10 +23,13 @@ class SpotMarkerLayer extends StatelessWidget {
     return MarkerLayer(
       markers: spots.map((spot) {
         final isSelected = spot.id == selectedSpotId;
+        final size = isSelected
+            ? CustomMarker.selectedSize
+            : CustomMarker.selectedSize; // Always use max for Marker bounds
         return Marker(
           point: LatLng(spot.latitude, spot.longitude),
-          width: isSelected ? 48 : 40,
-          height: isSelected ? 48 : 40,
+          width: size,
+          height: size,
           child: CustomMarker(
             category: spot.category,
             isSelected: isSelected,

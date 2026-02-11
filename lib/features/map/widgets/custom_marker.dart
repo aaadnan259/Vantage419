@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/spot_category.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/utils/constants.dart';
 
 /// Category-colored map marker with icon and elevation shadow.
 /// S2.4: Uses AnimatedScale from center with elastic bounce curve.
+/// S4.4: Sizes defined as static constants for DRY usage.
 class CustomMarker extends StatelessWidget {
   const CustomMarker({
     super.key,
@@ -16,6 +18,10 @@ class CustomMarker extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onTap;
 
+  /// Canonical marker sizes — used by SpotMarkerLayer too (S4.4).
+  static const selectedSize = AppConstants.markerSelectedSize;
+  static const defaultSize = AppConstants.markerSize;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -25,8 +31,8 @@ class CustomMarker extends StatelessWidget {
         duration: const Duration(milliseconds: 350),
         curve: isSelected ? Curves.elasticOut : Curves.easeOut,
         child: Container(
-          width: 48,
-          height: 48,
+          width: selectedSize,
+          height: selectedSize,
           decoration: BoxDecoration(
             color: category.color,
             shape: BoxShape.circle,

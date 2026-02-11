@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/models/roulette_mode.dart';
 import '../../../core/models/toledo_spot.dart';
 import '../../../core/models/user_visit.dart';
 import '../../../core/services/roulette_service.dart';

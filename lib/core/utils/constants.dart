@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import '../models/spot_category.dart';
 
 /// App-wide constants.
 abstract final class AppConstants {
@@ -27,51 +25,16 @@ abstract final class AppConstants {
 
   // Marker sizes
   static const markerSize = 40.0;
+  static const markerSelectedSize = 48.0;
   static const markerIconSize = 24.0;
+
+  // Common border radii (S4.6)
+  static const radiusSmall = 8.0;
+  static const radiusMedium = 12.0;
+  static const radiusLarge = 16.0;
+  static const radiusXL = 20.0;
 
   // Weighting — unvisited spots get this multiplier
   static const unvisitedWeight = 3;
   static const visitedWindowDays = 30;
-}
-
-/// Pre-defined roulette modes.
-class RouletteMode {
-  const RouletteMode({
-    required this.name,
-    required this.displayName,
-    required this.categories,
-    required this.color,
-    required this.icon,
-  });
-
-  final String name;
-  final String displayName;
-  final List<SpotCategory> categories;
-  final Color color;
-  final IconData icon;
-
-  /// All pre-defined modes.
-  static const List<RouletteMode> modes = [
-    RouletteMode(
-      name: 'hungry',
-      displayName: 'Hungry',
-      categories: [SpotCategory.dining, SpotCategory.cafe],
-      color: Color(0xFFFF6B6B),
-      icon: Icons.restaurant_rounded,
-    ),
-    RouletteMode(
-      name: 'active',
-      displayName: 'Active',
-      categories: [SpotCategory.recreation, SpotCategory.fitness],
-      color: Color(0xFF4ECDC4),
-      icon: Icons.directions_run_rounded,
-    ),
-    RouletteMode(
-      name: 'surprise',
-      displayName: 'Surprise Me',
-      categories: SpotCategory.values,
-      color: Color(0xFFFFE66D),
-      icon: Icons.casino_rounded,
-    ),
-  ];
 }

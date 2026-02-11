@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Vantage 419 color palette — dark theme optimized for OLED.
+/// Category colors live in SpotCategory enum — that's the single source of truth (S4.2).
 abstract final class VantageColors {
   // Backgrounds
   static const primaryBackground = Color(0xFF0A0E14);
@@ -21,12 +22,4 @@ abstract final class VantageColors {
   static const error = Color(0xFFF44336);
   static const success = Color(0xFF4CAF50);
   static const warning = Color(0xFFFFB74D);
-
-  // Category palette
-  static const categoryDining = Color(0xFFFF6B6B);
-  static const categoryActive = Color(0xFF4ECDC4);
-  static const categorySurprise = Color(0xFFFFE66D);
-  static const categoryCafe = Color(0xFFDDA15E);
-  static const categoryFitness = Color(0xFF45B7D1);
-  static const categoryEntertainment = Color(0xFFFFE66D);
 }

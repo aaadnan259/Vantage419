@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/models/roulette_mode.dart';
 import '../../../core/theme/colors.dart';
-import '../../../core/utils/constants.dart';
 
 /// Three-button row for roulette mode switching.
 /// S2.3: 44dp tap targets, Semantics labels, mode icons, InkWell ripple.

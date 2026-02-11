@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/theme/colors.dart';
 import 'core/theme/vantage_theme.dart';
 import 'features/map/map_screen.dart';
 import 'features/roulette/providers/roulette_state_provider.dart';
@@ -12,12 +13,12 @@ void main() async {
   // Lock to portrait for focused mobile UX
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // OLED-friendly status bar
+  // OLED-friendly status bar (S4.6: uses VantageColors)
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFF0A0E14),
+      systemNavigationBarColor: VantageColors.primaryBackground,
     ),
   );
 
