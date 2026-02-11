@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/toledo_spot.dart';
 import '../models/spot_category.dart';
@@ -14,13 +15,35 @@ class RouletteService {
   static const _visitsKey = 'user_visits';
 
   /// Load persisted visits from disk.
+  /// Handles corrupt JSON gracefully — resets and returns empty on failure.
   List<UserVisit> loadVisits() {
     final raw = _prefs.getString(_visitsKey);
     if (raw == null) return [];
-    final list = jsonDecode(raw) as List;
-    return list
-        .map((e) => UserVisit.fromJson(e as Map<String, dynamic>))
-        .toList();
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) {
+        debugPrint('⚠️ Visit data is not a list, resetting');
+        _prefs.remove(_visitsKey);
+        return [];
+      }
+
+      return decoded
+          .whereType<Map<String, dynamic>>()
+          .map((e) {
+            try {
+              return UserVisit.fromJson(e);
+            } catch (_) {
+              return null;
+            }
+          })
+          .whereType<UserVisit>()
+          .toList();
+    } catch (e) {
+      debugPrint('⚠️ Corrupt visit data, resetting: $e');
+      _prefs.remove(_visitsKey);
+      return [];
+    }
   }
 
   /// Save visits to disk.

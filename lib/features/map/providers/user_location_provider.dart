@@ -3,16 +3,14 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/services/location_service.dart';
 
 /// Streams the user's current location as LatLng.
+/// Errors propagate to the UI via AsyncValue.error so MapScreen
+/// can show contextual feedback (denied, disabled, etc.).
 final userLocationProvider = StreamProvider<LatLng>((ref) async* {
   final service = ref.read(locationServiceProvider);
 
-  // Emit current position first
-  try {
-    final pos = await service.getCurrentPosition();
-    yield LatLng(pos.latitude, pos.longitude);
-  } catch (_) {
-    // Yield nothing if initial fetch fails — UI shows default
-  }
+  // Emit current position first — throws typed exceptions on failure
+  final pos = await service.getCurrentPosition();
+  yield LatLng(pos.latitude, pos.longitude);
 
   // Then stream updates
   await for (final pos in service.positionStream()) {

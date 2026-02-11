@@ -187,33 +187,74 @@ class _CategoryBadge extends StatelessWidget {
   }
 }
 
-class _NavigateButton extends StatelessWidget {
+class _NavigateButton extends StatefulWidget {
   const _NavigateButton({required this.spot});
 
   final ToledoSpot spot;
+
+  @override
+  State<_NavigateButton> createState() => _NavigateButtonState();
+}
+
+class _NavigateButtonState extends State<_NavigateButton> {
+  bool _isLaunching = false;
+
+  Future<void> _onNavigate() async {
+    if (_isLaunching) return;
+    setState(() => _isLaunching = true);
+
+    final success = await NavigationService().navigateTo(
+      latitude: widget.spot.latitude,
+      longitude: widget.spot.longitude,
+      label: widget.spot.name,
+    );
+
+    if (mounted) {
+      setState(() => _isLaunching = false);
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "Couldn't open navigation. Check your installed map apps.",
+            ),
+            backgroundColor: VantageColors.surface,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 48,
       child: ElevatedButton.icon(
-        onPressed: () {
-          NavigationService().navigateTo(
-            latitude: spot.latitude,
-            longitude: spot.longitude,
-            label: spot.name,
-          );
-        },
+        onPressed: _isLaunching ? null : _onNavigate,
         style: ElevatedButton.styleFrom(
           backgroundColor: VantageColors.accent,
           foregroundColor: Colors.white,
+          disabledBackgroundColor: VantageColors.accentDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20),
         ),
-        icon: const Icon(Icons.navigation_rounded, size: 20),
-        label: const Text('Go'),
+        icon: _isLaunching
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.navigation_rounded, size: 20),
+        label: Text(_isLaunching ? 'Opening...' : 'Go'),
       ),
     );
   }

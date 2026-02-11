@@ -7,22 +7,19 @@ class LocationService {
   Future<Position> getCurrentPosition() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      throw LocationServiceException('Location services are disabled');
+      throw LocationDisabledException();
     }
 
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw LocationServiceException('Location permission denied');
+        throw LocationPermissionDeniedException();
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      throw LocationServiceException(
-        'Location permissions are permanently denied. '
-        'Please enable in Settings.',
-      );
+      throw LocationPermissionDeniedForeverException();
     }
 
     return Geolocator.getCurrentPosition(
@@ -41,12 +38,32 @@ class LocationService {
   }
 }
 
+// -- Typed exceptions so the UI can react differently to each case --
+
 class LocationServiceException implements Exception {
   const LocationServiceException(this.message);
   final String message;
 
   @override
   String toString() => message;
+}
+
+class LocationDisabledException extends LocationServiceException {
+  LocationDisabledException()
+    : super('Location services are disabled. Enable them in device settings.');
+}
+
+class LocationPermissionDeniedException extends LocationServiceException {
+  LocationPermissionDeniedException()
+    : super('Location permission denied. We need it to show your position.');
+}
+
+class LocationPermissionDeniedForeverException
+    extends LocationServiceException {
+  LocationPermissionDeniedForeverException()
+    : super(
+        'Location permission permanently denied. Please enable in Settings.',
+      );
 }
 
 /// Global provider for LocationService.
