@@ -26,6 +26,17 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   mockito: ^5.6.3
+  flutter_launcher_icons: ^0.14.3
+
+# App icon generation config — run: dart run flutter_launcher_icons
+# Place a 1024x1024 icon at assets/icon/app_icon.png first
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#0A0A0A"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
