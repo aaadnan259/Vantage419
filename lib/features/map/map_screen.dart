@@ -271,9 +271,18 @@ class _MapScreenState extends ConsumerState<MapScreen>
   bool _showOverlay = false;
   List<ToledoSpot> _candidates = [];
   ToledoSpot? _winner;
+  DateTime? _lastSpinTime;
 
   Future<void> _onSpin(MapController controller, List<ToledoSpot> pool) async {
     if (pool.isEmpty) return;
+
+    // Rate limit: 2-second cooldown between spins
+    final now = DateTime.now();
+    if (_lastSpinTime != null &&
+        now.difference(_lastSpinTime!) < const Duration(seconds: 2)) {
+      return;
+    }
+    _lastSpinTime = now;
 
     // 1. Generate Candidates (Shuffle Deck)
     final candidates = List<ToledoSpot>.from(pool)..shuffle();
