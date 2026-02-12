@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data_sources/spot_local_data_source.dart';
 import '../repositories/spot_repository.dart';
 import '../repositories/spot_repository_impl.dart';
+import '../services/analytics_service.dart';
 
 /// Core provider for SharedPreferences (Overridden in main)
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
@@ -19,4 +20,9 @@ final spotLocalDataSourceProvider = Provider<SpotLocalDataSource>((ref) {
 final spotRepositoryProvider = Provider<SpotRepository>((ref) {
   final dataSource = ref.watch(spotLocalDataSourceProvider);
   return SpotRepositoryImpl(dataSource);
+});
+
+/// Analytics service — swap to Firebase-backed implementation later
+final analyticsProvider = Provider<AnalyticsService>((ref) {
+  return AnalyticsService();
 });
