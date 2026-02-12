@@ -88,9 +88,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   ),
                 ),
                 children: [
-                  // Light tile layer (S4.5.3.1)
+                  // Theme-aware tile layer — switches between dark/light tiles
                   TileLayer(
-                    urlTemplate: AppConstants.lightTileUrl,
+                    urlTemplate: Theme.of(context).brightness == Brightness.dark
+                        ? AppConstants.darkTileUrl
+                        : AppConstants.lightTileUrl,
                     userAgentPackageName: 'com.vantage419.app',
                     maxZoom: 19,
                     tileProvider: NetworkTileProvider(),
