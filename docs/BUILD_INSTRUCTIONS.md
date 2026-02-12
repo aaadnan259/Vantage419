@@ -29,7 +29,7 @@ keytool -genkey -v -keystore c:\Users\aaadn\upload-keystore.jks ^
    storeFile=c:/Users/aaadn/upload-keystore.jks
    ```
 
-2. The `android/app/build.gradle` file is already configured to read this property file if it exists (standard Flutter setup).
+2. The `android/app/build.gradle.kts` is already configured to read this property file if it exists and apply the release signing config automatically.
 
 ## 3. Build Commands
 
