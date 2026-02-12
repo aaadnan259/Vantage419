@@ -192,9 +192,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 child: Center(
                   child: FloatingSearchPill(
                     onTapDice: () => _onSpin(mapController, filteredSpots),
-                    onTapSearch: () {
-                      // Future: Implement search
-                    },
                   ),
                 ),
               ),
