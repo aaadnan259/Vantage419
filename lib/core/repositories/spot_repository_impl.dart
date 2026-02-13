@@ -1,7 +1,7 @@
-import '../models/toledo_spot.dart';
-import '../models/user_visit.dart';
-import '../data_sources/spot_local_data_source.dart';
-import 'spot_repository.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/data_sources/spot_local_data_source.dart';
+import 'package:vantage419/core/repositories/spot_repository.dart';
 
 class SpotRepositoryImpl implements SpotRepository {
   final SpotLocalDataSource _dataSource;

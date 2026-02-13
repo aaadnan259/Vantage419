@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../map/map_screen.dart';
-import '../../core/utils/extensions.dart';
+import 'package:vantage419/features/map/map_screen.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Branded splash screen — shows app name + tagline, then fades into the map.
 class SplashScreen extends StatefulWidget {

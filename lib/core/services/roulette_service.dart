@@ -1,7 +1,7 @@
 import 'dart:math';
-import '../models/toledo_spot.dart';
-import '../models/user_visit.dart';
-import '../utils/constants.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/utils/constants.dart';
 
 /// Weighted random selection engine.
 /// Refactored (S3.2.2) to be pure logic with no persistence dependencies.

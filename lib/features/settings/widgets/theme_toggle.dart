@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/theme_provider.dart';
-import '../../../core/utils/extensions.dart';
+import 'package:vantage419/core/theme/theme_provider.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Floating button to toggle between System, Light, and Dark themes.
 class ThemeToggle extends ConsumerWidget {

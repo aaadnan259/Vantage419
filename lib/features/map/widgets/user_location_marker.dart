@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Blue pulsing dot for the user's location on the map.
 /// Extracted to avoid rebuilding static decoration on every map frame (S5.1).

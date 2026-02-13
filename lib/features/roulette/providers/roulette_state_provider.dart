@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/models/roulette_mode.dart';
-import '../../../core/models/toledo_spot.dart';
-import '../../../core/models/user_visit.dart';
-import '../../../core/repositories/spot_repository.dart';
-import '../../../core/services/roulette_service.dart';
-import '../../../core/providers/repository_providers.dart';
-import '../../../core/utils/constants.dart';
+import 'package:vantage419/core/models/roulette_mode.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/repositories/spot_repository.dart';
+import 'package:vantage419/core/services/roulette_service.dart';
+import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/core/utils/constants.dart';
 
 /// Pure logic service provider.
 final rouletteServiceProvider = Provider<RouletteService>((ref) {
@@ -65,10 +65,13 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
   final RouletteService _service;
 
   Future<void> _init() async {
-    // Load initial visits
-    final visits = await _repository.getVisits();
-    if (mounted) {
+    try {
+      final visits = await _repository.getVisits();
+      if (!mounted) return;
       state = state.copyWith(visits: visits);
+    } catch (e) {
+      debugPrint('⚠️ Failed to load visits: $e');
+      // Non-fatal — app works with empty visit history
     }
   }
 
@@ -110,35 +113,33 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
       );
 
       if (result != null) {
-        // Log visit via Repository
         final updatedVisits = await _repository.logVisit(result.id, visits);
+        if (!mounted) return null;
 
-        if (mounted) {
-          state = state.copyWith(
-            isSpinning: false,
-            selectedSpot: result,
-            visits: updatedVisits,
-          );
-        }
+        state = state.copyWith(
+          isSpinning: false,
+          selectedSpot: result,
+          visits: updatedVisits,
+        );
       } else {
-        if (mounted) {
-          state = state.copyWith(
-            isSpinning: false,
-            errorMessage:
-                "No spots match '${state.mode.displayName}' — try 'Surprise Me'!",
-          );
-        }
+        if (!mounted) return null;
+
+        state = state.copyWith(
+          isSpinning: false,
+          errorMessage:
+              "No spots match '${state.mode.displayName}' — try 'Surprise Me'!",
+        );
       }
 
       return result;
     } catch (e) {
       debugPrint('⚠️ Spin failed: $e');
-      if (mounted) {
-        state = state.copyWith(
-          isSpinning: false,
-          errorMessage: 'Something went wrong. Try spinning again.',
-        );
-      }
+      if (!mounted) return null;
+
+      state = state.copyWith(
+        isSpinning: false,
+        errorMessage: 'Something went wrong. Try spinning again.',
+      );
       return null;
     }
   }

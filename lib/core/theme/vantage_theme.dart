@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'palette.dart';
-import 'typography.dart';
+import 'package:vantage419/core/theme/palette.dart';
+import 'package:vantage419/core/theme/typography.dart';
 
 /// Assembles the complete Vantage theme (Light & Dark).
 abstract final class VantageTheme {
   /// S7.4: Dark Theme Factory
   static ThemeData get dark {
-    final palette = VantagePalette.dark;
+    const palette = VantagePalette.dark;
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -51,7 +51,7 @@ abstract final class VantageTheme {
 
   /// S7.4: Light Theme Factory
   static ThemeData get light {
-    final palette = VantagePalette.light;
+    const palette = VantagePalette.light;
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,

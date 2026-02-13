@@ -1,5 +1,5 @@
-import '../models/toledo_spot.dart';
-import '../models/user_visit.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/user_visit.dart';
 
 abstract class SpotRepository {
   /// Fetch all available spots (currently static, future: Supabase)

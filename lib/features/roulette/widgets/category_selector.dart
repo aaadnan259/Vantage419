@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/roulette_mode.dart';
-import '../../../core/utils/extensions.dart';
-import '../../../core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/roulette_mode.dart';
+import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
 
 /// Three-button row for roulette mode switching.
 /// S2.3: 44dp tap targets, Semantics labels, mode icons, InkWell ripple.

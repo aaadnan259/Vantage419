@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../core/models/spot_category.dart';
-import '../../../core/models/toledo_spot.dart';
-import '../../../core/services/navigation_service.dart';
-import '../../../core/utils/extensions.dart';
+import 'package:vantage419/core/models/spot_category.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/services/navigation_service.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Draggable bottom sheet showing selected spot details.
 class SpotBottomSheet extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/spot_category.dart';
-import '../../../core/utils/constants.dart';
-import '../../../core/utils/extensions.dart';
+import 'package:vantage419/core/models/spot_category.dart';
+import 'package:vantage419/core/utils/constants.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Category-colored map marker with icon and elevation shadow.
 /// S2.4: Uses AnimatedScale from center with elastic bounce curve.
