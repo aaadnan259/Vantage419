@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/utils/constants.dart';
+import 'package:vantage419/core/services/performance_service.dart';
 
 class SpotLocalDataSource {
   final SharedPreferences _prefs;
@@ -12,7 +13,9 @@ class SpotLocalDataSource {
   static const _maxVisits = 500;
   static const _spotsAssetPath = 'assets/data/spots.json';
 
-  SpotLocalDataSource(this._prefs);
+  SpotLocalDataSource(this._prefs, this._performance);
+
+  final PerformanceService _performance;
 
   List<ToledoSpot>? _cachedSpots;
 
@@ -22,12 +25,17 @@ class SpotLocalDataSource {
     if (_cachedSpots != null) return _cachedSpots!;
 
     try {
+      final trace = _performance.startTrace('fetch_static_spots');
       final raw = await rootBundle.loadString(_spotsAssetPath);
       final decoded = jsonDecode(raw) as List<dynamic>;
       _cachedSpots = decoded
           .whereType<Map<String, dynamic>>()
           .map((json) => ToledoSpot.fromJson(json))
           .toList();
+
+      trace.setMetric('spot_count', _cachedSpots!.length);
+      trace.stop();
+
       return _cachedSpots!;
     } catch (e) {
       debugPrint('⚠️ Failed to load spots asset: $e');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/utils/constants.dart';
@@ -35,6 +36,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
   @override
   void initState() {
     super.initState();
+    // Track screen view
+    ref.read(analyticsProvider).logScreenView('MapScreen');
+
     // Listen for roulette error messages and surface them as SnackBars (S1.3)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listenManual(rouletteProvider, (prev, next) {

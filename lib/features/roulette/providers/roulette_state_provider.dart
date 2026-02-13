@@ -7,6 +7,7 @@ import 'package:vantage419/core/repositories/spot_repository.dart';
 import 'package:vantage419/core/services/roulette_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/utils/constants.dart';
+import 'package:vantage419/core/services/analytics_service.dart';
 
 /// Pure logic service provider.
 final rouletteServiceProvider = Provider<RouletteService>((ref) {
@@ -56,13 +57,14 @@ class RouletteState {
 
 /// Manages roulette spinning, mode selection, and visit tracking.
 class RouletteNotifier extends StateNotifier<RouletteState> {
-  RouletteNotifier(this._repository, this._service)
+  RouletteNotifier(this._repository, this._service, this._analytics)
     : super(const RouletteState()) {
     _init();
   }
 
   final SpotRepository _repository;
   final RouletteService _service;
+  final AnalyticsService _analytics;
 
   Future<void> _init() async {
     try {
@@ -77,6 +79,10 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
 
   void selectMode(int index) {
     if (index < 0 || index >= RouletteMode.modes.length) return;
+
+    final newMode = RouletteMode.modes[index];
+    _analytics.logModeChange(newMode.displayName);
+
     state = state.copyWith(
       currentMode: index,
       clearSelectedSpot: true,
@@ -95,6 +101,8 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     );
 
     try {
+      _analytics.logSpinStart(state.mode.displayName);
+
       // S3.2: Fetch data from Repository (Abstracted Source)
       // This allows moving to Supabase later without changing this logic.
       final spots = await _repository.getSpots();
@@ -113,6 +121,7 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
       );
 
       if (result != null) {
+        _analytics.logSpinComplete(result.id, result.name);
         final updatedVisits = await _repository.logVisit(result.id, visits);
         if (!mounted) return null;
 
@@ -153,6 +162,7 @@ final rouletteProvider = StateNotifierProvider<RouletteNotifier, RouletteState>(
   (ref) {
     final repository = ref.watch(spotRepositoryProvider);
     final service = ref.watch(rouletteServiceProvider);
-    return RouletteNotifier(repository, service);
+    final analytics = ref.watch(analyticsProvider);
+    return RouletteNotifier(repository, service, analytics);
   },
 );

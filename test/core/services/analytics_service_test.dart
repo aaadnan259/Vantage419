@@ -25,4 +25,21 @@ void main() {
       expect(() => service.logScreenView('MapScreen'), returnsNormally);
     });
   });
+  test('logSpinStart runs without error', () {
+    final service = AnalyticsService();
+    expect(() => service.logSpinStart('Solo Dining'), returnsNormally);
+  });
+
+  test('logSpinComplete runs without error', () {
+    final service = AnalyticsService();
+    expect(
+      () => service.logSpinComplete('spot_123', 'Test Spot'),
+      returnsNormally,
+    );
+  });
+
+  test('logModeChange runs without error', () {
+    final service = AnalyticsService();
+    expect(() => service.logModeChange('Date Night'), returnsNormally);
+  });
 }
