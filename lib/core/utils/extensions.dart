@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/palette.dart';
+import 'package:vantage419/core/theme/palette.dart';
 
 /// Convenience extensions.
 extension ContextX on BuildContext {

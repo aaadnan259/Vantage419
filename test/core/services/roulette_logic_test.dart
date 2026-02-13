@@ -11,7 +11,7 @@ void main() {
     service = RouletteService();
   });
 
-  final spot1 = const ToledoSpot(
+  const spot1 = ToledoSpot(
     id: '1',
     name: 'Spot 1',
     latitude: 0,
@@ -21,7 +21,7 @@ void main() {
     description: '',
   );
 
-  final spot2 = const ToledoSpot(
+  const spot2 = ToledoSpot(
     id: '2',
     name: 'Spot 2',
     latitude: 0,

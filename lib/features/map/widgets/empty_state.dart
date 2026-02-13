@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// S6.3 / S4.5.5: Empty state when no spots match active mode.
 /// Updated with "Playful" editorial style.
@@ -34,7 +34,7 @@ class EmptyStateOverlay extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              "No spots here!",
+              'No spots here!',
               style: context.textTheme.headlineMedium?.copyWith(
                 color: context.colors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -43,7 +43,7 @@ class EmptyStateOverlay extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Try adjusting your filters or\nexplore a different area.",
+              'Try adjusting your filters or\nexplore a different area.',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: context.colors.textSecondary,
                 height: 1.5,

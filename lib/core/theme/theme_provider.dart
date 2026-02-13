@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/repository_providers.dart';
+import 'package:vantage419/core/providers/repository_providers.dart';
 
 /// S7.3: Manages the active theme mode (System/Light/Dark) with persistence.
 class ThemeNotifier extends StateNotifier<ThemeMode> {

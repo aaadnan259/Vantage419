@@ -6,12 +6,12 @@ class AnalyticsService {
   /// Log a named event with optional parameters.
   void logEvent(String name, [Map<String, Object>? params]) {
     debugPrint('📊 Analytics: $name ${params ?? ''}');
-    // TODO: FirebaseAnalytics.instance.logEvent(name: name, parameters: params);
+    // Swap: FirebaseAnalytics.instance.logEvent(name: name, parameters: params);
   }
 
   /// Track screen views for funnel analysis.
   void logScreenView(String screenName) {
     debugPrint('📊 Screen: $screenName');
-    // TODO: FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
+    // Swap: FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
   }
 }

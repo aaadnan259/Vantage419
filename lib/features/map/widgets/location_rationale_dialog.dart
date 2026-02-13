@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/utils/extensions.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Shows a friendly explanation before requesting location permission.
 /// Android best practice: explain rationale before the system dialog.

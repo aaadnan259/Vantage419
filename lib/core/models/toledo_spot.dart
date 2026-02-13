@@ -1,4 +1,4 @@
-import 'spot_category.dart';
+import 'package:vantage419/core/models/spot_category.dart';
 
 /// A discoverable location in Toledo.
 class ToledoSpot {

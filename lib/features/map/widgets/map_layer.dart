@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../core/models/toledo_spot.dart';
-import 'custom_marker.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/features/map/widgets/custom_marker.dart';
 
 /// Builds a MarkerLayer from a list of spots.
 /// S4.4: Uses CustomMarker static constants for DRY sizing.

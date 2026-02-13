@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import '../../core/models/toledo_spot.dart';
-import '../../core/utils/constants.dart';
-import '../../core/utils/extensions.dart';
-import '../../core/providers/spots_provider.dart';
-import 'providers/map_controller_provider.dart';
-import 'providers/user_location_provider.dart';
-import 'widgets/empty_state.dart';
-import 'widgets/map_controls.dart';
-import 'widgets/map_layer.dart';
-import 'widgets/user_location_marker.dart';
-import 'widgets/floating_search_pill.dart';
-import '../roulette/widgets/shuffle_deck_overlay.dart';
-import '../roulette/providers/roulette_state_provider.dart';
-import '../roulette/widgets/category_selector.dart';
-import '../roulette/widgets/spot_bottom_sheet.dart';
-import '../settings/widgets/theme_toggle.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/utils/constants.dart';
+import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/core/providers/spots_provider.dart';
+import 'package:vantage419/features/map/providers/map_controller_provider.dart';
+import 'package:vantage419/features/map/providers/user_location_provider.dart';
+import 'package:vantage419/features/map/widgets/empty_state.dart';
+import 'package:vantage419/features/map/widgets/map_controls.dart';
+import 'package:vantage419/features/map/widgets/map_layer.dart';
+import 'package:vantage419/features/map/widgets/user_location_marker.dart';
+import 'package:vantage419/features/map/widgets/floating_search_pill.dart';
+import 'package:vantage419/features/roulette/widgets/shuffle_deck_overlay.dart';
+import 'package:vantage419/features/roulette/providers/roulette_state_provider.dart';
+import 'package:vantage419/features/roulette/widgets/category_selector.dart';
+import 'package:vantage419/features/roulette/widgets/spot_bottom_sheet.dart';
+import 'package:vantage419/features/settings/widgets/theme_toggle.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -46,9 +46,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
               backgroundColor: context.colors.surface,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(
+                  AppConstants.snackBarRadius,
+                ),
               ),
-              duration: const Duration(seconds: 3),
+              duration: AppConstants.snackBarDuration,
             ),
           );
         }
@@ -153,7 +155,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
               // Category selector — top center (S2.5: dim during spin)
               Positioned(
-                top: MediaQuery.of(context).padding.top + 12,
+                top:
+                    MediaQuery.of(context).padding.top +
+                    AppConstants.topBarPadding,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -175,7 +179,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
               // S7.6: Theme Toggle — top right
               Positioned(
-                top: MediaQuery.of(context).padding.top + 12,
+                top:
+                    MediaQuery.of(context).padding.top +
+                    AppConstants.topBarPadding,
                 right: 16,
                 child: const ThemeToggle(),
               ),
@@ -185,8 +191,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOutCubic,
                 bottom: rouletteState.selectedSpot != null
-                    ? MediaQuery.of(context).size.height * 0.42 + 16
-                    : 32,
+                    ? MediaQuery.of(context).size.height *
+                              AppConstants.bottomSheetHeightRatio +
+                          AppConstants.pillAboveSheetPadding
+                    : AppConstants.pillBottomOffset,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -279,7 +287,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
     // Rate limit: 2-second cooldown between spins
     final now = DateTime.now();
     if (_lastSpinTime != null &&
-        now.difference(_lastSpinTime!) < const Duration(seconds: 2)) {
+        now.difference(_lastSpinTime!) <
+            const Duration(seconds: AppConstants.spinCooldownSeconds)) {
       return;
     }
     _lastSpinTime = now;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Floating action pill — spin-only button at the bottom center of the map.
 /// Triggers the roulette spin to discover a random spot.

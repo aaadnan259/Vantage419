@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/toledo_spot.dart';
-import 'repository_providers.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/providers/repository_providers.dart';
 
 /// S3.3: Provides the list of spots from the repository.
 /// Replaces the static `toledoSpots` global list.

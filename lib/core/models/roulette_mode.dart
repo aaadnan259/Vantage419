@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'spot_category.dart';
+import 'package:vantage419/core/models/spot_category.dart';
 
 /// A roulette mode that filters spots by category groups.
 class RouletteMode {

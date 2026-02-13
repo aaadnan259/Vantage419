@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../core/services/location_service.dart';
-import '../../../core/utils/extensions.dart';
+import 'package:vantage419/core/services/location_service.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// Banner shown when location permissions are denied or services disabled (S1.2).
 class LocationErrorBanner extends StatelessWidget {
@@ -112,7 +112,7 @@ class TileErrorBanner extends StatelessWidget {
                 color: context.colors.textMuted,
                 size: 18,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Map tiles unavailable — check your connection',

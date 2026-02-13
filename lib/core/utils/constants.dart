@@ -40,4 +40,13 @@ abstract final class AppConstants {
   // Weighting — unvisited spots get this multiplier
   static const unvisitedWeight = 3;
   static const visitedWindowDays = 30;
+
+  // UI layout
+  static const bottomSheetHeightRatio = 0.42;
+  static const pillBottomOffset = 32.0;
+  static const pillAboveSheetPadding = 16.0;
+  static const topBarPadding = 12.0;
+  static const spinCooldownSeconds = 2;
+  static const snackBarDuration = Duration(seconds: 3);
+  static const snackBarRadius = 12.0;
 }

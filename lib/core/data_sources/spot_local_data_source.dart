@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/toledo_spot.dart';
-import '../models/user_visit.dart';
-import '../utils/constants.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/utils/constants.dart';
 
 class SpotLocalDataSource {
   final SharedPreferences _prefs;

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/models/roulette_mode.dart';
-import '../../../core/models/toledo_spot.dart';
-import '../../../core/models/user_visit.dart';
-import '../../../core/repositories/spot_repository.dart';
-import '../../../core/services/roulette_service.dart';
-import '../../../core/providers/repository_providers.dart';
-import '../../../core/utils/constants.dart';
+import 'package:vantage419/core/models/roulette_mode.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/repositories/spot_repository.dart';
+import 'package:vantage419/core/services/roulette_service.dart';
+import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/core/utils/constants.dart';
 
 /// Pure logic service provider.
 final rouletteServiceProvider = Provider<RouletteService>((ref) {

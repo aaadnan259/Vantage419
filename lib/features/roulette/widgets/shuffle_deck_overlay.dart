@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/models/toledo_spot.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:vantage419/core/models/toledo_spot.dart';
+import 'package:vantage419/core/utils/extensions.dart';
 
 /// S4.5.4: Overlay that displays a "Tinder-style" shuffle animation.
 /// Shows a stack of [candidates] flying off-screen, revealing the [winner].
@@ -63,7 +63,7 @@ class _ShuffleDeckOverlayState extends State<ShuffleDeckOverlay>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: Colors.black.withValues(alpha: 0.5), // Dim background
       child: Center(
         child: _showWinner
@@ -155,7 +155,7 @@ class _Card extends StatelessWidget {
                 ? Image.network(
                     spot.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(
+                    errorBuilder: (_, _, _) => ColoredBox(
                       color: context.colors.surfaceLight,
                       child: Icon(
                         Icons.image_not_supported,
@@ -163,7 +163,7 @@ class _Card extends StatelessWidget {
                       ),
                     ),
                   )
-                : Container(
+                : ColoredBox(
                     color: context.colors.surfaceLight,
                     child: Icon(
                       Icons.restaurant,

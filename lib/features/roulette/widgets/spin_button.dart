@@ -2,9 +2,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/utils/constants.dart';
-import '../../../core/utils/extensions.dart';
-import '../../../core/providers/repository_providers.dart';
+import 'package:vantage419/core/utils/constants.dart';
+import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/core/providers/repository_providers.dart';
 
 /// 80dp circular button with Toyota Blue gradient and rotation animation.
 /// S2.5: Varied haptics — medium on tap, heavy on success, light on error.
