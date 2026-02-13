@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/utils/extensions.dart';
@@ -152,10 +153,12 @@ class _Card extends StatelessWidget {
           Expanded(
             flex: 3,
             child: spot.imageUrl != null
-                ? Image.network(
-                    spot.imageUrl!,
+                ? CachedNetworkImage(
+                    imageUrl: spot.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => ColoredBox(
+                    placeholder: (context, url) =>
+                        ColoredBox(color: context.colors.surfaceLight),
+                    errorWidget: (context, url, error) => ColoredBox(
                       color: context.colors.surfaceLight,
                       child: Icon(
                         Icons.image_not_supported,

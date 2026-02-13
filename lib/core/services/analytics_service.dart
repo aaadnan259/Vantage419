@@ -14,4 +14,16 @@ class AnalyticsService {
     debugPrint('📊 Screen: $screenName');
     // Swap: FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
   }
+
+  void logSpinStart(String mode) {
+    logEvent('spin_start', {'mode': mode});
+  }
+
+  void logSpinComplete(String spotId, String spotName) {
+    logEvent('spin_complete', {'spot_id': spotId, 'spot_name': spotName});
+  }
+
+  void logModeChange(String mode) {
+    logEvent('mode_change', {'mode': mode});
+  }
 }
