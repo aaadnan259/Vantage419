@@ -5,12 +5,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Load key.properties for release signing
-val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = java.util.Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
-}
+import java.util.Properties
+import java.io.FileInputStream
+
 
 android {
     namespace = "dev.adnanashraf.vantage419"
@@ -35,24 +32,19 @@ android {
     }
 
     signingConfigs {
-        if (keystorePropertiesFile.exists()) {
-            create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-            }
-        }
+//        if (keystorePropertiesFile.exists()) {
+//            create("release") {
+//                keyAlias = keystoreProperties["keyAlias"] as String
+//                keyPassword = keystoreProperties["keyPassword"] as String
+//                storeFile = file(keystoreProperties["storeFile"] as String)
+//                storePassword = keystoreProperties["storePassword"] as String
+//            }
+//        }
     }
 
     buildTypes {
         release {
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                // Fallback to debug signing — remove before production release
-                signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
