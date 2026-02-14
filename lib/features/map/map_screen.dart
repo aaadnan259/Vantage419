@@ -216,6 +216,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   spot: rouletteState.selectedSpot!,
                   onClose: () =>
                       ref.read(rouletteProvider.notifier).clearSelection(),
+                  userLocation: userLocation.valueOrNull,
                 ),
 
               // S4.5.4: Shuffle Deck Overlay

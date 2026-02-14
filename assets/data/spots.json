@@ -8,6 +8,7 @@
         "vibeCheck": "Late-night bowl perfection",
         "description": "Authentic Japanese ramen with rich tonkotsu broth and handmade noodles",
         "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop",
+        "address": "419 N Superior St, Toledo, OH 43604",
         "tags": [
             "Cozy",
             "Hot Soup",
@@ -23,6 +24,7 @@
         "vibeCheck": "Classic diner vibes, open late",
         "description": "24-hour comfort food with generous portions and nostalgic atmosphere",
         "imageUrl": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=800&auto=format&fit=crop",
+        "address": "3109 W Sylvania Ave, Toledo, OH 43613",
         "tags": [
             "Late Night",
             "Comfort Food",
@@ -38,6 +40,7 @@
         "vibeCheck": "Upscale Japanese fusion",
         "description": "Modern Japanese cuisine with creative presentations and premium ingredients",
         "imageUrl": "https://images.unsplash.com/photo-1626804475297-411db1434c31?q=80&w=800&auto=format&fit=crop",
+        "address": "537 Madison Ave, Toledo, OH 43604",
         "tags": [
             "Date Night",
             "Upscale",
@@ -53,6 +56,7 @@
         "vibeCheck": "Sushi bar excellence",
         "description": "Traditional sushi and sashimi with skilled itamae chefs",
         "imageUrl": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=800&auto=format&fit=crop",
+        "address": "1920 S Reynolds Rd, Toledo, OH 43614",
         "tags": [
             "Sushi",
             "Chefs Choice",
@@ -68,10 +72,203 @@
         "vibeCheck": "Interactive grill-your-own experience",
         "description": "All-you-can-eat Korean BBQ with table grills and banchan variety",
         "imageUrl": "https://images.unsplash.com/photo-1529193591184-b1d580690dd0?q=80&w=800&auto=format&fit=crop",
+        "address": "3155 W Central Ave, Toledo, OH 43606",
         "tags": [
             "Group Dining",
             "Interactive",
             "Spicy"
+        ]
+    },
+    {
+        "id": "din_006",
+        "name": "The Chop House",
+        "latitude": 41.6503,
+        "longitude": -83.5356,
+        "category": "dining",
+        "vibeCheck": "Prime cuts & candlelight",
+        "description": "Upscale steakhouse with dry-aged beef, craft cocktails, and a polished atmosphere",
+        "imageUrl": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop",
+        "address": "300 Madison Ave, Toledo, OH 43604",
+        "tags": [
+            "Steakhouse",
+            "Date Night",
+            "Upscale"
+        ]
+    },
+    {
+        "id": "din_007",
+        "name": "Tony Packo's",
+        "latitude": 41.6601,
+        "longitude": -83.5276,
+        "category": "dining",
+        "vibeCheck": "Toledo's legendary hot dogs since 1932",
+        "description": "Iconic Toledo restaurant famous for Hungarian hot dogs and chili. Featured on M*A*S*H",
+        "imageUrl": "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?q=80&w=800&auto=format&fit=crop",
+        "address": "1902 Front St, Toledo, OH 43605",
+        "tags": [
+            "Iconic",
+            "Hot Dogs",
+            "Historic"
+        ]
+    },
+    {
+        "id": "din_008",
+        "name": "Poco Piatti",
+        "latitude": 41.6510,
+        "longitude": -83.5370,
+        "category": "dining",
+        "vibeCheck": "Mediterranean charm downtown",
+        "description": "Italian and Mediterranean small plates with an extensive wine list and warm ambiance",
+        "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
+        "address": "329 N Huron St, Toledo, OH 43604",
+        "tags": [
+            "Italian",
+            "Wine",
+            "Small Plates"
+        ]
+    },
+    {
+        "id": "din_009",
+        "name": "Mancy's Steakhouse",
+        "latitude": 41.6718,
+        "longitude": -83.5847,
+        "category": "dining",
+        "vibeCheck": "Toledo's old-money steakhouse",
+        "description": "Family-owned since 1921, known for prime steaks and a classic supper club atmosphere",
+        "imageUrl": "https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=800&auto=format&fit=crop",
+        "address": "953 Phillips Ave, Toledo, OH 43612",
+        "tags": [
+            "Classic",
+            "Steakhouse",
+            "Special Occasion"
+        ]
+    },
+    {
+        "id": "din_010",
+        "name": "Balance Pan-Asian Grille",
+        "latitude": 41.6635,
+        "longitude": -83.6101,
+        "category": "dining",
+        "vibeCheck": "Fast-casual Asian fusion bowls",
+        "description": "Build-your-own bowls with fresh ingredients and bold pan-Asian flavors",
+        "imageUrl": "https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop",
+        "address": "4510 W Central Ave, Toledo, OH 43615",
+        "tags": [
+            "Bowls",
+            "Quick",
+            "Healthy"
+        ]
+    },
+    {
+        "id": "din_011",
+        "name": "El Camino Real",
+        "latitude": 41.6425,
+        "longitude": -83.5638,
+        "category": "dining",
+        "vibeCheck": "Authentic Mexican, no shortcuts",
+        "description": "Family-run Mexican restaurant with scratch-made salsas and generous portions",
+        "imageUrl": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?q=80&w=800&auto=format&fit=crop",
+        "address": "1655 S Reynolds Rd, Toledo, OH 43614",
+        "tags": [
+            "Mexican",
+            "Family",
+            "Authentic"
+        ]
+    },
+    {
+        "id": "din_012",
+        "name": "Sakura Japanese",
+        "latitude": 41.6660,
+        "longitude": -83.6322,
+        "category": "dining",
+        "vibeCheck": "Teppanyaki theater at your table",
+        "description": "Hibachi grills, sushi bar, and a lively atmosphere with chef performances",
+        "imageUrl": "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?q=80&w=800&auto=format&fit=crop",
+        "address": "5580 Monroe St, Toledo, OH 43560",
+        "tags": [
+            "Hibachi",
+            "Fun",
+            "Group Dining"
+        ]
+    },
+    {
+        "id": "din_013",
+        "name": "Jing Xuan",
+        "latitude": 41.6580,
+        "longitude": -83.5480,
+        "category": "dining",
+        "vibeCheck": "Dim sum and dumplings done right",
+        "description": "Traditional Chinese dim sum with weekend cart service and hand-folded dumplings",
+        "imageUrl": "https://images.unsplash.com/photo-1563245372-f21724e3856d?q=80&w=800&auto=format&fit=crop",
+        "address": "2215 S Byrne Rd, Toledo, OH 43614",
+        "tags": [
+            "Chinese",
+            "Dim Sum",
+            "Weekend"
+        ]
+    },
+    {
+        "id": "caf_001",
+        "name": "The Onyx Cafe",
+        "latitude": 41.6523,
+        "longitude": -83.5489,
+        "category": "cafe",
+        "vibeCheck": "Specialty coffee & study spot",
+        "description": "Locally roasted coffee with cozy atmosphere for remote work",
+        "imageUrl": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop",
+        "address": "509 Adams St, Toledo, OH 43604",
+        "tags": [
+            "Coffee",
+            "Quiet",
+            "Work Friendly"
+        ]
+    },
+    {
+        "id": "caf_002",
+        "name": "Black Kite Coffee",
+        "latitude": 41.6650,
+        "longitude": -83.5790,
+        "category": "cafe",
+        "vibeCheck": "Third-wave coffee in a cozy spot",
+        "description": "Single-origin pour-overs, house-baked pastries, and a warm neighborhood vibe",
+        "imageUrl": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop",
+        "address": "2499 Collingwood Blvd, Toledo, OH 43620",
+        "tags": [
+            "Pour Over",
+            "Pastries",
+            "Chill"
+        ]
+    },
+    {
+        "id": "caf_003",
+        "name": "Plate 21",
+        "latitude": 41.6515,
+        "longitude": -83.5395,
+        "category": "cafe",
+        "vibeCheck": "Brunch spot with bottomless drip",
+        "description": "All-day brunch, avocado toasts, and strong cold brew in a bright modern space",
+        "imageUrl": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+        "address": "118 N Michigan St, Toledo, OH 43604",
+        "tags": [
+            "Brunch",
+            "Cold Brew",
+            "Trendy"
+        ]
+    },
+    {
+        "id": "caf_004",
+        "name": "Maddie & Bella Coffee",
+        "latitude": 41.6560,
+        "longitude": -83.6050,
+        "category": "cafe",
+        "vibeCheck": "Community cafe with a mission",
+        "description": "Social enterprise coffee shop supporting local youth programs with great lattes",
+        "imageUrl": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop",
+        "address": "3112 W Central Ave, Toledo, OH 43606",
+        "tags": [
+            "Lattes",
+            "Community",
+            "Local"
         ]
     },
     {
@@ -81,8 +278,9 @@
         "longitude": -83.6012,
         "category": "recreation",
         "vibeCheck": "Pick-up games & cardio runs",
-        "description": "Well-maintained outdoor courts and extensive trail system.",
+        "description": "Well-maintained outdoor courts and extensive trail system",
         "imageUrl": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop",
+        "address": "2201 Kenwood Blvd, Toledo, OH 43606",
         "tags": [
             "Outdoors",
             "Cardio",
@@ -98,6 +296,7 @@
         "vibeCheck": "Waterfront trails & skyline views",
         "description": "Urban park along Maumee River with walking trails and event space",
         "imageUrl": "https://images.unsplash.com/photo-1496545672479-7dd69bd695e5?q=80&w=800&auto=format&fit=crop",
+        "address": "1001 Front St, Toledo, OH 43605",
         "tags": [
             "Views",
             "Riverfront",
@@ -106,17 +305,66 @@
     },
     {
         "id": "rec_003",
-        "name": "Toledo Zoo",
-        "latitude": 41.6234,
-        "longitude": -83.5512,
-        "category": "entertainment",
-        "vibeCheck": "World-class exhibits",
-        "description": "Historic zoo with diverse animal collection and botanical gardens",
-        "imageUrl": "https://images.unsplash.com/photo-1534567176735-8463641bd7e4?q=80&w=800&auto=format&fit=crop",
+        "name": "Wildwood Preserve Metropark",
+        "latitude": 41.7030,
+        "longitude": -83.6482,
+        "category": "recreation",
+        "vibeCheck": "Wooded trails and a historic manor",
+        "description": "350-acre park with hiking trails, bird watching, and the Wildwood Manor House",
+        "imageUrl": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=800&auto=format&fit=crop",
+        "address": "5100 W Central Ave, Toledo, OH 43615",
         "tags": [
-            "Family Friendly",
-            "Animals",
-            "Historic"
+            "Hiking",
+            "Nature",
+            "Peaceful"
+        ]
+    },
+    {
+        "id": "rec_004",
+        "name": "Oak Openings Preserve",
+        "latitude": 41.5550,
+        "longitude": -83.8455,
+        "category": "recreation",
+        "vibeCheck": "Rare oak savanna ecosystem",
+        "description": "5,000 acres of rare oak savanna with mountain biking, horseback riding, and camping",
+        "imageUrl": "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=800&auto=format&fit=crop",
+        "address": "4139 Girdham Rd, Swanton, OH 43558",
+        "tags": [
+            "Biking",
+            "Camping",
+            "Nature"
+        ]
+    },
+    {
+        "id": "rec_005",
+        "name": "Side Cut Metropark",
+        "latitude": 41.5153,
+        "longitude": -83.6520,
+        "category": "recreation",
+        "vibeCheck": "Kayak launch & river fishing",
+        "description": "Scenic park along Maumee River with kayak access, fishing spots, and historic canal locks",
+        "imageUrl": "https://images.unsplash.com/photo-1472745942893-4b9f730c7668?q=80&w=800&auto=format&fit=crop",
+        "address": "River Rd, Maumee, OH 43537",
+        "tags": [
+            "Kayaking",
+            "Fishing",
+            "River"
+        ]
+    },
+    {
+        "id": "rec_006",
+        "name": "International Park",
+        "latitude": 41.6485,
+        "longitude": -83.5280,
+        "category": "recreation",
+        "vibeCheck": "Riverfront walks & sunset views",
+        "description": "Downtown riverfront park with scenic walking paths and picnic areas along the Maumee",
+        "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop",
+        "address": "1 International Park, Toledo, OH 43604",
+        "tags": [
+            "Sunset",
+            "Walking",
+            "Downtown"
         ]
     },
     {
@@ -128,6 +376,7 @@
         "vibeCheck": "Full-service wellness",
         "description": "Modern fitness facility with cardio equipment, weights, and aquatic center",
         "imageUrl": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
+        "address": "13415 Eckel Junction Rd, Perrysburg, OH 43551",
         "tags": [
             "Gym",
             "Swimming",
@@ -135,18 +384,387 @@
         ]
     },
     {
-        "id": "caf_001",
-        "name": "The Onyx Cafe",
-        "latitude": 41.6523,
-        "longitude": -83.5489,
-        "category": "cafe",
-        "vibeCheck": "Specialty coffee & study spot",
-        "description": "Locally roasted coffee with cozy atmosphere for remote work",
-        "imageUrl": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop",
+        "id": "fit_002",
+        "name": "CrossFit 419",
+        "latitude": 41.6420,
+        "longitude": -83.6100,
+        "category": "fitness",
+        "vibeCheck": "Intense community workouts",
+        "description": "CrossFit box with programmed WODs, Olympic lifting coaching, and a competitive community",
+        "imageUrl": "https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?q=80&w=800&auto=format&fit=crop",
+        "address": "3454 Briarfield Blvd, Maumee, OH 43537",
         "tags": [
-            "Coffee",
-            "Quiet",
-            "Work Friendly"
+            "CrossFit",
+            "Community",
+            "Intense"
+        ]
+    },
+    {
+        "id": "fit_003",
+        "name": "Anytime Fitness Sylvania",
+        "latitude": 41.7100,
+        "longitude": -83.7120,
+        "category": "fitness",
+        "vibeCheck": "24/7 gym, no excuses",
+        "description": "Open 24 hours with cardio, free weights, and personal training options",
+        "imageUrl": "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800&auto=format&fit=crop",
+        "address": "6800 W Central Ave, Sylvania, OH 43560",
+        "tags": [
+            "24 Hour",
+            "Weights",
+            "Solo"
+        ]
+    },
+    {
+        "id": "fit_004",
+        "name": "Toledo Climbing Gym",
+        "latitude": 41.6380,
+        "longitude": -83.5880,
+        "category": "fitness",
+        "vibeCheck": "Bouldering walls and top-rope routes",
+        "description": "Indoor climbing gym with bouldering, top-rope, and lead climbing plus yoga classes",
+        "imageUrl": "https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop",
+        "address": "2060 S Byrne Rd, Toledo, OH 43614",
+        "tags": [
+            "Climbing",
+            "Bouldering",
+            "Adventure"
+        ]
+    },
+    {
+        "id": "ent_001",
+        "name": "Toledo Zoo",
+        "latitude": 41.6234,
+        "longitude": -83.5512,
+        "category": "entertainment",
+        "vibeCheck": "World-class exhibits",
+        "description": "Historic zoo with diverse animal collection and botanical gardens",
+        "imageUrl": "https://images.unsplash.com/photo-1534567176735-8463641bd7e4?q=80&w=800&auto=format&fit=crop",
+        "address": "2 Hippo Way, Toledo, OH 43614",
+        "tags": [
+            "Family Friendly",
+            "Animals",
+            "Historic"
+        ]
+    },
+    {
+        "id": "ent_002",
+        "name": "Toledo Museum of Art",
+        "latitude": 41.6597,
+        "longitude": -83.5731,
+        "category": "entertainment",
+        "vibeCheck": "Free world-class art — seriously",
+        "description": "Internationally renowned gallery with free admission, featuring glass art, European paintings, and modern sculpture",
+        "imageUrl": "https://images.unsplash.com/photo-1554907984-15263bfd63bd?q=80&w=800&auto=format&fit=crop",
+        "address": "2445 Monroe St, Toledo, OH 43620",
+        "tags": [
+            "Art",
+            "Free",
+            "Glass"
+        ]
+    },
+    {
+        "id": "ent_003",
+        "name": "Imagination Station",
+        "latitude": 41.6506,
+        "longitude": -83.5332,
+        "category": "entertainment",
+        "vibeCheck": "Science center for all ages",
+        "description": "Interactive science museum with hands-on exhibits, IMAX theater, and the High Wire bike ride",
+        "imageUrl": "https://images.unsplash.com/photo-1576319155264-99536e0be1ee?q=80&w=800&auto=format&fit=crop",
+        "address": "1 Discovery Way, Toledo, OH 43604",
+        "tags": [
+            "Science",
+            "Interactive",
+            "Family"
+        ]
+    },
+    {
+        "id": "ent_004",
+        "name": "Fifth Third Field",
+        "latitude": 41.6525,
+        "longitude": -83.5329,
+        "category": "entertainment",
+        "vibeCheck": "Minor league baseball vibes",
+        "description": "Home of the Toledo Mud Hens with great sightlines, cold beers, and a fun atmosphere",
+        "imageUrl": "https://images.unsplash.com/photo-1529768167801-9173d94c2a42?q=80&w=800&auto=format&fit=crop",
+        "address": "406 Washington St, Toledo, OH 43604",
+        "tags": [
+            "Baseball",
+            "Sports",
+            "Summer"
+        ]
+    },
+    {
+        "id": "ent_005",
+        "name": "Huntington Center",
+        "latitude": 41.6497,
+        "longitude": -83.5355,
+        "category": "entertainment",
+        "vibeCheck": "Concerts & Walleye hockey",
+        "description": "10,000-seat arena hosting concerts, Toledo Walleye hockey, and major touring events",
+        "imageUrl": "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=800&auto=format&fit=crop",
+        "address": "500 Jefferson Ave, Toledo, OH 43604",
+        "tags": [
+            "Concerts",
+            "Hockey",
+            "Events"
+        ]
+    },
+    {
+        "id": "ent_006",
+        "name": "Stranahan Theater",
+        "latitude": 41.6375,
+        "longitude": -83.6140,
+        "category": "entertainment",
+        "vibeCheck": "Broadway touring shows",
+        "description": "Premier performing arts venue hosting Broadway tours, comedy shows, and live performances",
+        "imageUrl": "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?q=80&w=800&auto=format&fit=crop",
+        "address": "4645 Heatherdowns Blvd, Toledo, OH 43614",
+        "tags": [
+            "Theater",
+            "Broadway",
+            "Live"
+        ]
+    },
+    {
+        "id": "ent_007",
+        "name": "Bowling Green Speedway",
+        "latitude": 41.3839,
+        "longitude": -83.6513,
+        "category": "entertainment",
+        "vibeCheck": "Friday night racing adrenaline",
+        "description": "Local dirt track with sprint cars, late models, and Friday night racing under the lights",
+        "imageUrl": "https://images.unsplash.com/photo-1570829053985-56e661df1ca2?q=80&w=800&auto=format&fit=crop",
+        "address": "13633 S Dixie Hwy, Bowling Green, OH 43402",
+        "tags": [
+            "Racing",
+            "Motorsport",
+            "Loud"
+        ]
+    },
+    {
+        "id": "nit_001",
+        "name": "The Attic on Adams",
+        "latitude": 41.6520,
+        "longitude": -83.5378,
+        "category": "nightlife",
+        "vibeCheck": "Rooftop cocktails overlooking downtown",
+        "description": "Upscale rooftop bar with craft cocktails, skyline views, and a moody lounge atmosphere",
+        "imageUrl": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop",
+        "address": "420 Adams St, Toledo, OH 43604",
+        "tags": [
+            "Rooftop",
+            "Cocktails",
+            "Views"
+        ]
+    },
+    {
+        "id": "nit_002",
+        "name": "Ye Olde Durty Bird",
+        "latitude": 41.6530,
+        "longitude": -83.5365,
+        "category": "nightlife",
+        "vibeCheck": "No-frills dive bar energy",
+        "description": "Beloved Toledo dive bar with cheap drinks, pool tables, and a jukebox that never stops",
+        "imageUrl": "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?q=80&w=800&auto=format&fit=crop",
+        "address": "9 N Huron St, Toledo, OH 43604",
+        "tags": [
+            "Dive Bar",
+            "Pool",
+            "Cheap Drinks"
+        ]
+    },
+    {
+        "id": "nit_003",
+        "name": "Manhattans Pub & Cheer",
+        "latitude": 41.6535,
+        "longitude": -83.5390,
+        "category": "nightlife",
+        "vibeCheck": "Craft cocktails & upscale pub",
+        "description": "Speakeasy-inspired cocktail bar with handcrafted drinks and a sophisticated pub menu",
+        "imageUrl": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=800&auto=format&fit=crop",
+        "address": "601 Monroe St, Toledo, OH 43604",
+        "tags": [
+            "Speakeasy",
+            "Craft Cocktails",
+            "Upscale"
+        ]
+    },
+    {
+        "id": "nit_004",
+        "name": "The Ottawa Tavern",
+        "latitude": 41.6655,
+        "longitude": -83.5735,
+        "category": "nightlife",
+        "vibeCheck": "Live music & cold pints",
+        "description": "Live music venue and bar featuring local and touring bands across rock, indie, and punk",
+        "imageUrl": "https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?q=80&w=800&auto=format&fit=crop",
+        "address": "1817 Adams St, Toledo, OH 43604",
+        "tags": [
+            "Live Music",
+            "Indie",
+            "Local"
+        ]
+    },
+    {
+        "id": "nit_005",
+        "name": "Wesley's Bar & Grill",
+        "latitude": 41.6640,
+        "longitude": -83.5730,
+        "category": "nightlife",
+        "vibeCheck": "Karaoke nights & wing specials",
+        "description": "Neighborhood sports bar with karaoke, wing nights, and a lively crowd on weekends",
+        "imageUrl": "https://images.unsplash.com/photo-1575037614876-c38a4e44f1c8?q=80&w=800&auto=format&fit=crop",
+        "address": "1610 Adams St, Toledo, OH 43604",
+        "tags": [
+            "Karaoke",
+            "Sports Bar",
+            "Wings"
+        ]
+    },
+    {
+        "id": "nit_006",
+        "name": "Fleetwood's Tap Room",
+        "latitude": 41.6515,
+        "longitude": -83.5350,
+        "category": "nightlife",
+        "vibeCheck": "Craft beer & chill vibes",
+        "description": "Cozy craft beer bar with rotating local taps, board games, and a no-TV policy",
+        "imageUrl": "https://images.unsplash.com/photo-1575116464504-9e7652248a25?q=80&w=800&auto=format&fit=crop",
+        "address": "211 N Superior St, Toledo, OH 43604",
+        "tags": [
+            "Craft Beer",
+            "Board Games",
+            "Chill"
+        ]
+    },
+    {
+        "id": "nit_007",
+        "name": "Registry Bistro",
+        "latitude": 41.6508,
+        "longitude": -83.5345,
+        "category": "nightlife",
+        "vibeCheck": "Wine bar meets fine dining",
+        "description": "Elegant bistro and wine bar with seasonal menus, curated wine list, and live jazz on weekends",
+        "imageUrl": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800&auto=format&fit=crop",
+        "address": "144 N Superior St, Toledo, OH 43604",
+        "tags": [
+            "Wine Bar",
+            "Jazz",
+            "Elegant"
+        ]
+    },
+    {
+        "id": "nit_008",
+        "name": "Patio 105",
+        "latitude": 41.6520,
+        "longitude": -83.5410,
+        "category": "nightlife",
+        "vibeCheck": "Summer patio season headquarters",
+        "description": "Open-air bar with a massive patio, fire pits, frozen drinks, and weekend DJs",
+        "imageUrl": "https://images.unsplash.com/photo-1530062845289-9109b2c9c868?q=80&w=800&auto=format&fit=crop",
+        "address": "105 Louisiana Ave, Toledo, OH 43604",
+        "tags": [
+            "Patio",
+            "DJs",
+            "Summer"
+        ]
+    },
+    {
+        "id": "din_014",
+        "name": "Kengo Sushi & Yakitori",
+        "latitude": 41.6690,
+        "longitude": -83.6210,
+        "category": "dining",
+        "vibeCheck": "Yakitori skewers & sake flights",
+        "description": "Intimate Japanese spot specializing in charcoal-grilled yakitori and omakase sushi",
+        "imageUrl": "https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=800&auto=format&fit=crop",
+        "address": "4465 Monroe St, Toledo, OH 43613",
+        "tags": [
+            "Yakitori",
+            "Sake",
+            "Intimate"
+        ]
+    },
+    {
+        "id": "din_015",
+        "name": "Brim House",
+        "latitude": 41.6630,
+        "longitude": -83.5660,
+        "category": "dining",
+        "vibeCheck": "Farm-to-table brunch heaven",
+        "description": "Seasonal farm-to-table restaurant with creative brunch cocktails and locally sourced ingredients",
+        "imageUrl": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop",
+        "address": "1500 Adams St, Toledo, OH 43604",
+        "tags": [
+            "Farm to Table",
+            "Brunch",
+            "Local"
+        ]
+    },
+    {
+        "id": "din_016",
+        "name": "Bangkok Kitchen",
+        "latitude": 41.6710,
+        "longitude": -83.5970,
+        "category": "dining",
+        "vibeCheck": "Authentic Thai, serious spice levels",
+        "description": "Family-run Thai restaurant with curries, pad thai, and dishes that deliver real heat",
+        "imageUrl": "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?q=80&w=800&auto=format&fit=crop",
+        "address": "3012 W Sylvania Ave, Toledo, OH 43613",
+        "tags": [
+            "Thai",
+            "Spicy",
+            "Authentic"
+        ]
+    },
+    {
+        "id": "ent_008",
+        "name": "National Museum of the Great Lakes",
+        "latitude": 41.6553,
+        "longitude": -83.5260,
+        "category": "entertainment",
+        "vibeCheck": "Maritime history & ship tours",
+        "description": "Museum covering Great Lakes maritime history with the Col. James M. Schoonmaker ship tour",
+        "imageUrl": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop",
+        "address": "1701 Front St, Toledo, OH 43605",
+        "tags": [
+            "Museum",
+            "Ships",
+            "History"
+        ]
+    },
+    {
+        "id": "fit_005",
+        "name": "Jab CrossFit & Boxing",
+        "latitude": 41.6450,
+        "longitude": -83.5550,
+        "category": "fitness",
+        "vibeCheck": "Hit things, build strength",
+        "description": "Boxing and CrossFit gym with heavy bags, ring sparring, and high-intensity classes",
+        "imageUrl": "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=800&auto=format&fit=crop",
+        "address": "1234 S Byrne Rd, Toledo, OH 43614",
+        "tags": [
+            "Boxing",
+            "CrossFit",
+            "Intense"
+        ]
+    },
+    {
+        "id": "rec_007",
+        "name": "Swan Creek Preserve",
+        "latitude": 41.6080,
+        "longitude": -83.5950,
+        "category": "recreation",
+        "vibeCheck": "Serene creek walks and bird watching",
+        "description": "Peaceful nature preserve with creek-side trails, bird blinds, and wildflower meadows",
+        "imageUrl": "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=800&auto=format&fit=crop",
+        "address": "4659 Airport Hwy, Toledo, OH 43614",
+        "tags": [
+            "Birds",
+            "Peaceful",
+            "Creek"
         ]
     }
 ]

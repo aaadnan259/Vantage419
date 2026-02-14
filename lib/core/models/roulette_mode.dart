@@ -34,6 +34,17 @@ class RouletteMode {
       icon: Icons.directions_run_rounded,
     ),
     RouletteMode(
+      name: 'going_out',
+      displayName: 'Going Out',
+      categories: [
+        SpotCategory.nightlife,
+        SpotCategory.entertainment,
+        SpotCategory.cafe,
+      ],
+      color: Color(0xFFE040FB),
+      icon: Icons.nightlife_rounded,
+    ),
+    RouletteMode(
       name: 'surprise',
       displayName: 'Surprise Me',
       categories: SpotCategory.values,

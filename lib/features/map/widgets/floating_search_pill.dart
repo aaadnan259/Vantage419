@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vantage419/core/utils/extensions.dart';
 
 /// Floating action pill — spin-only button at the bottom center of the map.
@@ -27,7 +28,10 @@ class FloatingSearchPill extends StatelessWidget {
         color: context.colors.accentDark,
         borderRadius: BorderRadius.circular(28),
         child: InkWell(
-          onTap: onTapDice,
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            onTapDice();
+          },
           borderRadius: BorderRadius.circular(28),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),

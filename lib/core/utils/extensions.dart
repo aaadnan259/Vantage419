@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:vantage419/core/theme/palette.dart';
 
 /// Convenience extensions.
@@ -30,4 +31,17 @@ extension ColorX on Color {
         .withLightness((hsl.lightness + amount).clamp(0.0, 1.0))
         .toColor();
   }
+}
+
+/// Haversine distance between two points, returned in miles.
+double distanceMiles(LatLng from, LatLng to) {
+  const distance = Distance();
+  final meters = distance.as(LengthUnit.Meter, from, to);
+  return meters / 1609.344;
+}
+
+/// Format distance for display: "0.3 mi" or "12.1 mi".
+String formatDistance(double miles) {
+  if (miles < 10) return '${miles.toStringAsFixed(1)} mi';
+  return '${miles.round()} mi';
 }

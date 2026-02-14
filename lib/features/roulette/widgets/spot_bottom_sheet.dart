@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vantage419/core/models/spot_category.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
@@ -7,10 +8,16 @@ import 'package:vantage419/core/utils/extensions.dart';
 
 /// Draggable bottom sheet showing selected spot details.
 class SpotBottomSheet extends StatelessWidget {
-  const SpotBottomSheet({super.key, required this.spot, required this.onClose});
+  const SpotBottomSheet({
+    super.key,
+    required this.spot,
+    required this.onClose,
+    this.userLocation,
+  });
 
   final ToledoSpot spot;
   final VoidCallback onClose;
+  final LatLng? userLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +67,13 @@ class SpotBottomSheet extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           _CategoryBadge(category: spot.category),
+                          if (userLocation != null) ...[
+                            const SizedBox(height: 4),
+                            _DistanceBadge(
+                              spot: spot,
+                              userLocation: userLocation!,
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -238,6 +252,40 @@ class _CategoryBadge extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DistanceBadge extends StatelessWidget {
+  const _DistanceBadge({required this.spot, required this.userLocation});
+
+  final ToledoSpot spot;
+  final LatLng userLocation;
+
+  @override
+  Widget build(BuildContext context) {
+    final spotLatLng = LatLng(spot.latitude, spot.longitude);
+    final miles = distanceMiles(userLocation, spotLatLng);
+    final display = formatDistance(miles);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.directions_walk_rounded,
+          size: 14,
+          color: context.colors.textSecondary,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          display,
+          style: TextStyle(
+            color: context.colors.textSecondary,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/utils/extensions.dart';
 
@@ -48,6 +51,7 @@ class _ShuffleDeckOverlayState extends State<ShuffleDeckOverlay>
     for (var i = 0; i < _displayStack.length - 1; i++) {
       if (!mounted) return;
       await Future.delayed(const Duration(milliseconds: 200));
+      unawaited(HapticFeedback.selectionClick());
       setState(() {
         _currentIndex = i + 1;
       });
@@ -55,6 +59,7 @@ class _ShuffleDeckOverlayState extends State<ShuffleDeckOverlay>
 
     // Reveal winner
     if (mounted) {
+      unawaited(HapticFeedback.heavyImpact());
       setState(() {
         _showWinner = true;
       });

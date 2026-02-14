@@ -26,6 +26,11 @@ enum SpotCategory {
     displayName: 'Entertainment',
     icon: Icons.theater_comedy_rounded,
     color: Color(0xFFFFE66D),
+  ),
+  nightlife(
+    displayName: 'Nightlife',
+    icon: Icons.local_bar_rounded,
+    color: Color(0xFFE040FB),
   );
 
   const SpotCategory({
