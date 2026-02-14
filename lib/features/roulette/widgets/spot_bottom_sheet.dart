@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vantage419/core/models/spot_category.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/services/navigation_service.dart';
 import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/features/favorites/favorites_provider.dart';
 
 /// Draggable bottom sheet showing selected spot details.
-class SpotBottomSheet extends StatelessWidget {
+class SpotBottomSheet extends ConsumerWidget {
   const SpotBottomSheet({
     super.key,
     required this.spot,
@@ -20,7 +22,8 @@ class SpotBottomSheet extends StatelessWidget {
   final LatLng? userLocation;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFav = ref.watch(favoritesProvider).contains(spot.id);
     return DraggableScrollableSheet(
       initialChildSize: 0.40,
       minChildSize: 0.15,
@@ -76,6 +79,18 @@ class SpotBottomSheet extends StatelessWidget {
                           ],
                         ],
                       ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Favorite toggle
+                    _CircleIconButton(
+                      icon: isFav
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      color: isFav
+                          ? context.colors.accent
+                          : context.colors.textMuted,
+                      onTap: () =>
+                          ref.read(favoritesProvider.notifier).toggle(spot.id),
                     ),
                     const SizedBox(width: 8),
                     // S6.2: Share button
@@ -395,6 +410,37 @@ class _ShareButton extends StatelessWidget {
           size: 20,
           color: context.colors.textPrimary,
         ),
+      ),
+    );
+  }
+}
+
+/// Circular icon button used for the favorite toggle.
+class _CircleIconButton extends StatelessWidget {
+  const _CircleIconButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: IconButton.filled(
+        onPressed: onTap,
+        style: IconButton.styleFrom(
+          backgroundColor: context.colors.surfaceLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        icon: Icon(icon, size: 20, color: color),
       ),
     );
   }

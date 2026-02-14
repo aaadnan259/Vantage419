@@ -19,6 +19,8 @@ import 'package:vantage419/features/roulette/providers/roulette_state_provider.d
 import 'package:vantage419/features/roulette/widgets/category_selector.dart';
 import 'package:vantage419/features/roulette/widgets/spot_bottom_sheet.dart';
 import 'package:vantage419/features/settings/widgets/theme_toggle.dart';
+import 'package:vantage419/features/favorites/favorites_sheet.dart';
+import 'package:vantage419/features/history/history_sheet.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -191,6 +193,27 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 child: const ThemeToggle(),
               ),
 
+              // Favorites + History buttons — top left
+              Positioned(
+                top:
+                    MediaQuery.of(context).padding.top +
+                    AppConstants.topBarPadding,
+                left: 16,
+                child: Row(
+                  children: [
+                    _MapIconButton(
+                      icon: Icons.favorite_rounded,
+                      onTap: () => FavoritesSheet.show(context, allSpots),
+                    ),
+                    const SizedBox(width: 8),
+                    _MapIconButton(
+                      icon: Icons.history_rounded,
+                      onTap: () => HistorySheet.show(context, allSpots),
+                    ),
+                  ],
+                ),
+              ),
+
               // S4.5.3.3: Floating Search Pill (Replaces SpinButton)
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
@@ -343,5 +366,36 @@ class _MapScreenState extends ConsumerState<MapScreen>
       _showOverlay = false;
     });
     // This reveals the bottom sheet which is already active due to notifier state
+  }
+}
+
+/// Glassmorphism icon button for map overlay controls.
+class _MapIconButton extends StatelessWidget {
+  const _MapIconButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: context.colors.surface.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(icon, size: 20, color: context.colors.textPrimary),
+      ),
+    );
   }
 }
