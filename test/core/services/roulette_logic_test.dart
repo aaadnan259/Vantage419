@@ -41,7 +41,7 @@ void main() {
           .where((s) => s.category == SpotCategory.dining)
           .toList();
 
-      final result = service.spin(spots: spots, pool: diningPool, visits: []);
+      final result = service.spin(pool: diningPool, visits: []);
 
       expect(result, isNotNull);
       expect(result!.category, equals(SpotCategory.dining));
@@ -59,13 +59,13 @@ void main() {
     ];
 
     // If we only have spot1 in pool, it MUST return spot1 even if visited
-    final result = service.spin(spots: spots, pool: [spot1], visits: visited);
+    final result = service.spin(pool: [spot1], visits: visited);
 
     expect(result, equals(spot1));
 
     // If we have both, it should favor spot2, but spot1 is still possible.
     // We just verify it returns *one* of them.
-    final resultBoth = service.spin(spots: spots, pool: spots, visits: visited);
+    final resultBoth = service.spin(pool: spots, visits: visited);
     expect(spots.contains(resultBoth), isTrue);
   });
 }

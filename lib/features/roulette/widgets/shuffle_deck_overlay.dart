@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/utils/extensions.dart';
 
-/// S4.5.4: Overlay that displays a "Tinder-style" shuffle animation.
-/// Shows a stack of [candidates] flying off-screen, revealing the [winner].
+/// Tinder-style shuffle overlay with swipe-out physics,
+/// stacking depth, and a pulsing winner glow on reveal.
 class ShuffleDeckOverlay extends StatefulWidget {
   const ShuffleDeckOverlay({
     super.key,
@@ -20,7 +21,7 @@ class ShuffleDeckOverlay extends StatefulWidget {
 
   final List<ToledoSpot> candidates;
   final ToledoSpot winner;
-  final VoidCallback onComplete; // Called when animation finishes
+  final VoidCallback onComplete;
   final VoidCallback onRespin;
   final VoidCallback onLetsGo;
 
@@ -29,51 +30,126 @@ class ShuffleDeckOverlay extends StatefulWidget {
 }
 
 class _ShuffleDeckOverlayState extends State<ShuffleDeckOverlay>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late List<ToledoSpot> _displayStack;
   int _currentIndex = 0;
   bool _showWinner = false;
 
+  // Per-card swipe animation
+  late AnimationController _swipeController;
+  late Animation<Offset> _swipeAnimation;
+  late Animation<double> _rotationAnimation;
+
+  // Winner entrance
+  late AnimationController _winnerController;
+  late Animation<double> _winnerScale;
+  late Animation<double> _winnerOpacity;
+
+  // Winner glow pulse
+  late AnimationController _glowController;
+
   @override
   void initState() {
     super.initState();
-    // Create a display stack: Candidates + Winner at the end
-    // Limit candidates to 5 max for brevity
+
     final limitedCandidates = widget.candidates.take(5).toList();
-    // Ensure winner is not in limitedCandidates to avoid duplicates if possible, or just append
     _displayStack = [...limitedCandidates, widget.winner];
 
+    _swipeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+    );
+
+    _winnerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _winnerScale = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _winnerController, curve: Curves.elasticOut),
+    );
+    _winnerOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _winnerController,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
+    );
+
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _setupSwipeDirection();
     _startShuffle();
   }
 
+  /// Randomize swipe direction (left or right) for each card
+  void _setupSwipeDirection() {
+    final goLeft = math.Random().nextBool();
+    final dx = goLeft ? -1.5 : 1.5;
+    final rotation = goLeft ? -0.15 : 0.15;
+
+    _swipeAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(dx, -0.2))
+        .animate(
+          CurvedAnimation(parent: _swipeController, curve: Curves.easeInBack),
+        );
+
+    _rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: rotation,
+    ).animate(CurvedAnimation(parent: _swipeController, curve: Curves.easeIn));
+  }
+
   Future<void> _startShuffle() async {
-    // Animate through the stack
+    // Brief pause before starting
+    await Future.delayed(const Duration(milliseconds: 300));
+
     for (var i = 0; i < _displayStack.length - 1; i++) {
       if (!mounted) return;
-      await Future.delayed(const Duration(milliseconds: 200));
+
+      // Randomize swipe direction each card
+      _setupSwipeDirection();
+
       unawaited(HapticFeedback.selectionClick());
+
+      // Animate the current card swiping away
+      _swipeController.reset();
+      await _swipeController.forward();
+
+      if (!mounted) return;
       setState(() {
         _currentIndex = i + 1;
       });
+
+      // Short pause between cards
+      await Future.delayed(const Duration(milliseconds: 80));
     }
 
-    // Reveal winner
+    // Reveal winner with scale-up + glow
     if (mounted) {
       unawaited(HapticFeedback.heavyImpact());
-      setState(() {
-        _showWinner = true;
-      });
+      setState(() => _showWinner = true);
+      unawaited(_winnerController.forward());
+      unawaited(_glowController.repeat(reverse: true));
       widget.onComplete();
     }
   }
 
   @override
+  void dispose() {
+    _swipeController.dispose();
+    _winnerController.dispose();
+    _glowController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: Colors.black.withValues(alpha: 0.5), // Dim background
+      color: Colors.black.withValues(alpha: 0.6),
       child: Center(
         child: _showWinner
-            ? _buildWinnerCard(widget.winner)
+            ? _buildWinnerReveal(widget.winner)
             : _buildShuffleStack(),
       ),
     );
@@ -82,46 +158,125 @@ class _ShuffleDeckOverlayState extends State<ShuffleDeckOverlay>
   Widget _buildShuffleStack() {
     if (_currentIndex >= _displayStack.length) return const SizedBox.shrink();
 
-    // Show top card
-    final spot = _displayStack[_currentIndex];
-    return _Card(spot: spot, isWinner: false);
+    return SizedBox(
+      width: 300,
+      height: 420,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Background cards (stacking depth effect)
+          for (
+            var i = math.min(_currentIndex + 2, _displayStack.length - 1);
+            i > _currentIndex;
+            i--
+          )
+            _buildStackedCard(i),
+
+          // Top card – animated swipe
+          AnimatedBuilder(
+            animation: _swipeController,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(
+                  _swipeAnimation.value.dx * 300,
+                  _swipeAnimation.value.dy * 100,
+                ),
+                child: Transform.rotate(
+                  angle: _rotationAnimation.value,
+                  child: Opacity(
+                    opacity: (1.0 - _swipeController.value).clamp(0.3, 1.0),
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: _Card(spot: _displayStack[_currentIndex], isWinner: false),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildWinnerCard(ToledoSpot spot) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+  /// Cards sitting behind the top card with scale + offset
+  Widget _buildStackedCard(int index) {
+    final depth = index - _currentIndex;
+    final scale = 1.0 - (depth * 0.05);
+    final yOffset = depth * 8.0;
+
+    return Transform.translate(
+      offset: Offset(0, yOffset),
+      child: Transform.scale(
+        scale: scale,
+        child: Opacity(
+          opacity: (1.0 - depth * 0.2).clamp(0.4, 1.0),
+          child: _Card(spot: _displayStack[index], isWinner: false),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWinnerReveal(ToledoSpot spot) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_winnerController, _glowController]),
+      builder: (context, child) {
+        return Opacity(
+          opacity: _winnerOpacity.value,
+          child: Transform.scale(
+            scale: _winnerScale.value,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Winner card with glow
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.colors.accent.withValues(
+                          alpha: 0.3 + (_glowController.value * 0.3),
+                        ),
+                        blurRadius: 20 + (_glowController.value * 20),
+                        spreadRadius: _glowController.value * 8,
+                      ),
+                    ],
+                  ),
+                  child: _Card(spot: spot, isWinner: true),
+                ),
+                const SizedBox(height: 32),
+                _buildActionButtons(),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Transform.scale(scale: 1.1, child: _Card(spot: spot, isWinner: true)),
-        const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: widget.onRespin,
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                textStyle: context.textTheme.labelLarge,
-              ),
-              child: const Text('RESPIN'),
+        TextButton(
+          onPressed: widget.onRespin,
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            textStyle: context.textTheme.labelLarge,
+          ),
+          child: const Text('RESPIN'),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton(
+          onPressed: widget.onLetsGo,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: context.colors.accentDark,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            const SizedBox(width: 16),
-            ElevatedButton(
-              onPressed: widget.onLetsGo,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.accentDark,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                textStyle: context.textTheme.labelLarge,
-              ),
-              child: const Text("LET'S GO"),
-            ),
-          ],
+            textStyle: context.textTheme.labelLarge,
+          ),
+          child: const Text("LET'S GO"),
         ),
       ],
     );

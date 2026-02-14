@@ -64,63 +64,61 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: context.colors.primaryBackground,
       body: Center(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            // Use min of fadeIn and fadeOut so it fades in then out
-            final opacity = _fadeIn.value * _fadeOut.value;
-            return Opacity(opacity: opacity, child: child);
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // App icon
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      context.colors.accentLight,
-                      context.colors.accent,
-                      context.colors.accentDark,
+        child: FadeTransition(
+          opacity: _fadeIn,
+          child: FadeTransition(
+            opacity: _fadeOut,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // App icon
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        context.colors.accentLight,
+                        context.colors.accent,
+                        context.colors.accentDark,
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.colors.accent.withValues(alpha: 0.4),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
                     ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: context.colors.accent.withValues(alpha: 0.4),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+                  child: const Icon(
+                    Icons.explore_rounded,
+                    size: 40,
+                    color: Colors.white,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.explore_rounded,
-                  size: 40,
-                  color: Colors.white,
+                const SizedBox(height: 24),
+                // App name
+                Text(
+                  'Vantage 419',
+                  style: context.textTheme.displayLarge?.copyWith(
+                    color: context.colors.textPrimary,
+                    letterSpacing: -1,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              // App name
-              Text(
-                'Vantage 419',
-                style: context.textTheme.displayLarge?.copyWith(
-                  color: context.colors.textPrimary,
-                  letterSpacing: -1,
+                const SizedBox(height: 8),
+                // Tagline
+                Text(
+                  'Discover Toledo, One Spin at a Time',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              // Tagline
-              Text(
-                'Discover Toledo, One Spin at a Time',
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: context.colors.textSecondary,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

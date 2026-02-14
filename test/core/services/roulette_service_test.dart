@@ -36,12 +36,12 @@ void main() {
     ];
 
     test('Returns null if pool is empty', () {
-      final result = service.spin(spots: spots, pool: [], visits: []);
+      final result = service.spin(pool: [], visits: []);
       expect(result, isNull);
     });
 
     test('Returns a spot from the pool', () {
-      final result = service.spin(spots: spots, pool: spots, visits: []);
+      final result = service.spin(pool: spots, visits: []);
       expect(result, isNotNull);
       expect(spots.contains(result), isTrue);
     });
@@ -49,7 +49,6 @@ void main() {
     test('Weighted selection logic runs without error', () {
       // Statistical testing is flaky, so we just ensure it runs
       final result = service.spin(
-        spots: spots,
         pool: spots,
         visits: [UserVisit(spotId: '1', visitedAt: DateTime.now())],
       );

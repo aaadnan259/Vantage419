@@ -113,7 +113,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
       await Future.delayed(AppConstants.spinDuration);
 
       final result = _service.spin(
-        spots: spots,
         pool: spots
             .where((s) => state.mode.categories.contains(s.category))
             .toList(),

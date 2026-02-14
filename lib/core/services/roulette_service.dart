@@ -15,7 +15,6 @@ class RouletteService {
   /// Spots not visited in [AppConstants.visitedWindowDays] get
   /// [AppConstants.unvisitedWeight]× probability.
   ToledoSpot? spin({
-    required List<ToledoSpot> spots,
     required List<ToledoSpot> pool, // Pre-filtered by category
     required List<UserVisit> visits,
   }) {

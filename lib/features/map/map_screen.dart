@@ -33,6 +33,7 @@ class MapScreen extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapScreen>
     with TickerProviderStateMixin {
+  AnimationController? _cameraAnimController;
   @override
   void initState() {
     super.initState();
@@ -240,6 +241,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
   /// S6.6: Animated camera fly-to instead of instant jump.
   void _animateCamera(MapController controller, LatLng target, double zoom) {
+    // Cancel any in-flight camera animation to avoid leaks
+    _cameraAnimController?.dispose();
+
     final cam = controller.camera;
     final startLat = cam.center.latitude;
     final startLng = cam.center.longitude;
@@ -249,6 +253,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
       vsync: this,
       duration: AppConstants.cameraDuration,
     );
+    _cameraAnimController = animController;
+
     final curve = CurvedAnimation(
       parent: animController,
       curve: Curves.easeInOutCubic,
@@ -267,6 +273,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
     animController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         animController.dispose();
+        if (_cameraAnimController == animController) {
+          _cameraAnimController = null;
+        }
       }
     });
     animController.forward();
