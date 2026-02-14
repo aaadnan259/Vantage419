@@ -21,6 +21,7 @@ import 'package:vantage419/features/roulette/widgets/spot_bottom_sheet.dart';
 import 'package:vantage419/features/settings/widgets/theme_toggle.dart';
 import 'package:vantage419/features/favorites/favorites_sheet.dart';
 import 'package:vantage419/features/history/history_sheet.dart';
+import 'package:vantage419/features/profile/profile_sheet.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -209,6 +210,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     _MapIconButton(
                       icon: Icons.history_rounded,
                       onTap: () => HistorySheet.show(context, allSpots),
+                    ),
+                    const SizedBox(width: 8),
+                    _MapIconButton(
+                      icon: Icons.bar_chart_rounded,
+                      onTap: () => ProfileSheet.show(context),
                     ),
                   ],
                 ),

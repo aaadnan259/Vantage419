@@ -3,13 +3,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vantage419/core/theme/vantage_theme.dart';
 import 'package:vantage419/features/map/widgets/floating_search_pill.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vantage419/features/profile/gamification_provider.dart';
+
 void main() {
   group('FloatingSearchPill', () {
     Widget buildTestWidget({required VoidCallback onTapDice}) {
-      return MaterialApp(
-        theme: VantageTheme.dark,
-        home: Scaffold(
-          body: Center(child: FloatingSearchPill(onTapDice: onTapDice)),
+      return ProviderScope(
+        overrides: [
+          gamificationProvider.overrideWith(() => FakeGamificationNotifier(0)),
+        ],
+        child: MaterialApp(
+          theme: VantageTheme.dark,
+          home: Scaffold(
+            body: Center(child: FloatingSearchPill(onTapDice: onTapDice)),
+          ),
         ),
       );
     }
@@ -37,4 +45,14 @@ void main() {
       expect(find.text('Where to?'), findsNothing);
     });
   });
+}
+
+class FakeGamificationNotifier extends GamificationNotifier {
+  final int initialStreak;
+  FakeGamificationNotifier(this.initialStreak);
+
+  @override
+  GamificationState build() {
+    return GamificationState(streak: initialStreak);
+  }
 }

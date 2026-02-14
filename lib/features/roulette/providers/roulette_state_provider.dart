@@ -6,6 +6,7 @@ import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/services/roulette_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/utils/constants.dart';
+import 'package:vantage419/features/profile/gamification_provider.dart';
 
 /// Pure logic service provider.
 final rouletteServiceProvider = Provider<RouletteService>((ref) {
@@ -119,6 +120,9 @@ class RouletteNotifier extends Notifier<RouletteState> {
       if (result != null) {
         analytics.logSpinComplete(result.id, result.name);
         final updatedVisits = await repository.logVisit(result.id, visits);
+
+        // Update gamification streak
+        ref.read(gamificationProvider.notifier).recordSpin();
 
         state = state.copyWith(
           isSpinning: false,
