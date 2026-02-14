@@ -1,201 +1,162 @@
-# Vantage 419: The Project Bible
+# Vantage 419: The Definitive Project Bible
 
-**Version:** 1.0.0
-**Date:** February 11, 2026
-**purpose:** This document contains ALL information required to recreate the core of Vantage 419 from scratch, including architecture, logic, data, and design tokens.
+**Version:** 1.0.0-beta
+**Date:** February 12, 2026
+**Purpose:** A comprehensive encyclopedia of the Vantage 419 project, documenting its history, architecture, and features to verify the current state and enable full reproduction.
 
 ---
 
-## 1. Project Identity
+## 1. Genesis & Identity
 
 **Name:** Vantage 419
-**Tagline:** Discover Toledo, One Spin at a Time.
-**Mission:** Gamify local discovery in Toledo, Ohio, by using a weighted random selection engine to combat decision paralysis.
+**Mission:** Break the routine of local discovery in Toledo, Ohio, through gamified, weighted random selection.
+**Core Value:** "Don't decide. Spin."
+
 **Key Features:**
-*   **Roulette**: Spin a wheel to find a spot.
-*   **Weighted Logic**: Unvisited spots are 3x more likely to be picked.
-*   **Moods**: Hungry, Active, Surprise Me.
-*   **Privacy**: Local-first connectivity.
+*   **Roulette**: Tinder-style card shuffle animation to pick a spot.
+*   **Weighted Logic**: Unvisited spots have 3x higher probability.
+*   **OLED-First**: Deep dark mode (#0A0E14) for battery saving and aesthetic.
+*   **Local-First**: No account required, all data static + local prefs.
 
 ---
 
-## 2. Technical Foundation
+## 2. Architecture & File Structure
 
-### 2.1 Dependencies (`pubspec.yaml`)
-*   **SDK**: Flutter (`>=3.10.8`), Dart 3.
-*   **Core**:
-    *   `flutter_riverpod: ^2.6.1` (State Management)
-    *   `shared_preferences: ^2.3.4` (Persistence)
-    *   `geolocator: ^13.0.2` (Location)
-*   **UI/Assets**:
-    *   `flutter_map: ^8.2.2` (OSM Maps)
-    *   `latlong2: ^0.9.1` (Coordinates)
-    *   `google_fonts: ^6.2.1` (Space Grotesk / Inter)
-    *   `cupertino_icons: ^1.0.8`
-*   **Utils**:
-    *   `url_launcher: ^6.3.1` (Nav intents)
-    *   `share_plus: ^10.1.4` (Sharing)
+The project follows a **Feature-First Clean Architecture**.
 
-### 2.2 Configuration (`lib/core/utils/constants.dart`)
-```dart
-abstract final class AppConstants {
-  static const toledoCenter = LatLng(41.6528, -83.5379);
-  static const defaultZoom = 13.0;
-  static const spotZoom = 15.5;
-  static const darkTileUrl = 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png';
-  static const spinDuration = Duration(milliseconds: 1000);
-  static const cameraDuration = Duration(milliseconds: 1200);
-  static const unvisitedWeight = 3; // 3x probability for new spots
-  static const visitedWindowDays = 30; // Reset weight after 30 days
-}
+### 2.1 File Tree (Key Files)
+```
+lib/
+├── core/
+│   ├── data_sources/
+│   │   └── spot_local_data_source.dart  # Handles JSON loading + Prefs
+│   ├── models/
+│   │   ├── toledo_spot.dart             # The Spot Entity (immutable)
+│   │   ├── user_visit.dart              # History Record
+│   │   └── spot_category.dart           # Enum (dining, nightlife, etc.)
+│   ├── repositories/
+│   │   ├── spot_repository.dart         # Interface
+│   │   └── spot_repository_impl.dart    # Implementation (Standardized Errors)
+│   ├── services/
+│   │   ├── analytics_service.dart       # Usage tracking
+│   │   └── performance_service.dart     # Trace monitoring
+│   ├── theme/
+│   │   ├── palette.dart                 # VantagePalette (ThemeExtension)
+│   │   └── typography.dart              # Space Grotesk / Inter
+│   └── utils/
+│       └── constants.dart               # Config (URLs, LatLng, Durations)
+├── features/
+│   ├── map/
+│   │   ├── map_screen.dart              # Main UI (FlutterMap)
+│   │   └── widgets/
+│   │       ├── floating_search_pill.dart # Primary Action Button
+│   │       ├── category_selector.dart    # Filter Bar
+│   │       └── user_location_marker.dart # "You are here"
+│   ├── roulette/
+│   │   ├── logic/
+│   │   │   └── roulette_service.dart     # The Weighted Algorithm
+│   │   └── widgets/
+│   │       └── shuffle_deck_overlay.dart # The Animation (Stack of Cards)
+│   └── splash/
+│       └── splash_screen.dart            # Branded Entry
+└── main.dart                             # App Entry, Providers, Routes
 ```
 
----
-
-## 3. The Design System (Theming)
-
-The app uses a custom `ThemeExtension` to support semantic coloring across Light and Dark modes.
-
-### 3.1 `VantagePalette` Source (`lib/core/theme/palette.dart`)
-```dart
-class VantagePalette extends ThemeExtension<VantagePalette> {
-  // ... (Constructor omitted for brevity)
-
-  // DARK MODE (OLED Optimized)
-  static const dark = VantagePalette(
-    primaryBackground: Color(0xFF0A0E14), // Deep Blue/Black
-    surface: Color(0xFF1A1F2E),
-    accent: Color(0xFF0D7ABF), // Toyota Blue
-    textPrimary: Color(0xFFE6E6E6),
-    // ...
-  );
-
-  // LIGHT MODE (High Contrast)
-  static const light = VantagePalette(
-    primaryBackground: Color(0xFFF8F9FA), // Off-white
-    surface: Color(0xFFFFFFFF),
-    accent: Color(0xFF0D7ABF),
-    textPrimary: Color(0xFF1A1F2E),
-    // ...
-  );
-}
-```
-
-### 3.2 Typography
-*   **Headings**: `Space Grotesk` (Geometric, modern).
-*   **Body**: `Inter` (Clean, readable).
+### 2.2 Tech Stack
+*   **Flutter**: ^3.10.8
+*   **Riverpod**: 2.6.1 (State Management)
+*   **Flutter Map**: 8.2.2 (OpenStreetMap/CartoDB)
+*   **CachedNetworkImage**: 3.4.1 (Image Caching)
+*   **Shared Preferences**: 2.3.4 (Persistence)
 
 ---
 
-## 4. The Brain: Core Logic
+## 3. The Chronicles (Version History)
 
-### 4.1 Data Model (`ToledoSpot`)
-```dart
-class ToledoSpot {
-  final String id;          // e.g. "din_001"
-  final String name;        // e.g. "Kato Ramen"
-  final double latitude;
-  final double longitude;
-  final SpotCategory category; // dining, fitness, etc.
-  final String vibeCheck;   // Short caption
-  final String description; // Full details
-}
-```
+### Sprint 0: Pre-Flight (Baseline)
+*   **Established**: Project structure, linting rules, and CI environment.
+*   **Result**: 0 lint errors, 17/17 passing tests baseline.
 
-### 4.2 Roulette Algorithm (`RouletteService.dart`)
-The heart of the app.
-```dart
-ToledoSpot? spin({
-  required List<ToledoSpot> spots,
-  required List<SpotCategory> categories, // From active mode
-  required List<UserVisit> visits,
-}) {
-  // 1. Filter spots by category
-  final pool = spots.where((s) => categories.contains(s.category)).toList();
-  if (pool.isEmpty) return null;
+### Sprint 1: Critical Blockers
+*   **Fixes**: Solved `LocationPermission` loops on Android 14.
+*   **Stability**: Implemented Global Error Handling (`FlutterError.onError`).
+*   **Bug**: Fixed `StateNotifier` async gap issues in MapController.
 
-  // 2. Identify "Recent" visits (last 30 days)
-  final cutoff = DateTime.now().subtract(const Duration(days: 30));
-  final recentIds = visits
-      .where((v) => v.visitedAt.isAfter(cutoff))
-      .map((v) => v.spotId)
-      .toSet();
+### Sprint 2: Foundation (P1)
+*   **Data**: Moved hardcoded lists to `assets/data/spots.json`.
+*   **Analytics**: Created `AnalyticsService` abstraction.
+*   **UX**: Added "Spin Rate Limiting" (2s cooldown) to prevent spam.
 
-  // 3. Build Weighted List
-  final weighted = <ToledoSpot>[];
-  for (final spot in pool) {
-    // If recently visited: Weight = 1
-    // If NEW or old visit: Weight = 3
-    final weight = recentIds.contains(spot.id) ? 1 : 3; 
-    for (var i = 0; i < weight; i++) {
-        weighted.add(spot);
-    }
-  }
+### Sprint 3: Polish (P2)
+*   **Branding**: Replaced default Flutter launcher icon with Vantage Logo.
+*   **Splash**: Implemented OLED-black splash screen (#0A0A0A).
+*   **Permissions**: Created `LocationRationaleDialog` for polite permission requests.
 
-  // 4. Pick Winner
-  return weighted[Random().nextInt(weighted.length)];
-}
-```
+### Sprint 4: Code Quality
+*   **Optimization**: Converted widgets to `const`, extracted Magic Numbers.
+*   **Audit**: Fixed minor memory leaks in AnimationControllers.
+*   **Cleanup**: Removed 6+ TODO comments, resolved 50+ lint warnings.
+
+### Sprint 5: Testing
+*   **Coverage**: Added Unit Tests for `RouletteService` and `SpotRepository`.
+*   **Widgets**: Added tests for `FloatingSearchPill`.
+*   **Integration**: Set up `integration_test` scaffold.
+
+### Sprint 6: Architecture
+*   **Monitoring**: Added `PerformanceService` to trace JSON load times.
+*   **Caching**: Implemented `CachedNetworkImage` in `ShuffleDeckOverlay`.
+*   **Hardening**: Standardized `RepositoryException` for predictable failures.
+
+### Sprint 7: Deployment (Beta)
+*   **CI/CD**: Created `.github/workflows/flutter_ci.yml` (Analyze + Test).
+*   **Docs**: Finalized `README.md` and `PROJECT_HANDOVER.md`.
+*   **Release**: Verified `flutter build apk --release` (v1.0.0-beta).
 
 ---
 
-## 5. Implementation History (Sprints 1-9)
+## 4. Feature Intelligence
 
-### Sprint 1: Stability (P0)
-*   **Leak Fix**: Wrapped `MapController` in a Provider with `ref.onDispose` to prevent memory leaks.
-*   **Permissions**: Added specific handling for `LocationPermission.denied` to show a banner instead of crashing.
+### 4.1 The Roulette Algorithm
+Located in `RouletteService`, the selection logic is **weighted**:
+1.  **Filter**: Candidates must match the selected `SpotCategory`.
+2.  **History Check**: Look back 30 days in `UserVisit` logs.
+3.  **Weight Assignment**:
+    *   **Recently Visited**: Weight = 1.
+    *   **Unvisited / Old**: Weight = 3.
+4.  **Selection**: Random pick from the weighted pool.
 
-### Sprint 2: UX Polish
-*   **Animations**: Added `AnimatedPositioned` to the Spin Button so it slides up when the Bottom Sheet opens.
-*   **Haptics**: Added `HapticFeedback.mediumImpact()` on spin and `heavyImpact()` on result.
+### 4.2 Map Implementation
+*   **Engine**: `flutter_map` using `TileLayer` with CartoDB Dark/Light styles.
+*   **Interaction**: Custom `AnimatedMapController` logic for smooth fly-to.
+*   **Overlays**: `EmptyStateOverlay` (if no spots match filter) and `ShuffleDeckOverlay` (modal).
 
-### Sprint 3: Logic
-*   **History Cap**: Logic added to `_pruneVisits` to keep only the last 500 visits, ensuring `SharedPreferences` doesn't explode.
-*   **Validation**: Start-up check ensures unique IDs for all static spots.
-
-### Sprint 4: Refactor
-*   **Feature-Sliced**: Moved code into `features/map`, `features/roulette`, `features/settings`.
-*   **Barrel Files**: created `core.dart` to export common models.
-
-### Sprint 5: Performance
-*   **RepaintBoundary**: Wrapped the rotating wheel in `RepaintBoundary` to stop the Map from repainting 60fps during spin.
-*   **Memoization**: Cached the filtered spot list using `Provider` families.
-
-### Sprint 6: Acquisition
-*   **Splash**: Added `SplashScreen` with fade transition.
-*   **Share**: Implemented `Share.share(...)` with a Google Maps link.
-
-### Sprint 7: Theming
-*   **Architecture**: Built `VantagePalette` ThemeExtension.
-*   **Persistence**: Saved `ThemeMode` index to prefs.
-
-### Sprint 8: QA
-*   **Tests**: Added `integration_test/app_test.dart` for "Splash -> Map -> Spin" flow.
-*   **Accessibility**: Added `Semantics` to all interactive buttons.
-
-### Sprint 9: Launch
-*   **Assets**: Created Store Listing, Privacy Policy, Build Instructions.
-*   **Release**: Verified release build pipeline.
+### 4.3 Theme System
+Uses `VantagePalette` (ThemeExtension) to semanticize colors:
+*   `surface`: Card backgrounds.
+*   `primaryBackground`: The deep void (#0A0E14).
+*   `accent`: The "Toyota Blue" brand color (#0D7ABF).
 
 ---
 
-## 6. Full Data Set (Static)
-Located in `lib/data/toledo_spots.dart`.
-*   **Dining**: Kato Ramen, Night Owl Diner, Kyoto Ka, Nagoya, Top Pot BBQ.
-*   **Recreation**: Ottawa Park, Glass City Metropark, Toledo Zoo.
-*   **Fitness**: YMCA Perrysburg.
-*   **Cafe**: The Onyx Cafe.
+## 5. Replication Guide
+
+To recreate this project from scratch:
+
+1.  **Scaffold**: `flutter create vantage419`.
+2.  **Deps**: Copy `pubspec.yaml` dependencies.
+3.  **Assets**: Place `spots.json` in `assets/data/`.
+4.  **Core**: Copy `lib/core` (Data, Logic, Theme).
+5.  **Features**: Copy `lib/features` (UI).
+6.  **Config**: Ensure `android/app/build.gradle` has correct CompileSDK (34) and Kotlin (1.9.24).
+7.  **Run**: `flutter run`.
 
 ---
 
-## 7. Build Instructions
-1.  **Install**: Flutter JDK.
-2.  **Run**: `flutter run` (Debug).
-3.  **Release**:
-    *   Create `upload-keystore.jks`.
-    *   Add `android/key.properties`.
-    *   Run `flutter build apk --release`.
+## 6. Testing & Quality
+*   **Run All Tests**: `flutter test`.
+*   **Run Integration**: `flutter test integration_test/app_test.dart`.
+*   **CI/CD**: Triggers on push to `main` or `production-sprint-*`.
 
 ---
 
-**This document allows any agent to rebuild Vantage 419's logic and structure accurately.**
+**Authorized by Antigravity Agent**
