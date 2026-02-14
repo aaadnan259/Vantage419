@@ -3,11 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/models/roulette_mode.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
-import 'package:vantage419/core/repositories/spot_repository.dart';
 import 'package:vantage419/core/services/roulette_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/utils/constants.dart';
-import 'package:vantage419/core/services/analytics_service.dart';
 
 /// Pure logic service provider.
 final rouletteServiceProvider = Provider<RouletteService>((ref) {
@@ -56,24 +54,21 @@ class RouletteState {
 }
 
 /// Manages roulette spinning, mode selection, and visit tracking.
-class RouletteNotifier extends StateNotifier<RouletteState> {
-  RouletteNotifier(this._repository, this._service, this._analytics)
-    : super(const RouletteState()) {
+/// Migrated from StateNotifier to Notifier (Riverpod 2.x).
+class RouletteNotifier extends Notifier<RouletteState> {
+  @override
+  RouletteState build() {
     _init();
+    return const RouletteState();
   }
-
-  final SpotRepository _repository;
-  final RouletteService _service;
-  final AnalyticsService _analytics;
 
   Future<void> _init() async {
     try {
-      final visits = await _repository.getVisits();
-      if (!mounted) return;
+      final repository = ref.read(spotRepositoryProvider);
+      final visits = await repository.getVisits();
       state = state.copyWith(visits: visits);
     } catch (e) {
       debugPrint('⚠️ Failed to load visits: $e');
-      // Non-fatal — app works with empty visit history
     }
   }
 
@@ -81,7 +76,7 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
-    _analytics.logModeChange(newMode.displayName);
+    ref.read(analyticsProvider).logModeChange(newMode.displayName);
 
     state = state.copyWith(
       currentMode: index,
@@ -90,7 +85,7 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     );
   }
 
-  /// Spin the roulette using data from Reservoir.
+  /// Spin the roulette using data from Repository.
   Future<ToledoSpot?> spin() async {
     if (state.isSpinning) return null;
 
@@ -101,18 +96,20 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
     );
 
     try {
-      _analytics.logSpinStart(state.mode.displayName);
+      final analytics = ref.read(analyticsProvider);
+      final repository = ref.read(spotRepositoryProvider);
+      final service = ref.read(rouletteServiceProvider);
+
+      analytics.logSpinStart(state.mode.displayName);
 
       // S3.2: Fetch data from Repository (Abstracted Source)
-      // This allows moving to Supabase later without changing this logic.
-      final spots = await _repository.getSpots();
-      // Ensure local state is fresh
-      final visits = await _repository.getVisits();
+      final spots = await repository.getSpots();
+      final visits = await repository.getVisits();
 
       // Artificial delay for suspense
       await Future.delayed(AppConstants.spinDuration);
 
-      final result = _service.spin(
+      final result = service.spin(
         pool: spots
             .where((s) => state.mode.categories.contains(s.category))
             .toList(),
@@ -120,9 +117,8 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
       );
 
       if (result != null) {
-        _analytics.logSpinComplete(result.id, result.name);
-        final updatedVisits = await _repository.logVisit(result.id, visits);
-        if (!mounted) return null;
+        analytics.logSpinComplete(result.id, result.name);
+        final updatedVisits = await repository.logVisit(result.id, visits);
 
         state = state.copyWith(
           isSpinning: false,
@@ -130,8 +126,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
           visits: updatedVisits,
         );
       } else {
-        if (!mounted) return null;
-
         state = state.copyWith(
           isSpinning: false,
           errorMessage:
@@ -142,7 +136,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
       return result;
     } catch (e) {
       debugPrint('⚠️ Spin failed: $e');
-      if (!mounted) return null;
 
       state = state.copyWith(
         isSpinning: false,
@@ -157,11 +150,6 @@ class RouletteNotifier extends StateNotifier<RouletteState> {
   }
 }
 
-final rouletteProvider = StateNotifierProvider<RouletteNotifier, RouletteState>(
-  (ref) {
-    final repository = ref.watch(spotRepositoryProvider);
-    final service = ref.watch(rouletteServiceProvider);
-    final analytics = ref.watch(analyticsProvider);
-    return RouletteNotifier(repository, service, analytics);
-  },
+final rouletteProvider = NotifierProvider<RouletteNotifier, RouletteState>(
+  RouletteNotifier.new,
 );

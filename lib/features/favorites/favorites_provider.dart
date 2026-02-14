@@ -6,17 +6,17 @@ import 'package:vantage419/core/providers/repository_providers.dart';
 const _favoritesKey = 'favorite_spot_ids';
 
 /// Provides the set of favorited spot IDs, persisted in SharedPreferences.
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, Set<String>>(
-  (ref) {
-    final prefs = ref.watch(sharedPreferencesProvider);
-    return FavoritesNotifier(prefs);
-  },
+/// Migrated to Notifier (Riverpod 2.x).
+final favoritesProvider = NotifierProvider<FavoritesNotifier, Set<String>>(
+  FavoritesNotifier.new,
 );
 
-class FavoritesNotifier extends StateNotifier<Set<String>> {
-  FavoritesNotifier(this._prefs) : super(_load(_prefs));
-
-  final SharedPreferences _prefs;
+class FavoritesNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    return _load(prefs);
+  }
 
   static Set<String> _load(SharedPreferences prefs) {
     final raw = prefs.getString(_favoritesKey);
@@ -44,7 +44,8 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
   bool isFavorited(String spotId) => state.contains(spotId);
 
   Future<void> _persist() async {
+    final prefs = ref.read(sharedPreferencesProvider);
     final json = jsonEncode(state.toList());
-    await _prefs.setString(_favoritesKey, json);
+    await prefs.setString(_favoritesKey, json);
   }
 }
