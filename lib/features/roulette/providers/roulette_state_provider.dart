@@ -85,11 +85,8 @@ class RouletteNotifier extends Notifier<RouletteState> {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
-    // This returns void, so unawaited isn't needed or appropriate if it's not a Future
-    // Checking analytics provider implementation might reveal if it returns Future or void.
-    // Assuming previous error meant it returns Future<void> but I got "expression has type void".
-    // If it returns void, I can just call it.
-    ref.read(analyticsProvider).logModeChange(newMode.displayName);
+    // This now returns Future, so we use unawaited to fire-and-forget
+    unawaited(ref.read(analyticsProvider).logModeChange(newMode.displayName));
 
     state = state.copyWith(
       currentMode: index,
@@ -114,7 +111,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final service = ref.read(rouletteServiceProvider);
 
       // Same here
-      analytics.logSpinStart(state.mode.displayName);
+      unawaited(analytics.logSpinStart(state.mode.displayName));
 
       // S3.2: Fetch data from Repository (Abstracted Source)
       final spots = await repository.getSpots();
@@ -132,7 +129,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
 
       if (result != null) {
         // And here
-        analytics.logSpinComplete(result.id, result.name);
+        unawaited(analytics.logSpinComplete(result.id, result.name));
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
