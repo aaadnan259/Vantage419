@@ -226,7 +226,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     const SizedBox(width: 8),
                     _MapIconButton(
                       icon: Icons.history_rounded,
-                      onTap: () => HistorySheet.show(context, allSpots),
+                      onTap: () => HistorySheet.show(context),
                     ),
                     const SizedBox(width: 8),
                     _MapIconButton(
