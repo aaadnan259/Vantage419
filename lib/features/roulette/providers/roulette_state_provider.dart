@@ -13,6 +13,13 @@ final rouletteServiceProvider = Provider<RouletteService>((ref) {
   return RouletteService();
 });
 
+/// Types of errors that can occur during roulette spin.
+enum RouletteErrorType {
+  none,
+  noSpotsMatch,
+  generic,
+}
+
 /// Current roulette mode state.
 class RouletteState {
   const RouletteState({
@@ -20,14 +27,14 @@ class RouletteState {
     this.isSpinning = false,
     this.selectedSpot,
     this.visits = const [],
-    this.errorMessage,
+    this.errorType = RouletteErrorType.none,
   });
 
   final int currentMode;
   final bool isSpinning;
   final ToledoSpot? selectedSpot;
   final List<UserVisit> visits;
-  final String? errorMessage;
+  final RouletteErrorType errorType;
 
   /// S3.3: Bounds-checked mode getter.
   RouletteMode get mode =>
@@ -38,7 +45,7 @@ class RouletteState {
     bool? isSpinning,
     ToledoSpot? selectedSpot,
     List<UserVisit>? visits,
-    String? errorMessage,
+    RouletteErrorType? errorType,
     bool clearSelectedSpot = false,
     bool clearError = false,
   }) {
@@ -49,7 +56,7 @@ class RouletteState {
           ? null
           : (selectedSpot ?? this.selectedSpot),
       visits: visits ?? this.visits,
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      errorType: clearError ? RouletteErrorType.none : (errorType ?? this.errorType),
     );
   }
 }
@@ -132,8 +139,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       } else {
         state = state.copyWith(
           isSpinning: false,
-          errorMessage:
-              "No spots match '${state.mode.displayName}' — try 'Surprise Me'!",
+          errorType: RouletteErrorType.noSpotsMatch,
         );
       }
 
@@ -143,7 +149,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
 
       state = state.copyWith(
         isSpinning: false,
-        errorMessage: 'Something went wrong. Try spinning again.',
+        errorType: RouletteErrorType.generic,
       );
       return null;
     }

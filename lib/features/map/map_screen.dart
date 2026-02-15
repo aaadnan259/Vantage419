@@ -22,6 +22,7 @@ import 'package:vantage419/features/settings/widgets/theme_toggle.dart';
 import 'package:vantage419/features/favorites/favorites_sheet.dart';
 import 'package:vantage419/features/history/history_sheet.dart';
 import 'package:vantage419/features/profile/profile_sheet.dart';
+import 'package:vantage419/l10n/generated/app_localizations.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -46,21 +47,34 @@ class _MapScreenState extends ConsumerState<MapScreen>
     // Listen for roulette error messages and surface them as SnackBars (S1.3)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listenManual(rouletteProvider, (prev, next) {
-        final msg = next.errorMessage;
-        if (msg != null && msg != prev?.errorMessage) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: context.colors.surface,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  AppConstants.snackBarRadius,
+        if (next.errorType != RouletteErrorType.none &&
+            next.errorType != prev?.errorType) {
+          final localizations = AppLocalizations.of(context);
+          String? msg;
+
+          if (localizations != null) {
+            if (next.errorType == RouletteErrorType.noSpotsMatch) {
+              msg = localizations.noSpotsMatchMode(next.mode.displayName);
+            } else if (next.errorType == RouletteErrorType.generic) {
+              msg = localizations.genericSpinError;
+            }
+          }
+
+          if (msg != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(msg),
+                backgroundColor: context.colors.surface,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.snackBarRadius,
+                  ),
                 ),
+                duration: AppConstants.snackBarDuration,
               ),
-              duration: AppConstants.snackBarDuration,
-            ),
-          );
+            );
+          }
         }
       });
     });
@@ -77,7 +91,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
     return Scaffold(
       body: spotsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error loading spots: $err')),
+        error: (err, stack) => Center(
+            child: Text(AppLocalizations.of(context)
+                    ?.errorLoadingSpots(err.toString()) ??
+                'Error: $err')),
         data: (allSpots) {
           // S5.2 + S6.3: Filter spots by active mode
           final filteredSpots = allSpots
