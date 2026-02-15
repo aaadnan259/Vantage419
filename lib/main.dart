@@ -14,6 +14,9 @@ import 'package:vantage419/l10n/generated/app_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // TODO: Initialize Firebase here once configured via `flutterfire configure`
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   // Global error handler — catches framework-level errors (widget build failures, etc.)
   // Wire to AnalyticsService when Firebase is configured
   FlutterError.onError = (FlutterErrorDetails details) {
