@@ -4,26 +4,26 @@ import 'package:flutter/foundation.dart';
 /// For now, logs events to debug console so we can verify event flow.
 class AnalyticsService {
   /// Log a named event with optional parameters.
-  void logEvent(String name, [Map<String, Object>? params]) {
+  Future<void> logEvent(String name, [Map<String, Object>? params]) async {
     debugPrint('📊 Analytics: $name ${params ?? ''}');
-    // Swap: FirebaseAnalytics.instance.logEvent(name: name, parameters: params);
+    // Swap: await FirebaseAnalytics.instance.logEvent(name: name, parameters: params);
   }
 
   /// Track screen views for funnel analysis.
-  void logScreenView(String screenName) {
+  Future<void> logScreenView(String screenName) async {
     debugPrint('📊 Screen: $screenName');
-    // Swap: FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
+    // Swap: await FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
   }
 
-  void logSpinStart(String mode) {
-    logEvent('spin_start', {'mode': mode});
+  Future<void> logSpinStart(String mode) async {
+    await logEvent('spin_start', {'mode': mode});
   }
 
-  void logSpinComplete(String spotId, String spotName) {
-    logEvent('spin_complete', {'spot_id': spotId, 'spot_name': spotName});
+  Future<void> logSpinComplete(String spotId, String spotName) async {
+    await logEvent('spin_complete', {'spot_id': spotId, 'spot_name': spotName});
   }
 
-  void logModeChange(String mode) {
-    logEvent('mode_change', {'mode': mode});
+  Future<void> logModeChange(String mode) async {
+    await logEvent('mode_change', {'mode': mode});
   }
 }
