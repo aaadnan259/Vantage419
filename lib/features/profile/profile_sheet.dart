@@ -91,7 +91,7 @@ class ProfileSheet extends ConsumerWidget {
                       value: '...',
                       subtitle: 'Loading...',
                     ),
-                    error: (_, __) => _StatCard(
+                    error: (_, _) => _StatCard(
                       icon: Icons.error_outline,
                       iconColor: context.colors.error,
                       label: 'Error',
@@ -130,7 +130,7 @@ class ProfileSheet extends ConsumerWidget {
                   child: CircularProgressIndicator(),
                 ),
               ),
-              error: (_, __) => Center(
+              error: (_, _) => Center(
                 child: Text(
                   'Could not load progress',
                   style: context.textTheme.bodySmall?.copyWith(

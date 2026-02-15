@@ -103,7 +103,7 @@ class CategoryProgress {
 }
 
 /// Computed provider that calculates discovery stats from visits + spots.
-/// Returns AsyncValue<DiscoveryStats> to handle async loading of visits and spots.
+/// Returns `AsyncValue<DiscoveryStats>` to handle async loading of visits and spots.
 final discoveryStatsProvider = FutureProvider<DiscoveryStats>((ref) async {
   // Wait for both spots and visits to load
   final spots = await ref.watch(toledoSpotsProvider.future);
