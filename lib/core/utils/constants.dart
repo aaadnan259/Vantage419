@@ -20,6 +20,7 @@ abstract final class AppConstants {
   static const sheetDuration = Duration(milliseconds: 300);
 
   // Bottom sheet heights (fraction of screen)
+  static const sheetMin = 0.15;
   static const sheetCollapsed = 0.40;
   static const sheetExpanded = 0.80;
 
