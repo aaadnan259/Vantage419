@@ -85,7 +85,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
-    ref.read(analyticsProvider).logModeChange(newMode.displayName);
+    ref.read(analyticsProvider).logModeChange(newMode.displayName).ignore();
 
     state = state.copyWith(
       currentMode: index,
@@ -109,7 +109,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final repository = ref.read(spotRepositoryProvider);
       final service = ref.read(rouletteServiceProvider);
 
-      analytics.logSpinStart(state.mode.displayName);
+      analytics.logSpinStart(state.mode.displayName).ignore();
 
       // S3.2: Fetch data from Repository (Abstracted Source)
       final spots = await repository.getSpots();
@@ -126,7 +126,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       );
 
       if (result != null) {
-        analytics.logSpinComplete(result.id, result.name);
+        analytics.logSpinComplete(result.id, result.name).ignore();
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
