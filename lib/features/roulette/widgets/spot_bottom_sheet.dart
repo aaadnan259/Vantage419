@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vantage419/core/models/spot_category.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/services/navigation_service.dart';
+import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/core/utils/extensions.dart';
 import 'package:vantage419/features/favorites/favorites_provider.dart';
 
@@ -25,11 +26,14 @@ class SpotBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isFav = ref.watch(favoritesProvider).contains(spot.id);
     return DraggableScrollableSheet(
-      initialChildSize: 0.40,
-      minChildSize: 0.15,
-      maxChildSize: 0.80,
+      initialChildSize: AppConstants.sheetCollapsed,
+      minChildSize: AppConstants.sheetMin,
+      maxChildSize: AppConstants.sheetExpanded,
       snap: true,
-      snapSizes: const [0.40, 0.80],
+      snapSizes: const [
+        AppConstants.sheetCollapsed,
+        AppConstants.sheetExpanded,
+      ],
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
