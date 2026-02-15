@@ -1,29 +1,38 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 
-/// Analytics abstraction — swap to Firebase Analytics when ready.
-/// For now, logs events to debug console so we can verify event flow.
+/// Analytics abstraction using Firebase Analytics.
+/// Logs events to debug console and sends them to Firebase.
 class AnalyticsService {
+  final FirebaseAnalytics? _analytics;
+
+  /// Creates an [AnalyticsService].
+  ///
+  /// If [analytics] is provided, events will be sent to Firebase.
+  /// Otherwise, events are only logged to the debug console (useful for testing).
+  AnalyticsService([this._analytics]);
+
   /// Log a named event with optional parameters.
-  void logEvent(String name, [Map<String, Object>? params]) {
+  Future<void> logEvent(String name, [Map<String, Object>? params]) async {
     debugPrint('📊 Analytics: $name ${params ?? ''}');
-    // Swap: FirebaseAnalytics.instance.logEvent(name: name, parameters: params);
+    await _analytics?.logEvent(name: name, parameters: params);
   }
 
   /// Track screen views for funnel analysis.
-  void logScreenView(String screenName) {
+  Future<void> logScreenView(String screenName) async {
     debugPrint('📊 Screen: $screenName');
-    // Swap: FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
+    await _analytics?.logScreenView(screenName: screenName);
   }
 
-  void logSpinStart(String mode) {
-    logEvent('spin_start', {'mode': mode});
+  Future<void> logSpinStart(String mode) async {
+    await logEvent('spin_start', {'mode': mode});
   }
 
-  void logSpinComplete(String spotId, String spotName) {
-    logEvent('spin_complete', {'spot_id': spotId, 'spot_name': spotName});
+  Future<void> logSpinComplete(String spotId, String spotName) async {
+    await logEvent('spin_complete', {'spot_id': spotId, 'spot_name': spotName});
   }
 
-  void logModeChange(String mode) {
-    logEvent('mode_change', {'mode': mode});
+  Future<void> logModeChange(String mode) async {
+    await logEvent('mode_change', {'mode': mode});
   }
 }
