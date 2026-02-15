@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/models/spot_category.dart';
-import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/providers/spots_provider.dart';
+import 'package:vantage419/core/providers/visits_provider.dart';
 
 const _streakKey = 'spin_streak';
 const _lastSpinDateKey = 'last_spin_date';
@@ -104,59 +103,31 @@ class CategoryProgress {
 }
 
 /// Computed provider that calculates discovery stats from visits + spots.
-final discoveryStatsProvider = Provider<DiscoveryStats>((ref) {
-  final spotsAsync = ref.watch(toledoSpotsProvider);
+/// Returns AsyncValue<DiscoveryStats> to handle async loading of visits and spots.
+final discoveryStatsProvider = FutureProvider<DiscoveryStats>((ref) async {
+  // Wait for both spots and visits to load
+  final spots = await ref.watch(toledoSpotsProvider.future);
+  final visits = await ref.watch(visitsProvider.future);
 
-  return spotsAsync.when(
-    loading: () => const DiscoveryStats(
-      totalSpots: 0,
-      discoveredCount: 0,
-      categoryProgress: {},
-    ),
-    error: (_, _) => const DiscoveryStats(
-      totalSpots: 0,
-      discoveredCount: 0,
-      categoryProgress: {},
-    ),
-    data: (spots) {
-      // We need visits — read synchronously from shared prefs
-      final prefs = ref.read(sharedPreferencesProvider);
-      final raw = prefs.getString('user_visits');
-      final visits = <UserVisit>[];
-      if (raw != null) {
-        try {
-          final decoded = jsonDecode(raw);
-          if (decoded is List) {
-            for (final item in decoded) {
-              if (item is Map<String, dynamic>) {
-                visits.add(UserVisit.fromJson(item));
-              }
-            }
-          }
-        } catch (_) {}
-      }
+  final visitedIds = visits.map((v) => v.spotId).toSet();
+  final discovered = spots.where((s) => visitedIds.contains(s.id)).length;
 
-      final visitedIds = visits.map((v) => v.spotId).toSet();
-      final discovered = spots.where((s) => visitedIds.contains(s.id)).length;
+  // Category breakdown
+  final categoryProgress = <SpotCategory, CategoryProgress>{};
+  for (final cat in SpotCategory.values) {
+    final catSpots = spots.where((s) => s.category == cat).toList();
+    final catDiscovered = catSpots
+        .where((s) => visitedIds.contains(s.id))
+        .length;
+    categoryProgress[cat] = CategoryProgress(
+      discovered: catDiscovered,
+      total: catSpots.length,
+    );
+  }
 
-      // Category breakdown
-      final categoryProgress = <SpotCategory, CategoryProgress>{};
-      for (final cat in SpotCategory.values) {
-        final catSpots = spots.where((s) => s.category == cat).toList();
-        final catDiscovered = catSpots
-            .where((s) => visitedIds.contains(s.id))
-            .length;
-        categoryProgress[cat] = CategoryProgress(
-          discovered: catDiscovered,
-          total: catSpots.length,
-        );
-      }
-
-      return DiscoveryStats(
-        totalSpots: spots.length,
-        discoveredCount: discovered,
-        categoryProgress: categoryProgress,
-      );
-    },
+  return DiscoveryStats(
+    totalSpots: spots.length,
+    discoveredCount: discovered,
+    categoryProgress: categoryProgress,
   );
 });

@@ -28,7 +28,7 @@ void main() {
             gamificationProvider.overrideWith(
               () => FakeGamificationNotifier(testStreak),
             ),
-            discoveryStatsProvider.overrideWithValue(testStats),
+            discoveryStatsProvider.overrideWith((ref) => testStats),
           ],
           child: MaterialApp(
             theme: VantageTheme.dark,
@@ -36,6 +36,9 @@ void main() {
           ),
         ),
       );
+
+      // Allow async providers to resolve
+      await tester.pumpAndSettle();
 
       // Verify Streak Card
       expect(find.text('Spin Streak'), findsOneWidget);
@@ -55,7 +58,7 @@ void main() {
             gamificationProvider.overrideWith(
               () => FakeGamificationNotifier(0),
             ),
-            discoveryStatsProvider.overrideWithValue(testStats),
+            discoveryStatsProvider.overrideWith((ref) => testStats),
           ],
           child: MaterialApp(
             theme: VantageTheme.dark,
@@ -63,6 +66,9 @@ void main() {
           ),
         ),
       );
+
+      // Allow async providers to resolve
+      await tester.pumpAndSettle();
 
       // Verify Categories
       expect(find.text('Category Progress'), findsOneWidget);
@@ -74,10 +80,6 @@ void main() {
       // Nightlife (100% + Checkmark)
       expect(find.text('Nightlife'), findsOneWidget);
       // "2/2" text might be present or not depending on implementation of completed check
-      // In my implementation:
-      // if (isComplete) Icon(Icons.check_circle_rounded...)
-      // Text('${progress.discovered}/${progress.total}')
-      // So yes, "2/2" should still be there.
       expect(find.text('2/2'), findsOneWidget);
       expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
     });
