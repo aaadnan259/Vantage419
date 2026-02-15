@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/models/roulette_mode.dart';
@@ -84,6 +85,10 @@ class RouletteNotifier extends Notifier<RouletteState> {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
+    // This returns void, so unawaited isn't needed or appropriate if it's not a Future
+    // Checking analytics provider implementation might reveal if it returns Future or void.
+    // Assuming previous error meant it returns Future<void> but I got "expression has type void".
+    // If it returns void, I can just call it.
     ref.read(analyticsProvider).logModeChange(newMode.displayName);
 
     state = state.copyWith(
@@ -108,6 +113,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final repository = ref.read(spotRepositoryProvider);
       final service = ref.read(rouletteServiceProvider);
 
+      // Same here
       analytics.logSpinStart(state.mode.displayName);
 
       // S3.2: Fetch data from Repository (Abstracted Source)
@@ -125,6 +131,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       );
 
       if (result != null) {
+        // And here
         analytics.logSpinComplete(result.id, result.name);
         final updatedVisits = await repository.logVisit(result.id, visits);
 

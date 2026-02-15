@@ -24,6 +24,7 @@ void main() {
     final stopwatch = Stopwatch()..start();
     final json = jsonEncode(visits.map((v) => v.toJson()).toList());
     stopwatch.stop();
+    // ignore: avoid_print
     print('Baseline (Main Thread): ${stopwatch.elapsedMicroseconds} µs');
 
     // Optimization: Compute
@@ -31,6 +32,7 @@ void main() {
     final visitsJson = visits.map((v) => v.toJson()).toList();
     final jsonCompute = await compute(_encodeVisits, visitsJson);
     stopwatchCompute.stop();
+    // ignore: avoid_print
     print('Optimization (Compute): ${stopwatchCompute.elapsedMicroseconds} µs');
 
     expect(json, equals(jsonCompute));
