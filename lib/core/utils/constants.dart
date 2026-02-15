@@ -49,4 +49,10 @@ abstract final class AppConstants {
   static const spinCooldownSeconds = 2;
   static const snackBarDuration = Duration(seconds: 3);
   static const snackBarRadius = 12.0;
+
+  // Navigation
+  static const googleNavScheme = 'google.navigation:q={lat},{lng}&mode=d';
+  static const wazeNavScheme = 'https://waze.com/ul?ll={lat},{lng}&navigate=yes';
+  static const googleWebNavScheme =
+      'https://www.google.com/maps/dir/?api=1&destination={lat},{lng}';
 }
