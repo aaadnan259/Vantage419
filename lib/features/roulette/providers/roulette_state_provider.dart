@@ -66,7 +66,8 @@ class RouletteState {
 class RouletteNotifier extends Notifier<RouletteState> {
   @override
   RouletteState build() {
-    _init();
+    // Fire and forget initialization
+    Future.microtask(() => _init());
     return const RouletteState();
   }
 
