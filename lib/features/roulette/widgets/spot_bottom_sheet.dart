@@ -24,7 +24,6 @@ class SpotBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFav = ref.watch(favoritesProvider).contains(spot.id);
     return DraggableScrollableSheet(
       initialChildSize: AppConstants.sheetCollapsed,
       minChildSize: AppConstants.sheetMin,
@@ -55,132 +54,21 @@ class SpotBottomSheet extends ConsumerWidget {
               const Center(child: _DragHandleHint()),
 
               // Header row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // S2.6: Ellipsis at 2 lines for long spot names
-                          Text(
-                            spot.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.textTheme.headlineMedium?.copyWith(
-                              color: context.colors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          _CategoryBadge(category: spot.category),
-                          if (userLocation != null) ...[
-                            const SizedBox(height: 4),
-                            _DistanceBadge(
-                              spot: spot,
-                              userLocation: userLocation!,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Favorite toggle
-                    _CircleIconButton(
-                      icon: isFav
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      color: isFav
-                          ? context.colors.accent
-                          : context.colors.textMuted,
-                      onTap: () =>
-                          ref.read(favoritesProvider.notifier).toggle(spot.id),
-                    ),
-                    const SizedBox(width: 8),
-                    // S6.2: Share button
-                    _ShareButton(spot: spot),
-                    const SizedBox(width: 8),
-                    _NavigateButton(spot: spot),
-                  ],
-                ),
-              ),
+              _SpotHeader(spot: spot, userLocation: userLocation),
 
               const SizedBox(height: 16),
 
               // Vibe check
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: spot.category.color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: spot.category.color.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.bolt_rounded,
-                      color: spot.category.color,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        spot.vibeCheck,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.textTheme.titleMedium?.copyWith(
-                          color: spot.category.color,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _SpotVibeCheck(spot: spot),
 
               const SizedBox(height: 16),
 
               // Description — S2.6: capped at 5 lines
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  spot.description,
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-              ),
+              _SpotDescription(spot: spot),
 
               if (spot.address != null) ...[
                 const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                        color: context.colors.textMuted,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          spot.address!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: context.colors.textMuted,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _SpotAddress(address: spot.address!),
               ],
 
               const SizedBox(height: 24),
@@ -188,6 +76,151 @@ class SpotBottomSheet extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _SpotHeader extends ConsumerWidget {
+  const _SpotHeader({required this.spot, required this.userLocation});
+
+  final ToledoSpot spot;
+  final LatLng? userLocation;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFav = ref.watch(favoritesProvider).contains(spot.id);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // S2.6: Ellipsis at 2 lines for long spot names
+                Text(
+                  spot.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.headlineMedium?.copyWith(
+                    color: context.colors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                _CategoryBadge(category: spot.category),
+                if (userLocation != null) ...[
+                  const SizedBox(height: 4),
+                  _DistanceBadge(spot: spot, userLocation: userLocation!),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Favorite toggle
+          _CircleIconButton(
+            icon: isFav
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
+            color: isFav ? context.colors.accent : context.colors.textMuted,
+            onTap: () => ref.read(favoritesProvider.notifier).toggle(spot.id),
+          ),
+          const SizedBox(width: 8),
+          // S6.2: Share button
+          _ShareButton(spot: spot),
+          const SizedBox(width: 8),
+          _NavigateButton(spot: spot),
+        ],
+      ),
+    );
+  }
+}
+
+class _SpotVibeCheck extends StatelessWidget {
+  const _SpotVibeCheck({required this.spot});
+
+  final ToledoSpot spot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: spot.category.color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: spot.category.color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.bolt_rounded, color: spot.category.color, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              spot.vibeCheck,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.titleMedium?.copyWith(
+                color: spot.category.color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SpotDescription extends StatelessWidget {
+  const _SpotDescription({required this.spot});
+
+  final ToledoSpot spot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        spot.description,
+        maxLines: 5,
+        overflow: TextOverflow.ellipsis,
+        style: context.textTheme.bodyLarge?.copyWith(
+          color: context.colors.textSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+class _SpotAddress extends StatelessWidget {
+  const _SpotAddress({required this.address});
+
+  final String address;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Icon(
+            Icons.location_on_outlined,
+            size: 16,
+            color: context.colors.textMuted,
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              address,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colors.textMuted,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
