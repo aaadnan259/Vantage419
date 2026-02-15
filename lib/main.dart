@@ -16,9 +16,19 @@ import 'package:vantage419/firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Initialize Firebase only on supported platforms
+  if (kIsWeb ||
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS) {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } catch (e) {
+      debugPrint('⚠️ Firebase initialization failed: $e');
+    }
+  }
 
   // Global error handler — catches framework-level errors (widget build failures, etc.)
   // Wire to AnalyticsService when Firebase is configured
