@@ -20,3 +20,6 @@ export 'theme/vantage_theme.dart';
 // Utils
 export 'utils/constants.dart';
 export 'utils/extensions.dart';
+
+// Widgets
+export 'widgets/drag_handle.dart';

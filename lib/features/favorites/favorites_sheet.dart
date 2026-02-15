@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vantage419/core/core.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
-import 'package:vantage419/core/utils/extensions.dart';
 import 'package:vantage419/features/favorites/favorites_provider.dart';
 
 /// Full-screen bottom sheet showing the user's favorited spots.
@@ -36,15 +36,7 @@ class FavoritesSheet extends ConsumerWidget {
         child: Column(
           children: [
             // Drag handle
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: context.colors.textMuted,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
+            const DragHandle(),
 
             // Title
             Padding(
