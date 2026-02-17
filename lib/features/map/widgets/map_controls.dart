@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vantage419/core/services/location_service.dart';
 import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/l10n/generated/app_localizations.dart';
 
 /// Banner shown when location permissions are denied or services disabled (S1.2).
 class LocationErrorBanner extends StatelessWidget {
@@ -11,24 +12,27 @@ class LocationErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     String message;
     String actionLabel;
     VoidCallback? onAction;
 
     if (error is LocationPermissionDeniedForeverException) {
-      message = 'Location access permanently denied';
-      actionLabel = 'Open Settings';
+      message = localizations?.locationAccessDeniedForever ??
+          'Location access permanently denied';
+      actionLabel = localizations?.openSettings ?? 'Open Settings';
       onAction = () => Geolocator.openAppSettings();
     } else if (error is LocationDisabledException) {
-      message = 'Location services are off';
-      actionLabel = 'Enable';
+      message = localizations?.locationServicesOff ?? 'Location services are off';
+      actionLabel = localizations?.enable ?? 'Enable';
       onAction = () => Geolocator.openLocationSettings();
     } else if (error is LocationPermissionDeniedException) {
-      message = 'Location permission needed for your position';
-      actionLabel = 'Settings';
+      message = localizations?.locationPermissionNeeded ??
+          'Location permission needed for your position';
+      actionLabel = localizations?.settings ?? 'Settings';
       onAction = () => Geolocator.openAppSettings();
     } else {
-      message = 'Location unavailable';
+      message = localizations?.locationUnavailable ?? 'Location unavailable';
       actionLabel = '';
       onAction = null;
     }
@@ -115,7 +119,8 @@ class TileErrorBanner extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Map tiles unavailable — check your connection',
+                  AppLocalizations.of(context)?.mapTilesUnavailable ??
+                      'Map tiles unavailable — check your connection',
                   style: TextStyle(
                     color: context.colors.textSecondary,
                     fontSize: 12,

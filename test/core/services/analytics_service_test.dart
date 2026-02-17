@@ -24,6 +24,20 @@ void main() {
     test('logScreenView runs without error', () {
       expect(() => service.logScreenView('MapScreen'), returnsNormally);
     });
+
+    test('logError runs without error', () {
+      expect(
+        () => service.logError(Exception('Test error'), StackTrace.current),
+        returnsNormally,
+      );
+    });
+
+    test('logError runs without error with fatal flag', () {
+      expect(
+        () => service.logError(Exception('Fatal error'), StackTrace.current, fatal: true),
+        returnsNormally,
+      );
+    });
   });
   test('logSpinStart runs without error', () {
     final service = AnalyticsService();
