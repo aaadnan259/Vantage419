@@ -167,7 +167,7 @@ void main() {
 
     test('spin success flow', () async {
       // Setup data
-      final spot = const ToledoSpot(
+      const spot = ToledoSpot(
         id: 'spot1',
         name: 'Spot 1',
         latitude: 0,
