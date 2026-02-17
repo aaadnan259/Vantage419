@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/models/spot_category.dart';
+import 'package:vantage419/core/services/clock_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/providers/spots_provider.dart';
 import 'package:vantage419/core/providers/visits_provider.dart';
@@ -43,7 +44,7 @@ class GamificationNotifier extends Notifier<GamificationState> {
 
   /// Call after every spin to update streak.
   Future<void> recordSpin() async {
-    final now = DateTime.now();
+    final now = ref.read(clockServiceProvider).now();
     final today = DateTime(now.year, now.month, now.day);
     final last = state.lastSpinDate;
 
