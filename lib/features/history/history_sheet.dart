@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vantage419/core/models/toledo_spot.dart';
-import 'package:vantage419/core/models/user_visit.dart';
+import 'package:vantage419/core/core.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/providers/spots_provider.dart';
-import 'package:vantage419/core/utils/extensions.dart';
 
 /// Provider for loading visit history from the repository.
 final visitHistoryProvider = FutureProvider<List<UserVisit>>((ref) async {
@@ -70,15 +68,7 @@ class HistorySheet extends ConsumerWidget {
         child: Column(
           children: [
             // Drag handle
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: context.colors.textMuted,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
+            const DragHandle(),
 
             // Title
             Padding(

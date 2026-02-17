@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:vantage419/core/models/spot_category.dart';
-import 'package:vantage419/core/models/toledo_spot.dart';
-import 'package:vantage419/core/services/navigation_service.dart';
-import 'package:vantage419/core/utils/constants.dart';
-import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/core/core.dart';
 import 'package:vantage419/features/favorites/favorites_provider.dart';
 
 /// Draggable bottom sheet showing selected spot details.
@@ -51,7 +47,7 @@ class SpotBottomSheet extends ConsumerWidget {
             padding: EdgeInsets.zero,
             children: [
               // Pulsing drag handle — hints that the sheet is draggable (S2.1)
-              const Center(child: _DragHandleHint()),
+              const Center(child: DragHandle(isPulsing: true)),
 
               // Header row
               _SpotHeader(spot: spot, userLocation: userLocation),
@@ -221,57 +217,6 @@ class _SpotAddress extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Pulsing drag handle that hints the sheet is draggable (S2.1).
-class _DragHandleHint extends StatefulWidget {
-  const _DragHandleHint();
-
-  @override
-  State<_DragHandleHint> createState() => _DragHandleHintState();
-}
-
-class _DragHandleHintState extends State<_DragHandleHint>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _opacity;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-    _opacity = Tween<double>(
-      begin: 0.3,
-      end: 0.7,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _opacity,
-      builder: (context, child) {
-        return Container(
-          margin: const EdgeInsets.only(top: 12, bottom: 8),
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: context.colors.textMuted.withValues(alpha: _opacity.value),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        );
-      },
     );
   }
 }

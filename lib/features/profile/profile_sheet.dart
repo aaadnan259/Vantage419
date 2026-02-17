@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vantage419/core/models/spot_category.dart';
-import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/core/core.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
 /// Profile sheet showing gamification stats: streak, discovery progress,
@@ -37,16 +36,7 @@ class ProfileSheet extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
           children: [
             // Drag handle
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.colors.textMuted.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+            const Center(child: DragHandle()),
             const SizedBox(height: 20),
 
             // Title
