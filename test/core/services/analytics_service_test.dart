@@ -54,7 +54,10 @@ void main() {
       service.logSpinStart('Solo Dining');
       // Allow async execution to complete
       await Future.delayed(Duration.zero);
-      expect(fakeAnalytics.logs, contains('logEvent: spin_start {mode: Solo Dining}'));
+      expect(
+        fakeAnalytics.logs,
+        contains('logEvent: spin_start {mode: Solo Dining}'),
+      );
     });
 
     test('logSpinComplete calls logEvent', () async {
@@ -62,14 +65,59 @@ void main() {
       await Future.delayed(Duration.zero);
       expect(
         fakeAnalytics.logs,
-        contains('logEvent: spin_complete {spot_id: spot_123, spot_name: Test Spot}'),
+        contains(
+          'logEvent: spin_complete {spot_id: spot_123, spot_name: Test Spot}',
+        ),
       );
     });
 
     test('logModeChange calls logEvent', () async {
       service.logModeChange('Date Night');
       await Future.delayed(Duration.zero);
-      expect(fakeAnalytics.logs, contains('logEvent: mode_change {mode: Date Night}'));
+      expect(
+        fakeAnalytics.logs,
+        contains('logEvent: mode_change {mode: Date Night}'),
+      );
     });
+
+    test('logScreenView runs without error', () {
+      expect(() => service.logScreenView('MapScreen'), returnsNormally);
+    });
+
+    test('logError runs without error', () {
+      expect(
+        () => service.logError(Exception('Test error'), StackTrace.current),
+        returnsNormally,
+      );
+    });
+
+    test('logError runs without error with fatal flag', () {
+      expect(
+        () => service.logError(
+          Exception('Fatal error'),
+          StackTrace.current,
+          fatal: true,
+        ),
+        returnsNormally,
+      );
+    });
+  });
+
+  test('logSpinStart runs without error with null analytics', () {
+    final service = AnalyticsService();
+    expect(() => service.logSpinStart('Solo Dining'), returnsNormally);
+  });
+
+  test('logSpinComplete runs without error with null analytics', () {
+    final service = AnalyticsService();
+    expect(
+      () => service.logSpinComplete('spot_123', 'Test Spot'),
+      returnsNormally,
+    );
+  });
+
+  test('logModeChange runs without error with null analytics', () {
+    final service = AnalyticsService();
+    expect(() => service.logModeChange('Date Night'), returnsNormally);
   });
 }

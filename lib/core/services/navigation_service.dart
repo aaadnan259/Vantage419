@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vantage419/core/utils/constants.dart';
 
 /// Launches external navigation apps with destination coordinates.
 class NavigationService {
@@ -18,7 +19,9 @@ class NavigationService {
     try {
       // Try Google Maps first
       final googleUrl = Uri.parse(
-        'google.navigation:q=$latitude,$longitude&mode=d',
+        AppConstants.googleNavScheme
+            .replaceAll('{lat}', latitude.toString())
+            .replaceAll('{lng}', longitude.toString()),
       );
       if (await canLaunchUrl(googleUrl)) {
         return launchUrl(googleUrl);
@@ -26,7 +29,9 @@ class NavigationService {
 
       // Waze fallback
       final wazeUrl = Uri.parse(
-        'https://waze.com/ul?ll=$latitude,$longitude&navigate=yes',
+        AppConstants.wazeNavScheme
+            .replaceAll('{lat}', latitude.toString())
+            .replaceAll('{lng}', longitude.toString()),
       );
       if (await canLaunchUrl(wazeUrl)) {
         return launchUrl(wazeUrl, mode: LaunchMode.externalApplication);
@@ -34,8 +39,9 @@ class NavigationService {
 
       // Web browser fallback
       final webUrl = Uri.parse(
-        'https://www.google.com/maps/dir/?api=1'
-        '&destination=$latitude,$longitude',
+        AppConstants.googleWebNavScheme
+            .replaceAll('{lat}', latitude.toString())
+            .replaceAll('{lng}', longitude.toString()),
       );
       return launchUrl(webUrl, mode: LaunchMode.externalApplication);
     } catch (e) {
