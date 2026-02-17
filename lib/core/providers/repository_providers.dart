@@ -5,6 +5,8 @@ import 'package:vantage419/core/repositories/spot_repository.dart';
 import 'package:vantage419/core/repositories/spot_repository_impl.dart';
 import 'package:vantage419/core/services/analytics_service.dart';
 import 'package:vantage419/core/services/performance_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart';
 
 /// Core provider for SharedPreferences (Overridden in main)
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
@@ -26,6 +28,12 @@ final spotRepositoryProvider = Provider<SpotRepository>((ref) {
 
 /// Analytics service — swap to Firebase-backed implementation later
 final analyticsProvider = Provider<AnalyticsService>((ref) {
+  if (kIsWeb ||
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS) {
+    return AnalyticsService(FirebaseAnalytics.instance);
+  }
   return AnalyticsService();
 });
 
