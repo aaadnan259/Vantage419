@@ -29,7 +29,13 @@ void main() {
         ),
       );
 
-      expect(find.byType(AnimatedBuilder), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(DragHandle),
+          matching: find.byType(AnimatedBuilder),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }
