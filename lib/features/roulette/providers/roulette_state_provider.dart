@@ -5,6 +5,7 @@ import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/services/roulette_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/core/providers/visits_provider.dart';
 import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
@@ -14,11 +15,7 @@ final rouletteServiceProvider = Provider<RouletteService>((ref) {
 });
 
 /// Types of errors that can occur during roulette spin.
-enum RouletteErrorType {
-  none,
-  noSpotsMatch,
-  generic,
-}
+enum RouletteErrorType { none, noSpotsMatch, generic }
 
 /// Current roulette mode state.
 class RouletteState {
@@ -56,7 +53,9 @@ class RouletteState {
           ? null
           : (selectedSpot ?? this.selectedSpot),
       visits: visits ?? this.visits,
-      errorType: clearError ? RouletteErrorType.none : (errorType ?? this.errorType),
+      errorType: clearError
+          ? RouletteErrorType.none
+          : (errorType ?? this.errorType),
     );
   }
 }
@@ -66,7 +65,8 @@ class RouletteState {
 class RouletteNotifier extends Notifier<RouletteState> {
   @override
   RouletteState build() {
-    _init();
+    // Fire and forget initialization
+    Future.microtask(() => _init());
     return const RouletteState();
   }
 
@@ -108,6 +108,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final repository = ref.read(spotRepositoryProvider);
       final service = ref.read(rouletteServiceProvider);
 
+      // S1.3: Log spin start
       await analytics.logSpinStart(state.mode.displayName);
 
       // S3.2: Fetch data from Repository (Abstracted Source)
@@ -125,11 +126,15 @@ class RouletteNotifier extends Notifier<RouletteState> {
       );
 
       if (result != null) {
+        // S1.3: Log spin complete
         await analytics.logSpinComplete(result.id, result.name);
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
         await ref.read(gamificationProvider.notifier).recordSpin();
+
+        // Invalidate visits provider to update discovery stats
+        ref.invalidate(visitsProvider);
 
         state = state.copyWith(
           isSpinning: false,

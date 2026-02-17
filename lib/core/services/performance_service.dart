@@ -1,48 +1,65 @@
-import 'package:firebase_performance/firebase_performance.dart' as firebase_performance;
+import 'package:firebase_performance/firebase_performance.dart' as fp;
 import 'package:flutter/foundation.dart';
 
 /// Performance monitoring abstraction.
+/// Uses Firebase Performance Monitoring.
 class PerformanceService {
-  final firebase_performance.FirebasePerformance _performance;
+  final fp.FirebasePerformance? _performance;
 
   /// Creates a [PerformanceService].
-  /// An optional [firebase_performance.FirebasePerformance] instance can be provided for testing.
-  PerformanceService({firebase_performance.FirebasePerformance? performance})
-      : _performance =
-            performance ?? firebase_performance.FirebasePerformance.instance;
+  /// An optional [fp.FirebasePerformance] instance can be provided for testing.
+  PerformanceService({fp.FirebasePerformance? performance})
+    : _performance = performance;
 
   /// Start a trace for a specific operation.
   /// Returns a [Trace] object that must be stopped.
   Trace startTrace(String name) {
     debugPrint('⏱️ Performance: Trace started - $name');
-    final firebaseTrace = _performance.newTrace(name);
-    // Fire and forget start() to keep API synchronous and avoid latency
-    firebaseTrace.start();
-    return Trace(name, firebaseTrace);
+
+    fp.FirebasePerformance? performance = _performance;
+    if (performance == null) {
+      try {
+        performance = fp.FirebasePerformance.instance;
+      } catch (e) {
+        // Firebase likely not initialized, proceed with debug trace only
+      }
+    }
+
+    final fpTrace = performance?.newTrace(name);
+    // Fire-and-forget async start to keep API synchronous
+    fpTrace?.start();
+
+    final trace = Trace(name, fpTrace: fpTrace);
+    trace.start();
+    return trace;
   }
 }
 
 /// Represents a performance trace.
 class Trace {
-  Trace(this.name, this._firebaseTrace);
+  Trace(this.name, {this.fpTrace});
 
   final String name;
-  final firebase_performance.Trace _firebaseTrace;
-  final Stopwatch _stopwatch = Stopwatch()..start();
+  final fp.Trace? fpTrace;
+  final Stopwatch _stopwatch = Stopwatch();
+
+  void start() {
+    _stopwatch.start();
+  }
 
   /// Stop the trace.
   void stop() {
     _stopwatch.stop();
-    // Fire and forget stop() to keep API synchronous and avoid latency
-    _firebaseTrace.stop();
     debugPrint(
       '⏱️ Performance: Trace stopped - $name (${_stopwatch.elapsedMilliseconds}ms)',
     );
+    // Fire-and-forget async stop
+    fpTrace?.stop();
   }
 
   /// Set a metric for the trace.
   void setMetric(String metricName, int value) {
     debugPrint('⏱️ Performance: Metric $name.$metricName = $value');
-    _firebaseTrace.setMetric(metricName, value);
+    fpTrace?.setMetric(metricName, value);
   }
 }

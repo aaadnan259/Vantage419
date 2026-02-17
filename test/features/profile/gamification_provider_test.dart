@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +6,7 @@ import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/providers/spots_provider.dart';
+import 'package:vantage419/core/providers/visits_provider.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
 void main() {
@@ -57,11 +57,6 @@ void main() {
       expect(state.streak, 1);
     });
 
-    // Note: We can't easily test "consecutive days" or "missed days" logic
-    // without mocking DateTime.now() or the provider logic.
-    // For now, we verified the logic structure in implementation.
-    // Ideally we would inject a Clock/Timer service, but avoiding over-engineering for now.
-
     test('persists streak to SharedPreferences', () async {
       final container = createContainer();
       final notifier = container.read(gamificationProvider.notifier);
@@ -75,13 +70,6 @@ void main() {
   });
 
   group('DiscoveryStatsProvider', () {
-    late SharedPreferences prefs;
-
-    setUp(() async {
-      SharedPreferences.setMockInitialValues({});
-      prefs = await SharedPreferences.getInstance();
-    });
-
     final testSpots = [
       const ToledoSpot(
         id: 'spot1',
@@ -112,15 +100,15 @@ void main() {
       ),
     ];
 
-    test('calculates empty stats when no visits', () {
+    test('calculates empty stats when no visits', () async {
       final container = ProviderContainer(
         overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
           toledoSpotsProvider.overrideWith((ref) => testSpots),
+          visitsProvider.overrideWith(() => FakeVisitsNotifier([])),
         ],
       );
 
-      final stats = container.read(discoveryStatsProvider);
+      final stats = await container.read(discoveryStatsProvider.future);
 
       expect(stats.totalSpots, 3);
       expect(stats.discoveredCount, 0);
@@ -129,22 +117,19 @@ void main() {
     });
 
     test('calculates stats correctly with visits', () async {
-      // Simulate visits in SharedPreferences
       final visits = [
         UserVisit(spotId: 'spot1', visitedAt: DateTime.now()),
         UserVisit(spotId: 'spot2', visitedAt: DateTime.now()),
       ];
-      final visitsJson = jsonEncode(visits.map((v) => v.toJson()).toList());
-      await prefs.setString('user_visits', visitsJson);
 
       final container = ProviderContainer(
         overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
           toledoSpotsProvider.overrideWith((ref) => testSpots),
+          visitsProvider.overrideWith(() => FakeVisitsNotifier(visits)),
         ],
       );
 
-      final stats = container.read(discoveryStatsProvider);
+      final stats = await container.read(discoveryStatsProvider.future);
 
       expect(stats.totalSpots, 3);
       expect(stats.discoveredCount, 2); // spot1, spot2
@@ -163,4 +148,12 @@ void main() {
       expect(nightlifeProgress?.progress, 1.0);
     });
   });
+}
+
+class FakeVisitsNotifier extends VisitsNotifier {
+  final List<UserVisit> _visits;
+  FakeVisitsNotifier(this._visits);
+
+  @override
+  Future<List<UserVisit>> build() async => _visits;
 }

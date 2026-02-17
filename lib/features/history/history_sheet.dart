@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/core/providers/spots_provider.dart';
 import 'package:vantage419/core/utils/extensions.dart';
 
 /// Provider for loading visit history from the repository.
@@ -11,24 +12,51 @@ final visitHistoryProvider = FutureProvider<List<UserVisit>>((ref) async {
   return repo.getVisits();
 });
 
+/// A combined history item with the visit and the associated spot.
+class HistoryItem {
+  const HistoryItem({required this.visit, required this.spot});
+  final UserVisit visit;
+  final ToledoSpot spot;
+}
+
+/// Provider that combines visit history with spot details, sorted by date.
+final historyItemsProvider = FutureProvider<List<HistoryItem>>((ref) async {
+  final visits = await ref.watch(visitHistoryProvider.future);
+  final spots = await ref.watch(toledoSpotsProvider.future);
+
+  // Sort most recent first
+  final sortedVisits = [...visits]
+    ..sort((a, b) => b.visitedAt.compareTo(a.visitedAt));
+
+  // Build a lookup map for spots
+  final spotMap = {for (final s in spots) s.id: s};
+
+  return sortedVisits
+      .map((visit) {
+        final spot = spotMap[visit.spotId];
+        if (spot == null) return null;
+        return HistoryItem(visit: visit, spot: spot);
+      })
+      .whereType<HistoryItem>()
+      .toList();
+});
+
 /// Bottom sheet showing the user's spin history with spot details.
 class HistorySheet extends ConsumerWidget {
-  const HistorySheet({super.key, required this.allSpots});
+  const HistorySheet({super.key});
 
-  final List<ToledoSpot> allSpots;
-
-  static void show(BuildContext context, List<ToledoSpot> spots) {
+  static void show(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => HistorySheet(allSpots: spots),
+      builder: (_) => const HistorySheet(),
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final historyAsync = ref.watch(visitHistoryProvider);
+    final historyAsync = ref.watch(historyItemsProvider);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.65,
@@ -86,8 +114,8 @@ class HistorySheet extends ConsumerWidget {
                     style: TextStyle(color: context.colors.textMuted),
                   ),
                 ),
-                data: (visits) {
-                  if (visits.isEmpty) {
+                data: (historyItems) {
+                  if (historyItems.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -116,27 +144,19 @@ class HistorySheet extends ConsumerWidget {
                     );
                   }
 
-                  // Sort most recent first
-                  final sorted = [...visits]
-                    ..sort((a, b) => b.visitedAt.compareTo(a.visitedAt));
-
-                  // Build a lookup map for spots
-                  final spotMap = {for (final s in allSpots) s.id: s};
-
                   return ListView.separated(
                     controller: scrollController,
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: sorted.length,
+                    itemCount: historyItems.length,
                     separatorBuilder: (_, _) => Divider(
                       height: 1,
                       indent: 72,
                       color: context.colors.surfaceLight,
                     ),
                     itemBuilder: (context, index) {
-                      final visit = sorted[index];
-                      final spot = spotMap[visit.spotId];
-
-                      if (spot == null) return const SizedBox.shrink();
+                      final item = historyItems[index];
+                      final visit = item.visit;
+                      final spot = item.spot;
 
                       return ListTile(
                         leading: Container(
