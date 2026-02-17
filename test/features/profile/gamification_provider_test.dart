@@ -31,11 +31,11 @@ void main() {
       expect(state.lastSpinDate, null);
     });
 
-    test('first spin sets streak to 1', () {
+    test('first spin sets streak to 1', () async {
       final container = createContainer();
       final notifier = container.read(gamificationProvider.notifier);
 
-      notifier.recordSpin();
+      await notifier.recordSpin();
 
       final state = container.read(gamificationProvider);
       expect(state.streak, 1);
@@ -46,11 +46,11 @@ void main() {
       final container = createContainer();
       final notifier = container.read(gamificationProvider.notifier);
 
-      notifier.recordSpin();
+      await notifier.recordSpin();
       final streakAfterFirst = container.read(gamificationProvider).streak;
 
       // Spin again immediately
-      notifier.recordSpin();
+      await notifier.recordSpin();
       final state = container.read(gamificationProvider);
 
       expect(state.streak, streakAfterFirst);
@@ -66,7 +66,7 @@ void main() {
       final container = createContainer();
       final notifier = container.read(gamificationProvider.notifier);
 
-      notifier.recordSpin();
+      await notifier.recordSpin();
       await Future<void>.delayed(Duration.zero); // Allow async persist
 
       final savedStreak = prefs.getInt('spin_streak');
