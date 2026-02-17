@@ -1,8 +1,10 @@
-import 'package:firebase_performance/firebase_performance.dart' as firebase_performance;
+import 'package:firebase_performance/firebase_performance.dart'
+    as firebase_performance;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vantage419/core/services/performance_service.dart';
 
-class ManualMockFirebasePerformance implements firebase_performance.FirebasePerformance {
+class ManualMockFirebasePerformance
+    implements firebase_performance.FirebasePerformance {
   String? lastTraceName;
   ManualMockTrace? lastTrace;
 

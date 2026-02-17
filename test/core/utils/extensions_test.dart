@@ -5,7 +5,12 @@ import 'package:vantage419/core/utils/extensions.dart';
 void main() {
   group('ColorX', () {
     test('darken should darken color by default amount (0.1)', () {
-      final color = const HSLColor.fromAHSL(1.0, 0.0, 0.0, 0.5).toColor(); // Lightness 0.5
+      final color = const HSLColor.fromAHSL(
+        1.0,
+        0.0,
+        0.0,
+        0.5,
+      ).toColor(); // Lightness 0.5
       final darkened = color.darken();
       final hslDarkened = HSLColor.fromColor(darkened);
 
@@ -13,7 +18,12 @@ void main() {
     });
 
     test('darken should darken color by specified amount', () {
-      final color = const HSLColor.fromAHSL(1.0, 0.0, 0.0, 0.5).toColor(); // Lightness 0.5
+      final color = const HSLColor.fromAHSL(
+        1.0,
+        0.0,
+        0.0,
+        0.5,
+      ).toColor(); // Lightness 0.5
       final darkened = color.darken(0.2);
       final hslDarkened = HSLColor.fromColor(darkened);
 
@@ -21,7 +31,12 @@ void main() {
     });
 
     test('darken should clamp lightness at 0.0', () {
-      final color = const HSLColor.fromAHSL(1.0, 0.0, 0.0, 0.05).toColor(); // Lightness 0.05
+      final color = const HSLColor.fromAHSL(
+        1.0,
+        0.0,
+        0.0,
+        0.05,
+      ).toColor(); // Lightness 0.05
       final darkened = color.darken(0.1); // Would be -0.05
       final hslDarkened = HSLColor.fromColor(darkened);
 
@@ -29,7 +44,12 @@ void main() {
     });
 
     test('lighten should lighten color by default amount (0.1)', () {
-      final color = const HSLColor.fromAHSL(1.0, 0.0, 0.0, 0.5).toColor(); // Lightness 0.5
+      final color = const HSLColor.fromAHSL(
+        1.0,
+        0.0,
+        0.0,
+        0.5,
+      ).toColor(); // Lightness 0.5
       final lightened = color.lighten();
       final hslLightened = HSLColor.fromColor(lightened);
 
@@ -37,7 +57,12 @@ void main() {
     });
 
     test('lighten should lighten color by specified amount', () {
-      final color = const HSLColor.fromAHSL(1.0, 0.0, 0.0, 0.5).toColor(); // Lightness 0.5
+      final color = const HSLColor.fromAHSL(
+        1.0,
+        0.0,
+        0.0,
+        0.5,
+      ).toColor(); // Lightness 0.5
       final lightened = color.lighten(0.2);
       final hslLightened = HSLColor.fromColor(lightened);
 
@@ -45,7 +70,12 @@ void main() {
     });
 
     test('lighten should clamp lightness at 1.0', () {
-      final color = const HSLColor.fromAHSL(1.0, 0.0, 0.0, 0.95).toColor(); // Lightness 0.95
+      final color = const HSLColor.fromAHSL(
+        1.0,
+        0.0,
+        0.0,
+        0.95,
+      ).toColor(); // Lightness 0.95
       final lightened = color.lighten(0.1); // Would be 1.05
       final hslLightened = HSLColor.fromColor(lightened);
 
