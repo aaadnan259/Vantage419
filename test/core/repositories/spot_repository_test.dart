@@ -92,11 +92,16 @@ void main() {
     });
 
     test('getSpots throws RepositoryException on data source failure', () async {
-      fakeDataSource.fetchError = Exception('Source failed');
+      final error = Exception('Source failed');
+      fakeDataSource.fetchError = error;
 
       expect(
         () => repository.getSpots(),
-        throwsA(isA<RepositoryException>()),
+        throwsA(
+          isA<RepositoryException>()
+              .having((e) => e.message, 'message', 'Failed to fetch spots')
+              .having((e) => e.originalError, 'originalError', error),
+        ),
       );
     });
 
@@ -108,20 +113,30 @@ void main() {
     });
 
     test('logVisit throws RepositoryException on save failure', () async {
-      fakeDataSource.saveError = Exception('Save failed');
+      final error = Exception('Save failed');
+      fakeDataSource.saveError = error;
 
       expect(
         () => repository.logVisit('1', []),
-        throwsA(isA<RepositoryException>()),
+        throwsA(
+          isA<RepositoryException>()
+              .having((e) => e.message, 'message', 'Failed to log visit')
+              .having((e) => e.originalError, 'originalError', error),
+        ),
       );
     });
 
     test('logVisit throws RepositoryException on reload failure', () async {
-      fakeDataSource.loadError = Exception('Reload failed');
+      final error = Exception('Reload failed');
+      fakeDataSource.loadError = error;
 
       expect(
         () => repository.logVisit('1', []),
-        throwsA(isA<RepositoryException>()),
+        throwsA(
+          isA<RepositoryException>()
+              .having((e) => e.message, 'message', 'Failed to log visit')
+              .having((e) => e.originalError, 'originalError', error),
+        ),
       );
     });
   });
