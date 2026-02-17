@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart'; // Trigger PR sync after conflict resolution
 import 'package:vantage419/core/data_sources/spot_local_data_source.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/spot_category.dart';
@@ -73,6 +73,14 @@ void main() {
       expect(result, spots);
     });
 
+    test('getVisits returns data from source', () async {
+      final visits = [UserVisit(spotId: '1', visitedAt: DateTime.now())];
+      fakeDataSource.setVisits(visits);
+
+      final result = await repository.getVisits();
+      expect(result, visits);
+    });
+
     test('logVisit saves and reloads', () async {
       final initialVisit = UserVisit(spotId: '1', visitedAt: DateTime.now());
       final history = [initialVisit];
@@ -91,19 +99,33 @@ void main() {
       expect(result.length, 2);
     });
 
-    test('getSpots throws RepositoryException on data source failure', () async {
-      final error = Exception('Source failed');
-      fakeDataSource.fetchError = error;
+    test('logVisit with empty initial history', () async {
+      fakeDataSource.setVisits([]);
 
-      expect(
-        () => repository.getSpots(),
-        throwsA(
-          isA<RepositoryException>()
-              .having((e) => e.message, 'message', 'Failed to fetch spots')
-              .having((e) => e.originalError, 'originalError', error),
-        ),
-      );
+      final result = await repository.logVisit('1', []);
+
+      expect(fakeDataSource.saveCallCount, 1);
+      expect(fakeDataSource.lastSavedVisits!.length, 1);
+      expect(fakeDataSource.lastSavedVisits!.first.spotId, '1');
+      expect(result.length, 1);
     });
+
+    test(
+      'getSpots throws RepositoryException on data source failure',
+      () async {
+        final error = Exception('Source failed');
+        fakeDataSource.fetchError = error;
+
+        expect(
+          () => repository.getSpots(),
+          throwsA(
+            isA<RepositoryException>()
+                .having((e) => e.message, 'message', 'Failed to fetch spots')
+                .having((e) => e.originalError, 'originalError', error),
+          ),
+        );
+      },
+    );
 
     test('getVisits returns empty list on data source failure', () async {
       fakeDataSource.loadError = Exception('Source failed');
