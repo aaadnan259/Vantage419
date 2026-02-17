@@ -7,6 +7,7 @@ import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/core/providers/spots_provider.dart';
 import 'package:vantage419/core/providers/visits_provider.dart';
+import 'package:vantage419/core/services/clock_service.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
 void main() {
@@ -18,9 +19,12 @@ void main() {
       prefs = await SharedPreferences.getInstance();
     });
 
-    ProviderContainer createContainer() {
+    ProviderContainer createContainer({List<Override> overrides = const []}) {
       return ProviderContainer(
-        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          ...overrides,
+        ],
       );
     }
 
@@ -43,18 +47,56 @@ void main() {
     });
 
     test('spin on same day keeps streak same', () async {
-      final container = createContainer();
+      final clock = FakeClockService(DateTime(2023, 1, 1, 10, 0));
+      final container = createContainer(overrides: [
+        clockServiceProvider.overrideWithValue(clock),
+      ]);
       final notifier = container.read(gamificationProvider.notifier);
 
       await notifier.recordSpin();
       final streakAfterFirst = container.read(gamificationProvider).streak;
 
-      // Spin again immediately
+      // Spin again immediately (same day, different time)
+      clock.setNow(DateTime(2023, 1, 1, 11, 0));
       await notifier.recordSpin();
       final state = container.read(gamificationProvider);
 
       expect(state.streak, streakAfterFirst);
       expect(state.streak, 1);
+    });
+
+    test('increments streak on consecutive day spin', () async {
+      final clock = FakeClockService(DateTime(2023, 1, 1));
+      final container = createContainer(overrides: [
+        clockServiceProvider.overrideWithValue(clock),
+      ]);
+      final notifier = container.read(gamificationProvider.notifier);
+
+      // Day 1
+      await notifier.recordSpin();
+      expect(container.read(gamificationProvider).streak, 1);
+
+      // Day 2 (Consecutive)
+      clock.setNow(DateTime(2023, 1, 2));
+      await notifier.recordSpin();
+      expect(container.read(gamificationProvider).streak, 2);
+    });
+
+    test('resets streak on missed day spin', () async {
+      final clock = FakeClockService(DateTime(2023, 1, 1));
+      final container = createContainer(overrides: [
+        clockServiceProvider.overrideWithValue(clock),
+      ]);
+      final notifier = container.read(gamificationProvider.notifier);
+
+      // Day 1
+      await notifier.recordSpin();
+      expect(container.read(gamificationProvider).streak, 1);
+
+      // Day 3 (Missed Day 2)
+      clock.setNow(DateTime(2023, 1, 3));
+      await notifier.recordSpin();
+      expect(container.read(gamificationProvider).streak, 1);
     });
 
     test('persists streak to SharedPreferences', () async {
@@ -156,4 +198,16 @@ class FakeVisitsNotifier extends VisitsNotifier {
 
   @override
   Future<List<UserVisit>> build() async => _visits;
+}
+
+class FakeClockService implements ClockService {
+  DateTime _now;
+  FakeClockService(this._now);
+
+  @override
+  DateTime now() => _now;
+
+  void setNow(DateTime now) {
+    _now = now;
+  }
 }

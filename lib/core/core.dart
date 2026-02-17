@@ -8,6 +8,7 @@ export 'models/toledo_spot.dart';
 export 'models/user_visit.dart';
 
 // Services
+export 'services/clock_service.dart';
 export 'services/location_service.dart';
 export 'services/navigation_service.dart';
 export 'services/roulette_service.dart';
