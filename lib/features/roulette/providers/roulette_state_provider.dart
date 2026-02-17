@@ -80,11 +80,11 @@ class RouletteNotifier extends Notifier<RouletteState> {
     }
   }
 
-  void selectMode(int index) {
+  Future<void> selectMode(int index) async {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
-    ref.read(analyticsProvider).logModeChange(newMode.displayName);
+    await ref.read(analyticsProvider).logModeChange(newMode.displayName);
 
     state = state.copyWith(
       currentMode: index,
@@ -129,7 +129,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
-        ref.read(gamificationProvider.notifier).recordSpin();
+        await ref.read(gamificationProvider.notifier).recordSpin();
 
         state = state.copyWith(
           isSpinning: false,
