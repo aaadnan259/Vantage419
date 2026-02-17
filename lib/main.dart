@@ -10,9 +10,11 @@ import 'package:vantage419/features/splash/splash_screen.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vantage419/l10n/generated/app_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   // Global error handler — catches framework-level errors (widget build failures, etc.)
   // Wire to AnalyticsService when Firebase is configured

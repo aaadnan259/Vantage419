@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/models/roulette_mode.dart';
@@ -108,7 +109,8 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final repository = ref.read(spotRepositoryProvider);
       final service = ref.read(rouletteServiceProvider);
 
-      analytics.logSpinStart(state.mode.displayName);
+      // Fire-and-forget logging to avoid UI blocking
+      unawaited(analytics.logSpinStart(state.mode.displayName));
 
       // S3.2: Fetch data from Repository (Abstracted Source)
       final spots = await repository.getSpots();
@@ -125,7 +127,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       );
 
       if (result != null) {
-        analytics.logSpinComplete(result.id, result.name);
+        unawaited(analytics.logSpinComplete(result.id, result.name));
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
