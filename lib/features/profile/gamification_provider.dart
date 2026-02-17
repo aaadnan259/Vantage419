@@ -42,7 +42,7 @@ class GamificationNotifier extends Notifier<GamificationState> {
   }
 
   /// Call after every spin to update streak.
-  void recordSpin() {
+  Future<void> recordSpin() async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final last = state.lastSpinDate;
@@ -67,7 +67,7 @@ class GamificationNotifier extends Notifier<GamificationState> {
     }
 
     state = state.copyWith(streak: newStreak, lastSpinDate: now);
-    _persist(newStreak, now);
+    await _persist(newStreak, now);
   }
 
   Future<void> _persist(int streak, DateTime date) async {

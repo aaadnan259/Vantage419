@@ -1,18 +1,36 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 
-/// Analytics abstraction — swap to Firebase Analytics when ready.
-/// For now, logs events to debug console so we can verify event flow.
+/// Analytics abstraction using Firebase Analytics.
+/// Logs events to debug console and sends them to Firebase.
 class AnalyticsService {
+  final FirebaseAnalytics? _analytics;
+
+  /// Creates an [AnalyticsService].
+  ///
+  /// If [analytics] is provided, events will be sent to Firebase.
+  /// Otherwise, events are only logged to the debug console (useful for testing).
+  AnalyticsService([this._analytics]);
+
   /// Log a named event with optional parameters.
   Future<void> logEvent(String name, [Map<String, Object>? params]) async {
     debugPrint('📊 Analytics: $name ${params ?? ''}');
-    // Swap: await FirebaseAnalytics.instance.logEvent(name: name, parameters: params);
+    await _analytics?.logEvent(name: name, parameters: params);
   }
 
   /// Track screen views for funnel analysis.
   Future<void> logScreenView(String screenName) async {
     debugPrint('📊 Screen: $screenName');
-    // Swap: await FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
+    await _analytics?.logScreenView(screenName: screenName);
+  }
+
+  /// Log errors to analytics (Crashlytics).
+  void logError(dynamic error, StackTrace? stackTrace, {bool fatal = false}) {
+    debugPrint('🔴 Analytics Error: $error');
+    if (stackTrace != null) {
+      debugPrint('Stack: $stackTrace');
+    }
+    // Swap: FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: fatal);
   }
 
   Future<void> logSpinStart(String mode) async {

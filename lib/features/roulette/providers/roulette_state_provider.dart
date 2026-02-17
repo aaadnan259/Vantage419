@@ -15,11 +15,7 @@ final rouletteServiceProvider = Provider<RouletteService>((ref) {
 });
 
 /// Types of errors that can occur during roulette spin.
-enum RouletteErrorType {
-  none,
-  noSpotsMatch,
-  generic,
-}
+enum RouletteErrorType { none, noSpotsMatch, generic }
 
 /// Current roulette mode state.
 class RouletteState {
@@ -57,7 +53,9 @@ class RouletteState {
           ? null
           : (selectedSpot ?? this.selectedSpot),
       visits: visits ?? this.visits,
-      errorType: clearError ? RouletteErrorType.none : (errorType ?? this.errorType),
+      errorType: clearError
+          ? RouletteErrorType.none
+          : (errorType ?? this.errorType),
     );
   }
 }
@@ -81,11 +79,11 @@ class RouletteNotifier extends Notifier<RouletteState> {
     }
   }
 
-  void selectMode(int index) {
+  Future<void> selectMode(int index) async {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
-    ref.read(analyticsProvider).logModeChange(newMode.displayName).ignore();
+    await ref.read(analyticsProvider).logModeChange(newMode.displayName);
 
     state = state.copyWith(
       currentMode: index,
@@ -109,7 +107,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final repository = ref.read(spotRepositoryProvider);
       final service = ref.read(rouletteServiceProvider);
 
-      analytics.logSpinStart(state.mode.displayName).ignore();
+      await analytics.logSpinStart(state.mode.displayName);
 
       // S3.2: Fetch data from Repository (Abstracted Source)
       final spots = await repository.getSpots();
@@ -126,11 +124,11 @@ class RouletteNotifier extends Notifier<RouletteState> {
       );
 
       if (result != null) {
-        analytics.logSpinComplete(result.id, result.name).ignore();
+        await analytics.logSpinComplete(result.id, result.name);
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
-        ref.read(gamificationProvider.notifier).recordSpin();
+        await ref.read(gamificationProvider.notifier).recordSpin();
 
         // Invalidate visits provider to update discovery stats
         ref.invalidate(visitsProvider);
