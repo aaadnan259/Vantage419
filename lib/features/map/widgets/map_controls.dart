@@ -18,16 +18,19 @@ class LocationErrorBanner extends StatelessWidget {
     VoidCallback? onAction;
 
     if (error is LocationPermissionDeniedForeverException) {
-      message = localizations?.locationAccessDeniedForever ??
+      message =
+          localizations?.locationAccessDeniedForever ??
           'Location access permanently denied';
       actionLabel = localizations?.openSettings ?? 'Open Settings';
       onAction = () => Geolocator.openAppSettings();
     } else if (error is LocationDisabledException) {
-      message = localizations?.locationServicesOff ?? 'Location services are off';
+      message =
+          localizations?.locationServicesOff ?? 'Location services are off';
       actionLabel = localizations?.enable ?? 'Enable';
       onAction = () => Geolocator.openLocationSettings();
     } else if (error is LocationPermissionDeniedException) {
-      message = localizations?.locationPermissionNeeded ??
+      message =
+          localizations?.locationPermissionNeeded ??
           'Location permission needed for your position';
       actionLabel = localizations?.settings ?? 'Settings';
       onAction = () => Geolocator.openAppSettings();
