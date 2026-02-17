@@ -19,7 +19,7 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Analytics service for error logging
+  // Analytics service for error logging (initialized after Firebase)
   final analytics = AnalyticsService();
 
   // Global error handler — catches framework-level errors (widget build failures, etc.)
