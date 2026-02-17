@@ -5,6 +5,7 @@ import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/services/roulette_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/core/providers/visits_provider.dart';
 import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
@@ -131,6 +132,9 @@ class RouletteNotifier extends Notifier<RouletteState> {
 
         // Update gamification streak
         await ref.read(gamificationProvider.notifier).recordSpin();
+
+        // Invalidate visits provider to update discovery stats
+        ref.invalidate(visitsProvider);
 
         state = state.copyWith(
           isSpinning: false,
