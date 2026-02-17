@@ -1,5 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:vantage419/main.dart' as app;
+import 'package:vantage419/features/roulette/widgets/shuffle_deck_overlay.dart';
 
 /// Integration test scaffold — validates core user flows.
 /// Run with: flutter test integration_test/app_test.dart
@@ -11,39 +14,33 @@ void main() {
       tester,
     ) async {
       // Import your main app entry point
-      // await tester.pumpWidget(const VantageApp());
-      // await tester.pumpAndSettle();
-      //
-      // Verify splash screen appears
-      // expect(find.textContaining('Vantage'), findsOneWidget);
-      //
-      // Wait for splash to complete
-      // await tester.pump(const Duration(seconds: 3));
-      // await tester.pumpAndSettle();
-      //
-      // Check we're on the map screen
-      // expect(find.byType(FlutterMap), findsOneWidget);
+      await app.main();
+      await tester.pumpAndSettle();
 
-      // Placeholder — uncomment above when testing on real device
-      expect(true, isTrue);
+      // Verify splash screen appears
+      expect(find.textContaining('Vantage'), findsOneWidget);
+
+      // Wait for splash to complete
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+
+      // Check we're on the map screen
+      expect(find.byType(FlutterMap), findsOneWidget);
     });
   });
 
   group('Spin flow', () {
     testWidgets('tapping spin triggers overlay', (tester) async {
       // Import your main app entry point and set up providers
-      // await tester.pumpWidget(const VantageApp());
-      // await tester.pumpAndSettle();
-      //
-      // Find and tap spin button
-      // await tester.tap(find.text('Spin'));
-      // await tester.pump();
-      //
-      // Verify shuffle overlay appears
-      // expect(find.byType(ShuffleDeckOverlay), findsOneWidget);
+      await app.main();
+      await tester.pumpAndSettle();
 
-      // Placeholder — uncomment above when testing on real device
-      expect(true, isTrue);
+      // Find and tap spin button
+      await tester.tap(find.text('Spin'));
+      await tester.pump();
+
+      // Verify shuffle overlay appears
+      expect(find.byType(ShuffleDeckOverlay), findsOneWidget);
     });
   });
 }

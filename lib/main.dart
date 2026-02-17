@@ -14,7 +14,7 @@ import 'package:vantage419/l10n/generated/app_localizations.dart';
 import 'package:vantage419/core/services/analytics_service.dart';
 import 'package:vantage419/firebase_options.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
