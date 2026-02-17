@@ -24,6 +24,7 @@ import 'package:vantage419/features/favorites/favorites_sheet.dart';
 import 'package:vantage419/features/history/history_sheet.dart';
 import 'package:vantage419/features/profile/profile_sheet.dart';
 import 'package:vantage419/l10n/generated/app_localizations.dart';
+import 'package:vantage419/features/map/utils/map_camera_animator.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -38,10 +39,13 @@ class MapScreen extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapScreen>
     with TickerProviderStateMixin {
-  AnimationController? _cameraAnimController;
+  late final MapCameraAnimator _mapAnimator;
+
   @override
   void initState() {
     super.initState();
+    _mapAnimator = MapCameraAnimator(vsync: this);
+
     // Track screen view
     ref.read(analyticsProvider).logScreenView('MapScreen');
 
@@ -93,9 +97,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
       body: spotsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
-            child: Text(AppLocalizations.of(context)
-                    ?.errorLoadingSpots(err.toString()) ??
-                'Error: $err')),
+          child: Text(
+            AppLocalizations.of(context)?.errorLoadingSpots(err.toString()) ??
+                'Error: $err',
+          ),
+        ),
         data: (allSpots) {
           // S5.2 + S6.3: Filter spots by active mode
           final filteredSpots = allSpots
@@ -286,50 +292,14 @@ class _MapScreenState extends ConsumerState<MapScreen>
     );
   }
 
-  /// S6.6: Animated camera fly-to instead of instant jump.
-  void _animateCamera(MapController controller, LatLng target, double zoom) {
-    // Cancel any in-flight camera animation to avoid leaks
-    _cameraAnimController?.dispose();
-
-    final cam = controller.camera;
-    final startLat = cam.center.latitude;
-    final startLng = cam.center.longitude;
-    final startZoom = cam.zoom;
-
-    final animController = AnimationController(
-      vsync: this,
-      duration: AppConstants.cameraDuration,
-    );
-    _cameraAnimController = animController;
-
-    final curve = CurvedAnimation(
-      parent: animController,
-      curve: Curves.easeInOutCubic,
-    );
-
-    animController.addListener(() {
-      final t = curve.value;
-      controller.move(
-        LatLng(
-          startLat + (target.latitude - startLat) * t,
-          startLng + (target.longitude - startLng) * t,
-        ),
-        startZoom + (zoom - startZoom) * t,
-      );
-    });
-    animController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        animController.dispose();
-        if (_cameraAnimController == animController) {
-          _cameraAnimController = null;
-        }
-      }
-    });
-    animController.forward();
+  @override
+  void dispose() {
+    _mapAnimator.dispose();
+    super.dispose();
   }
 
   void _onSpotTapped(ToledoSpot spot, MapController controller) {
-    _animateCamera(
+    _mapAnimator.animateTo(
       controller,
       LatLng(spot.latitude, spot.longitude),
       AppConstants.spotZoom,
