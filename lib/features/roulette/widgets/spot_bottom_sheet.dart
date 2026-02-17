@@ -46,7 +46,7 @@ class SpotBottomSheet extends ConsumerWidget {
             controller: scrollController,
             padding: EdgeInsets.zero,
             children: [
-              // Pulsing drag handle — hints that the sheet is draggable (S2.1)
+              // Shared pulsing drag handle to hint that the sheet is draggable (S2.1)
               const Center(child: DragHandle(isPulsing: true)),
 
               // Header row
