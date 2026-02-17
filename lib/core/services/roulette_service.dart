@@ -29,17 +29,30 @@ class RouletteService {
         .map((v) => v.spotId)
         .toSet();
 
-    // Build weighted list
-    final weighted = <ToledoSpot>[];
+    // Calculate total weight (O(n)) to avoid memory allocation for weighted list
+    int totalWeight = 0;
+    for (final spot in pool) {
+      totalWeight += recentVisitIds.contains(spot.id)
+          ? 1
+          : AppConstants.unvisitedWeight;
+    }
+
+    if (totalWeight == 0) return null;
+
+    int randomWeight = _rng.nextInt(totalWeight);
+
+    // Select based on cumulative weight
     for (final spot in pool) {
       final weight = recentVisitIds.contains(spot.id)
           ? 1
           : AppConstants.unvisitedWeight;
-      for (var i = 0; i < weight; i++) {
-        weighted.add(spot);
+      randomWeight -= weight;
+      if (randomWeight < 0) {
+        return spot;
       }
     }
 
-    return weighted[_rng.nextInt(weighted.length)];
+    // Fallback should theoretically not be reached if math is correct
+    return pool.last;
   }
 }

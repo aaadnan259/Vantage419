@@ -53,7 +53,8 @@ abstract final class AppConstants {
 
   // Navigation
   static const googleNavScheme = 'google.navigation:q={lat},{lng}&mode=d';
-  static const wazeNavScheme = 'https://waze.com/ul?ll={lat},{lng}&navigate=yes';
+  static const wazeNavScheme =
+      'https://waze.com/ul?ll={lat},{lng}&navigate=yes';
   static const googleWebNavScheme =
       'https://www.google.com/maps/dir/?api=1&destination={lat},{lng}';
 }

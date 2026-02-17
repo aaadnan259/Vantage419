@@ -4,17 +4,14 @@ import 'package:vantage419/features/map/widgets/map_icon_button.dart';
 import 'package:vantage419/core/theme/palette.dart';
 
 void main() {
-  testWidgets('MapIconButton renders correctly and handles taps',
-      (WidgetTester tester) async {
+  testWidgets('MapIconButton renders correctly and handles taps', (
+    WidgetTester tester,
+  ) async {
     bool tapped = false;
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          extensions: const [
-            VantagePalette.light,
-          ],
-        ),
+        theme: ThemeData(extensions: const [VantagePalette.light]),
         home: Scaffold(
           body: MapIconButton(
             icon: Icons.add,

@@ -17,22 +17,37 @@ class NavigationService {
     String? label,
   }) async {
     try {
+      Uri googleUrl;
+      Uri wazeUrl;
+
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        // iOS-specific schemes requiring LSApplicationQueriesSchemes in Info.plist
+        googleUrl = Uri.parse(
+          'comgooglemaps://?daddr=$latitude,$longitude&directionsmode=driving',
+        );
+        wazeUrl = Uri.parse(
+          'waze://?ll=$latitude,$longitude&navigate=yes',
+        );
+      } else {
+        // Android/other schemes
+        googleUrl = Uri.parse(
+          AppConstants.googleNavScheme
+              .replaceAll('{lat}', latitude.toString())
+              .replaceAll('{lng}', longitude.toString()),
+        );
+        wazeUrl = Uri.parse(
+          AppConstants.wazeNavScheme
+              .replaceAll('{lat}', latitude.toString())
+              .replaceAll('{lng}', longitude.toString()),
+        );
+      }
+
       // Try Google Maps first
-      final googleUrl = Uri.parse(
-        AppConstants.googleNavScheme
-            .replaceAll('{lat}', latitude.toString())
-            .replaceAll('{lng}', longitude.toString()),
-      );
       if (await canLaunchUrl(googleUrl)) {
         return launchUrl(googleUrl);
       }
 
       // Waze fallback
-      final wazeUrl = Uri.parse(
-        AppConstants.wazeNavScheme
-            .replaceAll('{lat}', latitude.toString())
-            .replaceAll('{lng}', longitude.toString()),
-      );
       if (await canLaunchUrl(wazeUrl)) {
         return launchUrl(wazeUrl, mode: LaunchMode.externalApplication);
       }
