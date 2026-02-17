@@ -4,6 +4,7 @@ import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/spot_category.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/repositories/spot_repository_impl.dart';
+import 'package:vantage419/core/errors/app_exception.dart';
 
 // Manual Fake implementation to avoid Mockito codegen/runtime issues
 class FakeSpotLocalDataSource implements SpotLocalDataSource {
@@ -18,14 +19,26 @@ class FakeSpotLocalDataSource implements SpotLocalDataSource {
   int saveCallCount = 0;
   List<UserVisit>? lastSavedVisits;
 
-  @override
-  Future<List<ToledoSpot>> fetchStaticSpots() async => _spots;
+  // Error simulation
+  Exception? fetchError;
+  Exception? loadError;
+  Exception? saveError;
 
   @override
-  Future<List<UserVisit>> loadVisits() async => _visits;
+  Future<List<ToledoSpot>> fetchStaticSpots() async {
+    if (fetchError != null) throw fetchError!;
+    return _spots;
+  }
+
+  @override
+  Future<List<UserVisit>> loadVisits() async {
+    if (loadError != null) throw loadError!;
+    return _visits;
+  }
 
   @override
   Future<void> saveVisits(List<UserVisit> visits) async {
+    if (saveError != null) throw saveError!;
     saveCallCount++;
     lastSavedVisits = visits;
     _visits = visits; // Simulate persistence
@@ -76,6 +89,40 @@ void main() {
 
       // Verify it returns the fresh list from loadVisits (which our fake updates in saveVisits)
       expect(result.length, 2);
+    });
+
+    test('getSpots throws RepositoryException on data source failure', () async {
+      fakeDataSource.fetchError = Exception('Source failed');
+
+      expect(
+        () => repository.getSpots(),
+        throwsA(isA<RepositoryException>()),
+      );
+    });
+
+    test('getVisits returns empty list on data source failure', () async {
+      fakeDataSource.loadError = Exception('Source failed');
+
+      final result = await repository.getVisits();
+      expect(result, isEmpty);
+    });
+
+    test('logVisit throws RepositoryException on save failure', () async {
+      fakeDataSource.saveError = Exception('Save failed');
+
+      expect(
+        () => repository.logVisit('1', []),
+        throwsA(isA<RepositoryException>()),
+      );
+    });
+
+    test('logVisit throws RepositoryException on reload failure', () async {
+      fakeDataSource.loadError = Exception('Reload failed');
+
+      expect(
+        () => repository.logVisit('1', []),
+        throwsA(isA<RepositoryException>()),
+      );
     });
   });
 }
