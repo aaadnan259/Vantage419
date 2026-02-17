@@ -76,7 +76,10 @@ class SpotLocalDataSource {
       pruned = pruned.sublist(0, _maxVisits);
     }
 
-    final json = jsonEncode(pruned.map((v) => v.toJson()).toList());
+    final jsonList = pruned.map((v) => v.toJson()).toList();
+    final json = await compute(_encodeVisits, jsonList);
     await _prefs.setString(_visitsKey, json);
   }
 }
+
+String _encodeVisits(List<Map<String, dynamic>> visits) => jsonEncode(visits);
