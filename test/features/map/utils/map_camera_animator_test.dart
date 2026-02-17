@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -32,12 +31,12 @@ class FakeMapController extends Fake implements MapController {
 
 void main() {
   testWidgets('MapCameraAnimator animates camera', (tester) async {
-    final camera = FakeMapCamera(center: LatLng(0, 0), zoom: 10);
+    final camera = FakeMapCamera(center: const LatLng(0, 0), zoom: 10);
     final controller = FakeMapController(camera);
 
     final animator = MapCameraAnimator(vsync: const TestVSync());
 
-    animator.animateTo(controller, LatLng(10, 10), 20);
+    animator.animateTo(controller, const LatLng(10, 10), 20);
 
     // Initial state
     expect(controller.moveCalls, isEmpty);
