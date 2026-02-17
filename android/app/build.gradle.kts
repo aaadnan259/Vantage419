@@ -49,6 +49,7 @@ android {
 
     buildTypes {
         release {
+            // explicit handling to prevent fallback to debug keystore
             signingConfig = signingConfigs.findByName("release")
         }
     }
