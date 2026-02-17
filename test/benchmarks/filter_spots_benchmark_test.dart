@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/spot_category.dart';
@@ -32,8 +33,12 @@ void main() {
       assert(filtered.isNotEmpty);
     }
     stopwatch.stop();
-    print('Filtering ${spotCount} spots ${iterations} times took: ${stopwatch.elapsedMilliseconds} ms');
-    print('Average time per filter: ${stopwatch.elapsedMicroseconds / iterations} µs');
+    debugPrint(
+      'Filtering $spotCount spots $iterations times took: ${stopwatch.elapsedMilliseconds} ms',
+    );
+    debugPrint(
+      'Average time per filter: ${stopwatch.elapsedMicroseconds / iterations} µs',
+    );
 
     // 3. Measure Accessing Cached (Optimized)
     final cached = spots
@@ -47,7 +52,11 @@ void main() {
       assert(result.isNotEmpty);
     }
     stopwatch.stop();
-    print('Accessing cached spots ${iterations} times took: ${stopwatch.elapsedMilliseconds} ms');
-    print('Average time per access: ${stopwatch.elapsedMicroseconds / iterations} µs');
+    debugPrint(
+      'Accessing cached spots $iterations times took: ${stopwatch.elapsedMilliseconds} ms',
+    );
+    debugPrint(
+      'Average time per access: ${stopwatch.elapsedMicroseconds / iterations} µs',
+    );
   });
 }

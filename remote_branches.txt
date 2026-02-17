@@ -1,0 +1,26 @@
+  origin/HEAD -> origin/main
+  origin/add-localization-1966054730022834864
+  origin/analytics-error-wiring-7477923391429419732
+  origin/code-health-remove-unused-tojson-14489724557944843760
+  origin/feat-firebase-performance-swap-170540842452182230
+  origin/feature/firebase-analytics-6959328449609135832
+  origin/feature/firebase-performance-provider-949118662374840256
+  origin/firebase-analytics-impl-47165364910801069
+  origin/fix-android-release-signing-5188011095060725287
+  origin/fix-ios-location-permission-605681081718821228
+  origin/fix/analytics-unawaited-futures-8992636384107047592
+  origin/fix/unawaited-futures-roulette-11144741339945185186
+  origin/main
+  origin/optimize-discovery-stats-provider-4150540194963842379
+  origin/optimize-history-sheet-7781986839400725014
+  origin/perf/offload-json-encode-isolate-17155827098775452457
+  origin/production-sprint-0
+  origin/production-sprint-7
+  origin/refactor-drag-handle-extraction-15393633592341081820
+  origin/refactor-map-icon-button-11838405778026609073
+  origin/refactor/extract-navigation-urls-17728405412540495902
+  origin/refactor/spot-bottom-sheet-15940953813735458091
+  origin/refactor/spot-bottom-sheet-constants-150839788842153216
+  origin/security-fix-background-location-permission-7136265592343254992
+  origin/test-color-extensions-4046164267843023585
+  origin/test-improvement-spot-repository-error-handling-12342861277734720206

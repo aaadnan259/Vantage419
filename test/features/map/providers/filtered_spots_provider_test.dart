@@ -11,7 +11,7 @@ import 'package:vantage419/core/services/analytics_service.dart';
 void main() {
   test('filteredSpotsProvider filters spots based on roulette mode', () async {
     // 1. Setup Mock Data
-    final diningSpot = ToledoSpot(
+    const diningSpot = ToledoSpot(
       id: '1',
       name: 'Dining Spot',
       latitude: 0,
@@ -20,7 +20,7 @@ void main() {
       vibeCheck: 'Vibe',
       description: 'Desc',
     );
-    final fitnessSpot = ToledoSpot(
+    const fitnessSpot = ToledoSpot(
       id: '2',
       name: 'Fitness Spot',
       latitude: 0,
