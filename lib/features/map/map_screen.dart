@@ -10,28 +10,25 @@ import 'package:vantage419/core/providers/spots_provider.dart';
 import 'package:vantage419/features/map/providers/filtered_spots_provider.dart';
 import 'package:vantage419/features/map/providers/map_controller_provider.dart';
 import 'package:vantage419/features/map/providers/user_location_provider.dart';
-import 'package:vantage419/features/map/widgets/empty_state.dart';
-import 'package:vantage419/features/map/widgets/map_controls.dart';
-import 'package:vantage419/features/map/widgets/map_layer.dart';
-import 'package:vantage419/features/map/widgets/user_location_marker.dart';
-import 'package:vantage419/features/map/widgets/map_icon_button.dart';
-import 'package:vantage419/features/map/widgets/floating_search_pill.dart';
-import 'package:vantage419/features/roulette/widgets/shuffle_deck_overlay.dart';
 import 'package:vantage419/features/roulette/providers/roulette_state_provider.dart';
-import 'package:vantage419/features/roulette/widgets/category_selector.dart';
-import 'package:vantage419/features/roulette/widgets/spot_bottom_sheet.dart';
-import 'package:vantage419/features/settings/widgets/theme_toggle.dart';
 import 'package:vantage419/features/favorites/favorites_sheet.dart';
 import 'package:vantage419/features/history/history_sheet.dart';
 import 'package:vantage419/features/profile/profile_sheet.dart';
 import 'package:vantage419/l10n/generated/app_localizations.dart';
+import 'package:vantage419/features/map/widgets/map_view.dart';
+import 'package:vantage419/features/map/widgets/map_top_bar.dart';
+import 'package:vantage419/features/map/widgets/map_status_banners.dart';
+import 'package:vantage419/features/map/widgets/map_action_area.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
 
 /// Main screen — dark map with markers, spin button, and bottom sheet overlay.
 class MapScreen extends ConsumerStatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, this.tileProvider});
+
+  @visibleForTesting
+  final TileProvider? tileProvider;
 
   @override
   ConsumerState<MapScreen> createState() => _MapScreenState();
@@ -104,180 +101,54 @@ class _MapScreenState extends ConsumerState<MapScreen>
           return Stack(
             children: [
               // Map layer
-              FlutterMap(
+              MapView(
                 mapController: mapController,
-                options: MapOptions(
-                  initialCenter: AppConstants.toledoCenter,
-                  initialZoom: AppConstants.defaultZoom,
-                  backgroundColor: context.colors.primaryBackground,
-                  interactionOptions: const InteractionOptions(
-                    flags: InteractiveFlag.all,
-                  ),
-                ),
-                children: [
-                  // Theme-aware tile layer — switches between dark/light tiles
-                  TileLayer(
-                    urlTemplate: Theme.of(context).brightness == Brightness.dark
-                        ? AppConstants.darkTileUrl
-                        : AppConstants.lightTileUrl,
-                    userAgentPackageName: 'com.vantage419.app',
-                    maxZoom: 19,
-                    tileProvider: NetworkTileProvider(),
-                    errorTileCallback: (tile, error, stackTrace) {
-                      // Mark tile error state — shows banner
-                      Future.microtask(() {
-                        if (context.mounted) {
-                          ref.read(_tileErrorProvider.notifier).state = true;
-                        }
-                      });
-                    },
-                  ),
-
-                  // User location marker — handles permission errors (S1.2)
-                  userLocation.when(
-                    data: (pos) {
-                      // Clear tile error if location works (network likely ok)
-                      Future.microtask(() {
-                        if (context.mounted) {
-                          ref.read(_tileErrorProvider.notifier).state = false;
-                        }
-                      });
-                      return MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: pos,
-                            width: 24,
-                            height: 24,
-                            child: const UserLocationMarker(),
-                          ),
-                        ],
-                      );
-                    },
-                    loading: () => const MarkerLayer(markers: []),
-                    error: (_, _) => const MarkerLayer(markers: []),
-                  ),
-
-                  // S5.2: Only render markers for spots matching active mode
-                  SpotMarkerLayer(
-                    spots: filteredSpots,
-                    selectedSpotId: rouletteState.selectedSpot?.id,
-                    onSpotTapped: (spot) => _onSpotTapped(spot, mapController),
-                  ),
-                ],
+                userLocation: userLocation,
+                filteredSpots: filteredSpots,
+                selectedSpotId: rouletteState.selectedSpot?.id,
+                onSpotTapped: (spot) => _onSpotTapped(spot, mapController),
+                onTileError: () =>
+                    ref.read(_tileErrorProvider.notifier).state = true,
+                onUserLocationSuccess: () =>
+                    ref.read(_tileErrorProvider.notifier).state = false,
+                tileProvider: widget.tileProvider,
               ),
 
-              // Location error banner (S1.2) — shown when permission denied
-              userLocation.whenOrNull(
-                    error: (error, _) => LocationErrorBanner(error: error),
-                  ) ??
-                  const SizedBox.shrink(),
-
-              // Tile error banner (S1.6)
-              if (hasTileError) const TileErrorBanner(),
-
-              // S6.3: Empty state when no spots match active mode
-              if (filteredSpots.isEmpty) const EmptyStateOverlay(),
-
-              // Category selector — top center (S2.5: dim during spin)
-              Positioned(
-                top:
-                    MediaQuery.of(context).padding.top +
-                    AppConstants.topBarPadding,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: IgnorePointer(
-                    ignoring: rouletteState.isSpinning,
-                    child: AnimatedOpacity(
-                      opacity: rouletteState.isSpinning ? 0.4 : 1.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: CategorySelector(
-                        selectedIndex: rouletteState.currentMode,
-                        onSelected: (i) =>
-                            ref.read(rouletteProvider.notifier).selectMode(i),
-                        spots: allSpots,
-                      ),
-                    ),
-                  ),
-                ),
+              // Status banners
+              MapStatusBanners(
+                userLocation: userLocation,
+                hasTileError: hasTileError,
+                filteredSpots: filteredSpots,
               ),
 
-              // S7.6: Theme Toggle — top right
-              Positioned(
-                top:
-                    MediaQuery.of(context).padding.top +
-                    AppConstants.topBarPadding,
-                right: 16,
-                child: const ThemeToggle(),
+              // Top controls
+              MapTopBar(
+                rouletteState: rouletteState,
+                allSpots: allSpots,
+                onModeSelected: (i) =>
+                    ref.read(rouletteProvider.notifier).selectMode(i),
+                onFavoritesTap: () => FavoritesSheet.show(context, allSpots),
+                onHistoryTap: () => HistorySheet.show(context),
+                onProfileTap: () => ProfileSheet.show(context),
               ),
 
-              // Favorites + History buttons — top left
-              Positioned(
-                top:
-                    MediaQuery.of(context).padding.top +
-                    AppConstants.topBarPadding,
-                left: 16,
-                child: Row(
-                  children: [
-                    MapIconButton(
-                      icon: Icons.favorite_rounded,
-                      onTap: () => FavoritesSheet.show(context, allSpots),
-                    ),
-                    const SizedBox(width: 8),
-                    MapIconButton(
-                      icon: Icons.history_rounded,
-                      onTap: () => HistorySheet.show(context),
-                    ),
-                    const SizedBox(width: 8),
-                    MapIconButton(
-                      icon: Icons.bar_chart_rounded,
-                      onTap: () => ProfileSheet.show(context),
-                    ),
-                  ],
-                ),
+              // Action area (Pill, BottomSheet, Overlay)
+              MapActionArea(
+                rouletteState: rouletteState,
+                userLocation: userLocation,
+                showOverlay: _showOverlay,
+                candidates: _candidates,
+                winner: _winner,
+                onSpin: () => _onSpin(mapController, filteredSpots),
+                onOverlayComplete: _onOverlayComplete,
+                onRespin: () {
+                  setState(() => _showOverlay = false);
+                  _onSpin(mapController, filteredSpots);
+                },
+                onLetsGo: _onLetsGo,
+                onCloseSelection: () =>
+                    ref.read(rouletteProvider.notifier).clearSelection(),
               ),
-
-              // S4.5.3.3: Floating Search Pill (Replaces SpinButton)
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOutCubic,
-                bottom: rouletteState.selectedSpot != null
-                    ? MediaQuery.of(context).size.height *
-                              AppConstants.bottomSheetHeightRatio +
-                          AppConstants.pillAboveSheetPadding
-                    : AppConstants.pillBottomOffset,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: FloatingSearchPill(
-                    onTapDice: () => _onSpin(mapController, filteredSpots),
-                  ),
-                ),
-              ),
-
-              // Spin button placeholder (Functionality moved to Pill/Overlay)
-
-              // Bottom sheet — displayed when a spot is selected AND overlay is closed
-              if (rouletteState.selectedSpot != null && !_showOverlay)
-                SpotBottomSheet(
-                  spot: rouletteState.selectedSpot!,
-                  onClose: () =>
-                      ref.read(rouletteProvider.notifier).clearSelection(),
-                  userLocation: userLocation.valueOrNull,
-                ),
-
-              // S4.5.4: Shuffle Deck Overlay
-              if (_showOverlay && _winner != null)
-                ShuffleDeckOverlay(
-                  candidates: _candidates,
-                  winner: _winner!,
-                  onComplete: _onOverlayComplete,
-                  onRespin: () {
-                    setState(() => _showOverlay = false);
-                    _onSpin(mapController, filteredSpots);
-                  },
-                  onLetsGo: _onLetsGo,
-                ),
             ],
           );
         },
