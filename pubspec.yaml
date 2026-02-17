@@ -34,6 +34,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   mockito: ^5.6.3
   flutter_launcher_icons: ^0.14.3
+  plugin_platform_interface: ^2.1.8
+  url_launcher_platform_interface: ^2.3.2
 
 # App icon generation config — run: dart run flutter_launcher_icons
 # Place a 1024x1024 icon at assets/icon/app_icon.png first
