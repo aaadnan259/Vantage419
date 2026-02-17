@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vantage419/core/utils/extensions.dart';
+import 'package:vantage419/l10n/generated/app_localizations.dart';
 
 /// S6.3 / S4.5.5: Empty state when no spots match active mode.
 /// Updated with "Playful" editorial style.
@@ -8,6 +9,7 @@ class EmptyStateOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Center(
       child: Container(
         padding: const EdgeInsets.all(32),
@@ -34,7 +36,7 @@ class EmptyStateOverlay extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'No spots here!',
+              localizations?.noSpotsHereTitle ?? 'No spots here!',
               style: context.textTheme.headlineMedium?.copyWith(
                 color: context.colors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -43,7 +45,8 @@ class EmptyStateOverlay extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Try adjusting your filters or\nexplore a different area.',
+              localizations?.noSpotsHereDescription ??
+                  'Try adjusting your filters or\nexplore a different area.',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: context.colors.textSecondary,
                 height: 1.5,

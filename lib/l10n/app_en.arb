@@ -1,0 +1,69 @@
+{
+  "@@locale": "en",
+  "appTitle": "Vantage 419",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "errorLoadingSpots": "Error loading spots: {error}",
+  "@errorLoadingSpots": {
+    "description": "Error message when spots fail to load",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noSpotsHereTitle": "No spots here!",
+  "@noSpotsHereTitle": {
+    "description": "Title for empty state overlay"
+  },
+  "noSpotsHereDescription": "Try adjusting your filters or\nexplore a different area.",
+  "@noSpotsHereDescription": {
+    "description": "Description for empty state overlay"
+  },
+  "noSpotsMatchMode": "No spots match '{mode}' — try 'Surprise Me'!",
+  "@noSpotsMatchMode": {
+    "description": "Error message when no spots match the selected mode",
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "genericSpinError": "Something went wrong. Try spinning again.",
+  "@genericSpinError": {
+    "description": "Generic error message for spin failure"
+  },
+  "locationAccessDeniedForever": "Location access permanently denied",
+  "@locationAccessDeniedForever": {
+    "description": "Message when location permission is permanently denied"
+  },
+  "openSettings": "Open Settings",
+  "@openSettings": {
+    "description": "Button label to open settings"
+  },
+  "locationServicesOff": "Location services are off",
+  "@locationServicesOff": {
+    "description": "Message when location services are disabled"
+  },
+  "enable": "Enable",
+  "@enable": {
+    "description": "Button label to enable a setting"
+  },
+  "locationPermissionNeeded": "Location permission needed for your position",
+  "@locationPermissionNeeded": {
+    "description": "Message when location permission is needed"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Button label for settings"
+  },
+  "locationUnavailable": "Location unavailable",
+  "@locationUnavailable": {
+    "description": "Message when location is unavailable"
+  },
+  "mapTilesUnavailable": "Map tiles unavailable — check your connection",
+  "@mapTilesUnavailable": {
+    "description": "Message when map tiles fail to load"
+  }
+}

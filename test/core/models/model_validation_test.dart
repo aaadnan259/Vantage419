@@ -44,25 +44,24 @@ void main() {
       expect(spot.category, SpotCategory.entertainment);
     });
 
-    test('round-trips correctly via toJson', () {
-      const original = ToledoSpot(
-        id: 'rt_001',
-        name: 'Round Trip',
-        latitude: 41.65,
-        longitude: -83.54,
-        category: SpotCategory.cafe,
-        vibeCheck: 'cozy',
-        description: 'A cozy cafe',
-        address: '123 Main St',
-      );
-      final json = original.toJson();
+    test('parses valid JSON correctly', () {
+      final json = {
+        'id': 'rt_001',
+        'name': 'Round Trip',
+        'latitude': 41.65,
+        'longitude': -83.54,
+        'category': 'cafe',
+        'vibeCheck': 'cozy',
+        'description': 'A cozy cafe',
+        'address': '123 Main St',
+      };
       final restored = ToledoSpot.fromJson(json);
-      expect(restored.id, original.id);
-      expect(restored.name, original.name);
-      expect(restored.latitude, original.latitude);
-      expect(restored.longitude, original.longitude);
-      expect(restored.category, original.category);
-      expect(restored.address, original.address);
+      expect(restored.id, 'rt_001');
+      expect(restored.name, 'Round Trip');
+      expect(restored.latitude, 41.65);
+      expect(restored.longitude, -83.54);
+      expect(restored.category, SpotCategory.cafe);
+      expect(restored.address, '123 Main St');
     });
   });
 

@@ -5,6 +5,7 @@ import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/services/roulette_service.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/core/providers/visits_provider.dart';
 import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
@@ -13,6 +14,9 @@ final rouletteServiceProvider = Provider<RouletteService>((ref) {
   return RouletteService();
 });
 
+/// Types of errors that can occur during roulette spin.
+enum RouletteErrorType { none, noSpotsMatch, generic }
+
 /// Current roulette mode state.
 class RouletteState {
   const RouletteState({
@@ -20,14 +24,14 @@ class RouletteState {
     this.isSpinning = false,
     this.selectedSpot,
     this.visits = const [],
-    this.errorMessage,
+    this.errorType = RouletteErrorType.none,
   });
 
   final int currentMode;
   final bool isSpinning;
   final ToledoSpot? selectedSpot;
   final List<UserVisit> visits;
-  final String? errorMessage;
+  final RouletteErrorType errorType;
 
   /// S3.3: Bounds-checked mode getter.
   RouletteMode get mode =>
@@ -38,7 +42,7 @@ class RouletteState {
     bool? isSpinning,
     ToledoSpot? selectedSpot,
     List<UserVisit>? visits,
-    String? errorMessage,
+    RouletteErrorType? errorType,
     bool clearSelectedSpot = false,
     bool clearError = false,
   }) {
@@ -49,7 +53,9 @@ class RouletteState {
           ? null
           : (selectedSpot ?? this.selectedSpot),
       visits: visits ?? this.visits,
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      errorType: clearError
+          ? RouletteErrorType.none
+          : (errorType ?? this.errorType),
     );
   }
 }
@@ -59,7 +65,8 @@ class RouletteState {
 class RouletteNotifier extends Notifier<RouletteState> {
   @override
   RouletteState build() {
-    _init();
+    // Fire and forget initialization
+    Future.microtask(() => _init());
     return const RouletteState();
   }
 
@@ -73,11 +80,11 @@ class RouletteNotifier extends Notifier<RouletteState> {
     }
   }
 
-  void selectMode(int index) {
+  Future<void> selectMode(int index) async {
     if (index < 0 || index >= RouletteMode.modes.length) return;
 
     final newMode = RouletteMode.modes[index];
-    ref.read(analyticsProvider).logModeChange(newMode.displayName);
+    await ref.read(analyticsProvider).logModeChange(newMode.displayName);
 
     state = state.copyWith(
       currentMode: index,
@@ -101,7 +108,8 @@ class RouletteNotifier extends Notifier<RouletteState> {
       final repository = ref.read(spotRepositoryProvider);
       final service = ref.read(rouletteServiceProvider);
 
-      analytics.logSpinStart(state.mode.displayName); // ignore: unawaited_futures
+      // S1.3: Log spin start
+      await analytics.logSpinStart(state.mode.displayName);
 
       // S3.2: Fetch data from Repository (Abstracted Source)
       final spots = await repository.getSpots();
@@ -118,11 +126,15 @@ class RouletteNotifier extends Notifier<RouletteState> {
       );
 
       if (result != null) {
-        analytics.logSpinComplete(result.id, result.name); // ignore: unawaited_futures
+        // S1.3: Log spin complete
+        await analytics.logSpinComplete(result.id, result.name);
         final updatedVisits = await repository.logVisit(result.id, visits);
 
         // Update gamification streak
-        ref.read(gamificationProvider.notifier).recordSpin();
+        await ref.read(gamificationProvider.notifier).recordSpin();
+
+        // Invalidate visits provider to update discovery stats
+        ref.invalidate(visitsProvider);
 
         state = state.copyWith(
           isSpinning: false,
@@ -132,8 +144,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
       } else {
         state = state.copyWith(
           isSpinning: false,
-          errorMessage:
-              "No spots match '${state.mode.displayName}' — try 'Surprise Me'!",
+          errorType: RouletteErrorType.noSpotsMatch,
         );
       }
 
@@ -143,7 +154,7 @@ class RouletteNotifier extends Notifier<RouletteState> {
 
       state = state.copyWith(
         isSpinning: false,
-        errorMessage: 'Something went wrong. Try spinning again.',
+        errorType: RouletteErrorType.generic,
       );
       return null;
     }
