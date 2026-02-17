@@ -5,26 +5,25 @@ import 'package:vantage419/core/models/user_visit.dart';
 
 void main() {
   group('ToledoSpot', () {
-    test('toJson and fromJson round-trip', () {
-      const spot = ToledoSpot(
-        id: 'test_001',
-        name: 'Test Spot',
-        latitude: 41.65,
-        longitude: -83.54,
-        category: SpotCategory.dining,
-        vibeCheck: 'Great vibes',
-        description: 'A test spot',
-      );
+    test('parses valid JSON correctly', () {
+      final json = {
+        'id': 'test_001',
+        'name': 'Test Spot',
+        'latitude': 41.65,
+        'longitude': -83.54,
+        'category': 'dining',
+        'vibeCheck': 'Great vibes',
+        'description': 'A test spot',
+      };
 
-      final json = spot.toJson();
       final restored = ToledoSpot.fromJson(json);
 
-      expect(restored.id, spot.id);
-      expect(restored.name, spot.name);
-      expect(restored.latitude, spot.latitude);
-      expect(restored.longitude, spot.longitude);
-      expect(restored.category, spot.category);
-      expect(restored.vibeCheck, spot.vibeCheck);
+      expect(restored.id, 'test_001');
+      expect(restored.name, 'Test Spot');
+      expect(restored.latitude, 41.65);
+      expect(restored.longitude, -83.54);
+      expect(restored.category, SpotCategory.dining);
+      expect(restored.vibeCheck, 'Great vibes');
     });
   });
 

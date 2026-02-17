@@ -26,19 +26,6 @@ class ToledoSpot {
   final String? address;
   final List<String> tags;
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'latitude': latitude,
-    'longitude': longitude,
-    'category': category.name,
-    'vibeCheck': vibeCheck,
-    'description': description,
-    'imageUrl': imageUrl,
-    'address': address,
-    'tags': tags,
-  };
-
   /// S3.4: Defensive deserialization with coordinate validation
   /// and category fallback.
   factory ToledoSpot.fromJson(Map<String, dynamic> json) {

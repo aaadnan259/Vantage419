@@ -13,6 +13,7 @@ import 'package:vantage419/features/map/widgets/empty_state.dart';
 import 'package:vantage419/features/map/widgets/map_controls.dart';
 import 'package:vantage419/features/map/widgets/map_layer.dart';
 import 'package:vantage419/features/map/widgets/user_location_marker.dart';
+import 'package:vantage419/features/map/widgets/map_icon_button.dart';
 import 'package:vantage419/features/map/widgets/floating_search_pill.dart';
 import 'package:vantage419/features/roulette/widgets/shuffle_deck_overlay.dart';
 import 'package:vantage419/features/roulette/providers/roulette_state_provider.dart';
@@ -22,6 +23,7 @@ import 'package:vantage419/features/settings/widgets/theme_toggle.dart';
 import 'package:vantage419/features/favorites/favorites_sheet.dart';
 import 'package:vantage419/features/history/history_sheet.dart';
 import 'package:vantage419/features/profile/profile_sheet.dart';
+import 'package:vantage419/l10n/generated/app_localizations.dart';
 
 /// Tracks whether map tiles are loading successfully.
 final _tileErrorProvider = StateProvider<bool>((ref) => false);
@@ -46,21 +48,34 @@ class _MapScreenState extends ConsumerState<MapScreen>
     // Listen for roulette error messages and surface them as SnackBars (S1.3)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listenManual(rouletteProvider, (prev, next) {
-        final msg = next.errorMessage;
-        if (msg != null && msg != prev?.errorMessage) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: context.colors.surface,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  AppConstants.snackBarRadius,
+        if (next.errorType != RouletteErrorType.none &&
+            next.errorType != prev?.errorType) {
+          final localizations = AppLocalizations.of(context);
+          String? msg;
+
+          if (localizations != null) {
+            if (next.errorType == RouletteErrorType.noSpotsMatch) {
+              msg = localizations.noSpotsMatchMode(next.mode.displayName);
+            } else if (next.errorType == RouletteErrorType.generic) {
+              msg = localizations.genericSpinError;
+            }
+          }
+
+          if (msg != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(msg),
+                backgroundColor: context.colors.surface,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.snackBarRadius,
+                  ),
                 ),
+                duration: AppConstants.snackBarDuration,
               ),
-              duration: AppConstants.snackBarDuration,
-            ),
-          );
+            );
+          }
         }
       });
     });
@@ -77,7 +92,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
     return Scaffold(
       body: spotsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error loading spots: $err')),
+        error: (err, stack) => Center(
+            child: Text(AppLocalizations.of(context)
+                    ?.errorLoadingSpots(err.toString()) ??
+                'Error: $err')),
         data: (allSpots) {
           // S5.2 + S6.3: Filter spots by active mode
           final filteredSpots = allSpots
@@ -202,17 +220,17 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 left: 16,
                 child: Row(
                   children: [
-                    _MapIconButton(
+                    MapIconButton(
                       icon: Icons.favorite_rounded,
                       onTap: () => FavoritesSheet.show(context, allSpots),
                     ),
                     const SizedBox(width: 8),
-                    _MapIconButton(
+                    MapIconButton(
                       icon: Icons.history_rounded,
-                      onTap: () => HistorySheet.show(context, allSpots),
+                      onTap: () => HistorySheet.show(context),
                     ),
                     const SizedBox(width: 8),
-                    _MapIconButton(
+                    MapIconButton(
                       icon: Icons.bar_chart_rounded,
                       onTap: () => ProfileSheet.show(context),
                     ),
@@ -372,36 +390,5 @@ class _MapScreenState extends ConsumerState<MapScreen>
       _showOverlay = false;
     });
     // This reveals the bottom sheet which is already active due to notifier state
-  }
-}
-
-/// Glassmorphism icon button for map overlay controls.
-class _MapIconButton extends StatelessWidget {
-  const _MapIconButton({required this.icon, required this.onTap});
-
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: context.colors.surface.withValues(alpha: 0.85),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Icon(icon, size: 20, color: context.colors.textPrimary),
-      ),
-    );
   }
 }

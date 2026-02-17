@@ -44,10 +44,11 @@ class _DragHandleState extends State<DragHandle>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isPulsing) {
+    final opacity = _opacity;
+    if (widget.isPulsing && opacity != null) {
       return AnimatedBuilder(
-        animation: _opacity!,
-        builder: (context, _) => _buildHandle(context, _opacity!.value),
+        animation: opacity,
+        builder: (context, _) => _buildHandle(context, opacity.value),
       );
     }
 

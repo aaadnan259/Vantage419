@@ -4,11 +4,14 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.8
+  sdk: ^3.10.7
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
   cupertino_icons: ^1.0.8
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
@@ -19,6 +22,9 @@ dependencies:
   google_fonts: ^8.0.1
   share_plus: ^10.1.4
   cached_network_image: ^3.4.1
+  firebase_core: ^4.4.0
+  firebase_performance: ^0.11.1+4
+  firebase_analytics: ^12.1.2
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +46,7 @@ flutter_launcher_icons:
   min_sdk_android: 21
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/data/

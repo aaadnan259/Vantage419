@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/core.dart';
-import 'package:vantage419/core/models/spot_category.dart';
 import 'package:vantage419/features/profile/gamification_provider.dart';
 
 /// Profile sheet showing gamification stats: streak, discovery progress,
@@ -21,7 +20,7 @@ class ProfileSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final gamification = ref.watch(gamificationProvider);
-    final stats = ref.watch(discoveryStatsProvider);
+    final statsAsync = ref.watch(discoveryStatsProvider);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -66,13 +65,29 @@ class ProfileSheet extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _StatCard(
-                    icon: Icons.explore_rounded,
-                    iconColor: context.colors.accent,
-                    label: 'Discovered',
-                    value: '${stats.discoveredCount}/${stats.totalSpots}',
-                    subtitle:
-                        '${(stats.overallProgress * 100).toInt()}% explored',
+                  child: statsAsync.when(
+                    data: (stats) => _StatCard(
+                      icon: Icons.explore_rounded,
+                      iconColor: context.colors.accent,
+                      label: 'Discovered',
+                      value: '${stats.discoveredCount}/${stats.totalSpots}',
+                      subtitle:
+                          '${(stats.overallProgress * 100).toInt()}% explored',
+                    ),
+                    loading: () => _StatCard(
+                      icon: Icons.explore_rounded,
+                      iconColor: context.colors.textMuted,
+                      label: 'Discovered',
+                      value: '...',
+                      subtitle: 'Loading...',
+                    ),
+                    error: (_, _) => _StatCard(
+                      icon: Icons.error_outline,
+                      iconColor: context.colors.error,
+                      label: 'Error',
+                      value: '-',
+                      subtitle: 'Failed to load',
+                    ),
                   ),
                 ),
               ],
@@ -89,13 +104,31 @@ class ProfileSheet extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            ...SpotCategory.values.map((cat) {
-              final progress = stats.categoryProgress[cat];
-              if (progress == null || progress.total == 0) {
-                return const SizedBox.shrink();
-              }
-              return _CategoryRow(category: cat, progress: progress);
-            }),
+            statsAsync.when(
+              data: (stats) => Column(
+                children: SpotCategory.values.map((cat) {
+                  final progress = stats.categoryProgress[cat];
+                  if (progress == null || progress.total == 0) {
+                    return const SizedBox.shrink();
+                  }
+                  return _CategoryRow(category: cat, progress: progress);
+                }).toList(),
+              ),
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              error: (_, _) => Center(
+                child: Text(
+                  'Could not load progress',
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

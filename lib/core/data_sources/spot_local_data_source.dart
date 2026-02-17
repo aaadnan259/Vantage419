@@ -7,6 +7,18 @@ import 'package:vantage419/core/models/user_visit.dart';
 import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/core/services/performance_service.dart';
 
+/// Top-level function for compute to avoid capturing closures
+List<UserVisit> _parseVisits(String raw) {
+  final decoded = jsonDecode(raw);
+  if (decoded is! List) {
+    throw const FormatException('Expected a list');
+  }
+  return decoded
+      .whereType<Map<String, dynamic>>()
+      .map((e) => UserVisit.fromJson(e))
+      .toList();
+}
+
 class SpotLocalDataSource {
   final SharedPreferences _prefs;
   static const _visitsKey = 'user_visits';
@@ -48,15 +60,7 @@ class SpotLocalDataSource {
     if (raw == null) return [];
 
     try {
-      final decoded = jsonDecode(raw);
-      if (decoded is! List) {
-        await _prefs.remove(_visitsKey);
-        return [];
-      }
-      return decoded
-          .whereType<Map<String, dynamic>>()
-          .map((e) => UserVisit.fromJson(e))
-          .toList();
+      return await compute(_parseVisits, raw);
     } catch (e) {
       debugPrint('⚠️ Corrupt visit data, resetting: $e');
       await _prefs.remove(_visitsKey);
@@ -76,7 +80,10 @@ class SpotLocalDataSource {
       pruned = pruned.sublist(0, _maxVisits);
     }
 
-    final json = jsonEncode(pruned.map((v) => v.toJson()).toList());
+    final jsonList = pruned.map((v) => v.toJson()).toList();
+    final json = await compute(_encodeVisits, jsonList);
     await _prefs.setString(_visitsKey, json);
   }
 }
+
+String _encodeVisits(List<Map<String, dynamic>> visits) => jsonEncode(visits);

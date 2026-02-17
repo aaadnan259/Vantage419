@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/core.dart';
-import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/features/favorites/favorites_provider.dart';
 
 /// Full-screen bottom sheet showing the user's favorited spots.
