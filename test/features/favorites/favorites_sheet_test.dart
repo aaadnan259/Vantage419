@@ -4,8 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vantage419/core/core.dart';
 import 'package:vantage419/core/theme/palette.dart';
-import 'package:vantage419/core/models/spot_category.dart';
-import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:vantage419/features/favorites/favorites_sheet.dart';
 import 'package:vantage419/features/favorites/favorites_provider.dart';
