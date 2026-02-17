@@ -39,7 +39,7 @@ class SpotRepositoryImpl implements SpotRepository {
         UserVisit(spotId: spotId, visitedAt: DateTime.now()),
       ];
       await _dataSource.saveVisits(updated);
-      return _dataSource.loadVisits(); // Return fresh source of truth
+      return await _dataSource.loadVisits(); // Return fresh source of truth
     } catch (e) {
       throw RepositoryException('Failed to log visit', e);
     }
