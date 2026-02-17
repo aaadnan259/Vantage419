@@ -4,16 +4,25 @@ import 'package:flutter/foundation.dart';
 /// Performance monitoring abstraction.
 /// Uses Firebase Performance Monitoring.
 class PerformanceService {
+  final fp.FirebasePerformance? _performance;
+
+  /// Creates a [PerformanceService].
+  /// An optional [fp.FirebasePerformance] instance can be provided for testing.
+  PerformanceService({fp.FirebasePerformance? performance})
+    : _performance = performance;
+
   /// Start a trace for a specific operation.
   /// Returns a [Trace] object that must be stopped.
   Trace startTrace(String name) {
     debugPrint('⏱️ Performance: Trace started - $name');
 
-    fp.FirebasePerformance? performance;
-    try {
-      performance = fp.FirebasePerformance.instance;
-    } catch (e) {
-      // Firebase likely not initialized, proceed with debug trace only
+    fp.FirebasePerformance? performance = _performance;
+    if (performance == null) {
+      try {
+        performance = fp.FirebasePerformance.instance;
+      } catch (e) {
+        // Firebase likely not initialized, proceed with debug trace only
+      }
     }
 
     final fpTrace = performance?.newTrace(name);
@@ -38,6 +47,7 @@ class Trace {
     _stopwatch.start();
   }
 
+  /// Stop the trace.
   void stop() {
     _stopwatch.stop();
     debugPrint(
@@ -47,6 +57,7 @@ class Trace {
     fpTrace?.stop();
   }
 
+  /// Set a metric for the trace.
   void setMetric(String metricName, int value) {
     debugPrint('⏱️ Performance: Metric $name.$metricName = $value');
     fpTrace?.setMetric(metricName, value);

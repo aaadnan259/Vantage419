@@ -103,21 +103,21 @@ void main() {
     });
   });
 
-  test('logSpinStart runs without error with null analytics', () {
+  test('logSpinStart runs without error with null analytics', () async {
     final service = AnalyticsService();
-    expect(() => service.logSpinStart('Solo Dining'), returnsNormally);
+    await expectLater(service.logSpinStart('Solo Dining'), completes);
   });
 
-  test('logSpinComplete runs without error with null analytics', () {
+  test('logSpinComplete runs without error with null analytics', () async {
     final service = AnalyticsService();
-    expect(
-      () => service.logSpinComplete('spot_123', 'Test Spot'),
-      returnsNormally,
+    await expectLater(
+      service.logSpinComplete('spot_123', 'Test Spot'),
+      completes,
     );
   });
 
-  test('logModeChange runs without error with null analytics', () {
+  test('logModeChange runs without error with null analytics', () async {
     final service = AnalyticsService();
-    expect(() => service.logModeChange('Date Night'), returnsNormally);
+    await expectLater(service.logModeChange('Date Night'), completes);
   });
 }
