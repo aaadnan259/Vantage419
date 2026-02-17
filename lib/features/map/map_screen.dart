@@ -7,6 +7,7 @@ import 'package:vantage419/core/models/toledo_spot.dart';
 import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/core/utils/extensions.dart';
 import 'package:vantage419/core/providers/spots_provider.dart';
+import 'package:vantage419/features/map/providers/filtered_spots_provider.dart';
 import 'package:vantage419/features/map/providers/map_controller_provider.dart';
 import 'package:vantage419/features/map/providers/user_location_provider.dart';
 import 'package:vantage419/features/map/widgets/empty_state.dart';
@@ -88,6 +89,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final userLocation = ref.watch(userLocationProvider);
     final hasTileError = ref.watch(_tileErrorProvider);
     final spotsAsync = ref.watch(toledoSpotsProvider);
+    final filteredSpots = ref.watch(filteredSpotsProvider);
 
     return Scaffold(
       body: spotsAsync.when(
@@ -97,11 +99,6 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     ?.errorLoadingSpots(err.toString()) ??
                 'Error: $err')),
         data: (allSpots) {
-          // S5.2 + S6.3: Filter spots by active mode
-          final filteredSpots = allSpots
-              .where((s) => rouletteState.mode.categories.contains(s.category))
-              .toList();
-
           return Stack(
             children: [
               // Map layer
