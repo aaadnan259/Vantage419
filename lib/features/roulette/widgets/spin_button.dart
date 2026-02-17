@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vantage419/core/utils/constants.dart';
 import 'package:vantage419/core/utils/extensions.dart';
-import 'package:vantage419/core/providers/repository_providers.dart';
+import 'package:vantage419/features/roulette/providers/spin_tooltip_provider.dart';
 
 /// 80dp circular button with Toyota Blue gradient and rotation animation.
 /// S2.5: Varied haptics — medium on tap, heavy on success, light on error.
@@ -30,7 +30,6 @@ class _SpinButtonState extends ConsumerState<SpinButton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _rotation;
-  bool _showTooltip = false;
 
   @override
   void initState() {
@@ -43,12 +42,6 @@ class _SpinButtonState extends ConsumerState<SpinButton>
       begin: 0,
       end: 2 * math.pi,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-    // S6.4: Check if user has spun before
-    final prefs = ref.read(sharedPreferencesProvider);
-    if (!(prefs.getBool('hasSpunOnce') ?? false)) {
-      setState(() => _showTooltip = true);
-    }
   }
 
   @override
@@ -57,10 +50,9 @@ class _SpinButtonState extends ConsumerState<SpinButton>
     if (widget.isSpinning && !oldWidget.isSpinning) {
       _controller.forward(from: 0);
       // S6.4: Dismiss tooltip after first spin
-      if (_showTooltip) {
-        setState(() => _showTooltip = false);
-        ref.read(sharedPreferencesProvider).setBool('hasSpunOnce', true);
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(spinTooltipProvider.notifier).onSpinStarted();
+      });
     }
     // Haptic on spin completion (S2.5)
     if (!widget.isSpinning && oldWidget.isSpinning) {
@@ -86,11 +78,13 @@ class _SpinButtonState extends ConsumerState<SpinButton>
 
   @override
   Widget build(BuildContext context) {
+    final showTooltip = ref.watch(spinTooltipProvider);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         // S6.4: First-launch tooltip
-        if (_showTooltip)
+        if (showTooltip)
           Container(
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

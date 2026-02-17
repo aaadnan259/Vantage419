@@ -93,9 +93,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
       body: spotsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
-            child: Text(AppLocalizations.of(context)
-                    ?.errorLoadingSpots(err.toString()) ??
-                'Error: $err')),
+          child: Text(
+            AppLocalizations.of(context)?.errorLoadingSpots(err.toString()) ??
+                'Error: $err',
+          ),
+        ),
         data: (allSpots) {
           // S5.2 + S6.3: Filter spots by active mode
           final filteredSpots = allSpots

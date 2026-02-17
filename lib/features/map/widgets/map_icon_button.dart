@@ -3,11 +3,7 @@ import 'package:vantage419/core/utils/extensions.dart';
 
 /// Glassmorphism icon button for map overlay controls.
 class MapIconButton extends StatelessWidget {
-  const MapIconButton({
-    super.key,
-    required this.icon,
-    required this.onTap,
-  });
+  const MapIconButton({super.key, required this.icon, required this.onTap});
 
   final IconData icon;
   final VoidCallback onTap;

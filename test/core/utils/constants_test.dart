@@ -30,7 +30,10 @@ void main() {
           .replaceAll('{lat}', lat.toString())
           .replaceAll('{lng}', lng.toString());
 
-      expect(url, 'https://www.google.com/maps/dir/?api=1&destination=41.6528,-83.5379');
+      expect(
+        url,
+        'https://www.google.com/maps/dir/?api=1&destination=41.6528,-83.5379',
+      );
     });
   });
 }
