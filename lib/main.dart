@@ -10,22 +10,30 @@ import 'package:vantage419/features/splash/splash_screen.dart';
 import 'package:vantage419/core/providers/repository_providers.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vantage419/l10n/generated/app_localizations.dart';
+import 'package:vantage419/core/services/analytics_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:vantage419/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Analytics service for error logging (initialized after Firebase)
+  final analytics = AnalyticsService();
+
   // Global error handler — catches framework-level errors (widget build failures, etc.)
-  // Wire to AnalyticsService when Firebase is configured
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint('🔴 FlutterError caught: ${details.exceptionAsString()}');
+    analytics.logError(details.exception, details.stack);
   };
 
   // Async/isolate error handler — catches errors outside the Flutter framework
-  // Wire to AnalyticsService when Firebase is configured
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('🔴 PlatformDispatcher error: $error');
     debugPrint('$stack');
+    analytics.logError(error, stack, fatal: true);
     return true;
   };
 
