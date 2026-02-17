@@ -24,6 +24,15 @@ class AnalyticsService {
     await _analytics?.logScreenView(screenName: screenName);
   }
 
+  /// Log errors to analytics (Crashlytics).
+  void logError(dynamic error, StackTrace? stackTrace, {bool fatal = false}) {
+    debugPrint('🔴 Analytics Error: $error');
+    if (stackTrace != null) {
+      debugPrint('Stack: $stackTrace');
+    }
+    // Swap: FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: fatal);
+  }
+
   Future<void> logSpinStart(String mode) async {
     await logEvent('spin_start', {'mode': mode});
   }
