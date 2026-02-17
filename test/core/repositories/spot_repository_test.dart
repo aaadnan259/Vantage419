@@ -96,7 +96,15 @@ void main() {
 
       expect(
         () => repository.getSpots(),
-        throwsA(isA<RepositoryException>()),
+        throwsA(
+          isA<RepositoryException>()
+              .having((e) => e.message, 'message', 'Failed to fetch spots')
+              .having(
+                (e) => e.originalError,
+                'originalError',
+                fakeDataSource.fetchError,
+              ),
+        ),
       );
     });
 
@@ -112,7 +120,15 @@ void main() {
 
       expect(
         () => repository.logVisit('1', []),
-        throwsA(isA<RepositoryException>()),
+        throwsA(
+          isA<RepositoryException>()
+              .having((e) => e.message, 'message', 'Failed to log visit')
+              .having(
+                (e) => e.originalError,
+                'originalError',
+                fakeDataSource.saveError,
+              ),
+        ),
       );
     });
 
@@ -121,7 +137,15 @@ void main() {
 
       expect(
         () => repository.logVisit('1', []),
-        throwsA(isA<RepositoryException>()),
+        throwsA(
+          isA<RepositoryException>()
+              .having((e) => e.message, 'message', 'Failed to log visit')
+              .having(
+                (e) => e.originalError,
+                'originalError',
+                fakeDataSource.loadError,
+              ),
+        ),
       );
     });
   });
