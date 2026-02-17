@@ -51,7 +51,7 @@ void main() {
     });
 
     test('logSpinStart calls logEvent', () async {
-      service.logSpinStart('Solo Dining');
+      await service.logSpinStart('Solo Dining');
       // Allow async execution to complete
       await Future.delayed(Duration.zero);
       expect(
@@ -61,7 +61,7 @@ void main() {
     });
 
     test('logSpinComplete calls logEvent', () async {
-      service.logSpinComplete('spot_123', 'Test Spot');
+      await service.logSpinComplete('spot_123', 'Test Spot');
       await Future.delayed(Duration.zero);
       expect(
         fakeAnalytics.logs,
@@ -72,7 +72,7 @@ void main() {
     });
 
     test('logModeChange calls logEvent', () async {
-      service.logModeChange('Date Night');
+      await service.logModeChange('Date Night');
       await Future.delayed(Duration.zero);
       expect(
         fakeAnalytics.logs,
