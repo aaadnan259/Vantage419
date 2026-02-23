@@ -9,7 +9,7 @@ class RouletteService {
   RouletteService();
 
   /// S3.5: Class-level RNG.
-  final _rng = Random();
+  final _rng = Random.secure();
 
   /// Pick a random spot with weighted selection.
   /// Spots not visited in [AppConstants.visitedWindowDays] get
