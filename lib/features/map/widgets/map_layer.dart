@@ -23,9 +23,8 @@ class SpotMarkerLayer extends StatelessWidget {
     return MarkerLayer(
       markers: spots.map((spot) {
         final isSelected = spot.id == selectedSpotId;
-        final size = isSelected
-            ? CustomMarker.selectedSize
-            : CustomMarker.selectedSize; // Always use max for Marker bounds
+        // Always use max for Marker bounds
+        const size = CustomMarker.selectedSize;
         return Marker(
           point: LatLng(spot.latitude, spot.longitude),
           width: size,
