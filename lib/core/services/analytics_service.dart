@@ -14,21 +14,27 @@ class AnalyticsService {
 
   /// Log a named event with optional parameters.
   Future<void> logEvent(String name, [Map<String, Object>? params]) async {
-    debugPrint('📊 Analytics: $name ${params ?? ''}');
+    if (kDebugMode) {
+      debugPrint('📊 Analytics: $name ${params ?? ''}');
+    }
     await _analytics?.logEvent(name: name, parameters: params);
   }
 
   /// Track screen views for funnel analysis.
   Future<void> logScreenView(String screenName) async {
-    debugPrint('📊 Screen: $screenName');
+    if (kDebugMode) {
+      debugPrint('📊 Screen: $screenName');
+    }
     await _analytics?.logScreenView(screenName: screenName);
   }
 
   /// Log errors to the debug console.
   void logError(dynamic error, StackTrace? stackTrace, {bool fatal = false}) {
-    debugPrint('🔴 Analytics Error: $error');
-    if (stackTrace != null) {
-      debugPrint('Stack: $stackTrace');
+    if (kDebugMode) {
+      debugPrint('🔴 Analytics Error: $error');
+      if (stackTrace != null) {
+        debugPrint('Stack: $stackTrace');
+      }
     }
   }
 
