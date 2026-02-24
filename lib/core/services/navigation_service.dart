@@ -25,9 +25,7 @@ class NavigationService {
         googleUrl = Uri.parse(
           'comgooglemaps://?daddr=$latitude,$longitude&directionsmode=driving',
         );
-        wazeUrl = Uri.parse(
-          'waze://?ll=$latitude,$longitude&navigate=yes',
-        );
+        wazeUrl = Uri.parse('waze://?ll=$latitude,$longitude&navigate=yes');
       } else {
         // Android/other schemes
         googleUrl = Uri.parse(
@@ -60,7 +58,9 @@ class NavigationService {
       );
       return launchUrl(webUrl, mode: LaunchMode.externalApplication);
     } catch (e) {
-      debugPrint('⚠️ Navigation launch failed: $e');
+      if (kDebugMode) {
+        debugPrint('⚠️ Navigation launch failed: $e');
+      }
       return false;
     }
   }

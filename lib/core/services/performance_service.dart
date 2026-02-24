@@ -14,7 +14,9 @@ class PerformanceService {
   /// Start a trace for a specific operation.
   /// Returns a [Trace] object that must be stopped.
   Trace startTrace(String name) {
-    debugPrint('⏱️ Performance: Trace started - $name');
+    if (kDebugMode) {
+      debugPrint('⏱️ Performance: Trace started - $name');
+    }
 
     fp.FirebasePerformance? performance = _performance;
     if (performance == null) {
@@ -50,16 +52,20 @@ class Trace {
   /// Stop the trace.
   void stop() {
     _stopwatch.stop();
-    debugPrint(
-      '⏱️ Performance: Trace stopped - $name (${_stopwatch.elapsedMilliseconds}ms)',
-    );
+    if (kDebugMode) {
+      debugPrint(
+        '⏱️ Performance: Trace stopped - $name (${_stopwatch.elapsedMilliseconds}ms)',
+      );
+    }
     // Fire-and-forget async stop
     fpTrace?.stop();
   }
 
   /// Set a metric for the trace.
   void setMetric(String metricName, int value) {
-    debugPrint('⏱️ Performance: Metric $name.$metricName = $value');
+    if (kDebugMode) {
+      debugPrint('⏱️ Performance: Metric $name.$metricName = $value');
+    }
     fpTrace?.setMetric(metricName, value);
   }
 }
