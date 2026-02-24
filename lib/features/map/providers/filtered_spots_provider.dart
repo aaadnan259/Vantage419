@@ -19,6 +19,8 @@ final filteredSpotsProvider = Provider<List<ToledoSpot>>((ref) {
   return spotsAsync.maybeWhen(
     data: (spots) {
       return spots
+          // Note: mode.categories is a Set<SpotCategory>, so contains() is O(1).
+          // This ensures efficient filtering even with large spot lists.
           .where((s) => mode.categories.contains(s.category))
           .toList();
     },
